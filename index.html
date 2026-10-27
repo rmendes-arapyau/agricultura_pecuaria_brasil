@@ -22,9 +22,6 @@
   .pm-intro { margin: .9rem 0 0; font-size: 1.05rem; }
   .pm-take { margin: .6rem 0 0; color: var(--fg-muted); font-size: 1.05rem; }
   .pm-take b { color: var(--fg); }
-  .pm-notice { display: flex; gap: .9rem; align-items: flex-start; background: var(--aviso); border-radius: var(--raio); padding: 1rem 1.25rem; }
-  .pm-notice-dot { flex: none; width: .8rem; height: .8rem; border-radius: 50%; background: var(--laranja); margin-top: .4rem; }
-  .pm-notice p { margin: 0; flex: 1; min-width: 0; font-size: .95rem; }
   .pm-controls { display: flex; flex-wrap: wrap; gap: 1rem 1.5rem; align-items: flex-end; }
   .pm-field { display: grid; gap: .3rem; }
   .pm-label { font-size: .8rem; color: var(--fg-muted); }
@@ -92,10 +89,6 @@
     <p class="pm-take" id="pm-take">Carregando dados…</p>
   </header>
 
-  <aside class="pm-notice" role="note">
-    <span class="pm-notice-dot" aria-hidden="true"></span>
-    <p><strong>Observação: os dados de agricultura não incluem as lavouras temporárias de Minas Gerais</strong> (Tabela 3.11 do IBGE, não disponível). Para os municípios mineiros aparecem apenas as lavouras permanentes. Por isso, os totais de Minas Gerais e do Brasil em “Temporárias” e “Todas as lavouras” estão subestimados, e produtos como soja, milho, cana e feijão aparecem sem dados em Minas. Os dados de pecuária de Minas Gerais estão completos.</p>
-  </aside>
 
   <div class="pm-controls">
     <div class="pm-field">
@@ -162,7 +155,7 @@
 
   <section class="pm-method">
     <h2>Sobre os dados</h2>
-    <p><strong>Fonte da agricultura.</strong> IBGE, Produção Agrícola Municipal (PAM) 2025: Tabela 1612 (lavouras temporárias) e Tabela 1613 (lavouras permanentes), por município. O IBGE classifica o último ano divulgado como resultado preliminar, sujeito a revisão. <a href="dados/pam_2025.csv" download>Baixar a base de agricultura (CSV)</a>.</p>
+    <p><strong>Fonte da agricultura.</strong> IBGE, Produção Agrícola Municipal (PAM) 2025: Tabela 1612 (lavouras temporárias) e Tabela 1613 (lavouras permanentes), por município. Para Minas Gerais, os dados de lavouras temporárias vêm da Tabela 5457, versão consolidada da mesma pesquisa (PAM 2025), com as mesmas variáveis por município e produto; as lavouras permanentes de Minas, que constam nas duas tabelas, coincidem em todos os municípios. O IBGE classifica o último ano divulgado como resultado preliminar, sujeito a revisão. <a href="dados/pam_2025.csv" download>Baixar a base de agricultura (CSV)</a>.</p>
     <p><strong>Área.</strong> Nas temporárias, é a área plantada. Nas permanentes, o IBGE usa a área destinada à colheita, conceito equivalente para culturas que não são replantadas a cada ano. Em “Todas as lavouras”, as duas foram somadas. Como pode haver mais de um cultivo por ano no mesmo lugar, a área informada pode superar a área do município.</p>
     <p><strong>Quantidade.</strong> Só aparece por produto, porque o IBGE não soma produtos com unidades diferentes. Está em toneladas, exceto abacaxi e coco-da-baía, medidos em mil frutos.</p>
     <p><strong>Valor.</strong> Preço médio pago ao produtor vezes a quantidade, sem frete, taxas e impostos. Nas tabelas originais está em mil reais.</p>
@@ -326,9 +319,6 @@
     box.replaceChildren();
     baseViewBox = malha.viewBox.join(' ');
     svg = d3.select(box).append('svg').attr('viewBox', baseViewBox).attr('role', 'img').attr('aria-label', 'Mapa dos municípios do Brasil colorido pela variável escolhida');
-    const pat = svg.append('defs').append('pattern').attr('id', 'pm-hatch').attr('patternUnits', 'userSpaceOnUse').attr('width', 6).attr('height', 6).attr('patternTransform', 'rotate(45)');
-    pat.append('rect').attr('width', 6).attr('height', 6).attr('fill', '#fff');
-    pat.append('line').attr('x2', 0).attr('y2', 6).attr('stroke', '#E76129').attr('stroke-width', 2.2).attr('stroke-opacity', .6);
     const gm = svg.append('g'), gu = svg.append('g');
     gm.selectAll('path').data(malha.municipios).join('path').attr('class', 'pm-mun').attr('d', (d) => d[1]).each(function (d) { paths.set(d[0], this); });
     gu.selectAll('path').data(malha.ufs).join('path').attr('class', 'pm-uf').attr('d', (d) => d[1]).each(function (d) { ufBoxes.set(d[0], this.getBBox()); });
@@ -362,13 +352,11 @@
     const { p, rows } = current, r = rows.get(cod), uf = COD_UF[cod.slice(0, 2)], te = tipoEf(p);
     tipHead(cod, A.names);
     tip.append('div').text(p.produto === 'Total' ? (p.tipo === 'Todas' ? 'Todas as lavouras' : 'Total de ' + TIPO_TXT[p.tipo]) : p.produto);
-    if (uf === 'MG' && te === 'Temporária') tip.append('div').text('Sem dados: a tabela de lavouras temporárias de Minas Gerais não foi incluída.');
-    else if (!r) tip.append('div').text('Sem produção registrada.');
+    if (!r) tip.append('div').text('Sem produção registrada.');
     else {
       tipLine('Área', r.area == null ? '—' : nInt.format(r.area) + ' ha');
       if (p.produto !== 'Total') tipLine('Quantidade', r.qtd == null ? '—' : nInt.format(r.qtd) + ' ' + (r.unidade || 't'));
       tipLine('Valor', r.valor == null ? '—' : fmtReais(r.valor * 1000));
-      if (uf === 'MG' && te === 'Todas') tip.append('div').attr('class', 'pm-tip-head').text('Só lavouras permanentes');
     }
     const crit = p.variavel === 'area' ? 'area' : 'valor';
     const todos = (A.porMun.get(cod) || []).filter((x) => (p.tipo === 'Todas' || x.tipo === p.tipo) && x[crit] > 0);
@@ -409,7 +397,7 @@
     svg.attr('viewBox', b ? [b.x - pad, b.y - pad, b.width + 2 * pad, b.height + 2 * pad].join(' ') : baseViewBox);
   }
   // Mapa coroplético genérico: rows = Map(cod → objeto), v = campo numérico.
-  function drawChoro(p, rows, v, fmtL, vazio, hatchMG) {
+  function drawChoro(p, rows, v, fmtL, vazio) {
     const vals = [];
     for (const [cod, r] of rows) if (inScope(p, cod) && r[v] > 0) vals.push(r[v]);
     const k = Math.max(1, Math.min(RAMP.length, new Set(vals).size));
@@ -417,7 +405,7 @@
     const scale = d3.scaleQuantile(vals.length ? vals : [0, 1], colors);
     for (const [cod, el] of paths) {
       const r = rows.get(cod);
-      el.setAttribute('fill', hatchMG && cod.startsWith('31') ? 'url(#pm-hatch)' : r && r[v] > 0 ? scale(r[v]) : 'var(--vazio)');
+      el.setAttribute('fill', r && r[v] > 0 ? scale(r[v]) : 'var(--vazio)');
       el.style.opacity = inScope(p, cod) ? 1 : 0.18;
     }
     zoom(p);
@@ -434,11 +422,6 @@
     }
     const it = lg.append('span').attr('class', 'pm-legend-item');
     it.append('i').style('background', 'var(--vazio)'); it.append('span').text(vazio);
-    if (hatchMG && (p.uf === 'BR' || p.uf === 'MG')) {
-      const it2 = lg.append('span').attr('class', 'pm-legend-item');
-      it2.append('i').style('background', 'repeating-linear-gradient(45deg, rgba(231,97,41,.6) 0 2px, #fff 2px 5px)');
-      it2.append('span').text('Minas Gerais: sem dados de temporárias');
-    }
   }
   function drawPred(p, rows) {
     const cor = Object.fromEntries(GRUPOS);
@@ -497,7 +480,7 @@
   function renderAgri(p) {
     const te = tipoEf(p), rows = A.series.get(te + '|' + p.produto) || new Map();
     current = { p, rows };
-    drawChoro(p, rows, p.variavel, (x) => (p.variavel === 'valor' ? fmtReais(x * 1000) : fmtBig(x) + (p.variavel === 'area' ? ' ha' : '')), 'Sem produção', te === 'Temporária');
+    drawChoro(p, rows, p.variavel, (x) => (p.variavel === 'valor' ? fmtReais(x * 1000) : fmtBig(x) + (p.variavel === 'area' ? ' ha' : '')), 'Sem produção');
     const prodTxt = p.produto === 'Total' ? (p.tipo === 'Todas' ? 'todas as lavouras' : TIPO_TXT[p.tipo]) : p.produto;
     const varTxt = p.variavel === 'area' ? areaLabel(te).toLowerCase() : VAR_TXT[p.variavel];
     $('pm-map-title').textContent = varTxt.charAt(0).toUpperCase() + varTxt.slice(1) + ', ' + prodTxt + (p.uf === 'BR' ? '' : ' — ' + UF_NOMES[p.uf]);
@@ -526,7 +509,7 @@
       current = { p, rows };
       let cont = null;
       if (p.vista === 'predominante') cont = drawPred(p, rows);
-      else drawChoro(p, rows, 'val', fmtBig, 'Sem criação', false);
+      else drawChoro(p, rows, 'val', fmtBig, 'Sem criação');
       $('pm-map-title').textContent = (p.vista === 'predominante' ? 'Rebanho predominante' : 'Todos os rebanhos, em unidades animais') + (p.uf === 'BR' ? '' : ' — ' + UF_NOMES[p.uf]);
       $('pm-map-note').textContent = p.vista === 'predominante' ? 'Cada município aparece na cor do grupo de rebanho com mais unidades animais. Passe o mouse (ou toque) para ver todos os rebanhos.' : 'Cores em sete faixas com o mesmo número de municípios cada. Passe o mouse (ou toque) para ver o rebanho predominante e todos os rebanhos.';
       const { top, n } = drawTable(p, rows, 'val', 'Unidades animais', true);
@@ -540,7 +523,7 @@
     }
     const rows = P.byReb.get(p.rebanho) || new Map();
     current = { p, rows };
-    drawChoro(p, rows, 'val', fmtBig, 'Sem criação', false);
+    drawChoro(p, rows, 'val', fmtBig, 'Sem criação');
     $('pm-map-title').textContent = 'Efetivo do rebanho, ' + p.rebanho.toLowerCase() + (p.uf === 'BR' ? '' : ' — ' + UF_NOMES[p.uf]);
     const { top, n } = drawTable(p, rows, 'val', 'Cabeças', false);
     rankNote(p, n, 'efetivo de ' + p.rebanho.toLowerCase(), 'Nenhum município com criação nesta seleção.');
