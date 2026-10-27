@@ -15,6 +15,7 @@ dados/ppm_2025.json        pecuária, no formato lido pela página
 dados/ppm_2025.csv         pecuária em CSV, para download
 dados/credito_2025.json    crédito rural, no formato lido pela página
 dados/credito_2025.csv     crédito rural em CSV, para download
+dados/instituicoes_financeiras.csv  nome e tipo de cada instituição financeira (CNPJ de 8 dígitos)
 dados/malha.json           contornos dos municípios e estados, já projetados
 dados/biomas_municipios.csv  bioma predominante de cada município (IBGE)
 dados/malha_biomas.json    contornos dos biomas, já projetados
@@ -45,6 +46,7 @@ Os filtros ficam gravados no endereço da página. Exemplos:
 - `…/#setor=pecuaria&rebanho=Todos&vista=predominante`: rebanho predominante em cada município.
 - `…/#tema=credito&setor=agricultura&programa=Pronaf&linha=Floresta (sistemas agroflorestais)&bioma=Amazônia`: Pronaf Floresta na Amazônia.
 - `…/#tema=credito&setor=todos&instituicao=Cooperativa de crédito`: crédito rural contratado em cooperativas de crédito.
+- `…/#tema=credito&setor=todos&ifin=04902979`: crédito rural contratado com o Banco da Amazônia (o código é o CNPJ de 8 dígitos da instituição, que aparece no endereço ao clicar nela no quadro "Maiores instituições financeiras").
 - `…/#bioma=Amazônia&tipo=Permanente&produto=Cacau (em amêndoa)&variavel=valor`: valor do cacau nos municípios da Amazônia.
 
 ## Como atualizar os dados
@@ -64,7 +66,7 @@ Para Minas Gerais, as lavouras temporárias desta versão vieram da Tabela 5457 
 - **Agricultura:** IBGE, PAM 2025, Tabelas 1612 e 1613 (para as temporárias de Minas Gerais, Tabela 5457 por município, versão consolidada da mesma pesquisa). Área plantada (temporárias) ou área destinada à colheita (permanentes); em "Todas as lavouras", as duas são somadas. Quantidade só por produto, em toneladas (abacaxi e coco-da-baía em mil frutos). Valor em mil reais, preço pago ao produtor.
 - **Pecuária:** IBGE, PPM 2025, Tabela 3939, efetivo em 31/12, em cabeças. Matrizes de suínos e galinhas são subgrupos de suínos e galináceos.
 - **Todos os rebanhos:** efetivo convertido em unidades animais com os coeficientes da FAO para a América do Sul (FAO, 2011, *Guidelines for the preparation of livestock sector reviews*, Anexo 1): bovino 0,70; suíno 0,25; equino 0,65; ovino e caprino 0,10; galináceos 0,01. Búfalo (0,70) e codorna (0,01) por aproximação, pois a FAO não traz coeficiente para eles na região. O rebanho predominante é o grupo com mais unidades animais no município.
-- **Crédito rural:** Banco Central, Matriz de Dados do Crédito Rural (SICOR), operações contratadas de janeiro a dezembro de 2025 pela data de emissão (não o ano-safra), no município informado na operação, em valores nominais. Agregado por município, programa, linha (Pronaf e RenovAgro), setor, finalidade e tipo de instituição financeira; nome da instituição, fonte de recursos e mês ficaram de fora. Programas não listados em `PROGRAMAS` no script são avisados na execução.
+- **Crédito rural:** Banco Central, Matriz de Dados do Crédito Rural (SICOR), operações contratadas de janeiro a dezembro de 2025 pela data de emissão (não o ano-safra), no município informado na operação, em valores nominais. Agregado por município, programa, linha (Pronaf e RenovAgro), setor, finalidade e instituição financeira (nome, CNPJ de 8 dígitos e tipo); fonte de recursos e mês ficaram de fora. Programas não listados em `PROGRAMAS` no script são avisados na execução.
 - **Biomas:** bioma predominante por município, IBGE (lista de 2024, com base na Malha Municipal 2022). Municípios na transição entre biomas entram inteiros no bioma que ocupa a maior parte do território; o filtro é um recorte por município, não uma medição exata dentro de cada bioma. Para atualizar, substitua `dados/biomas_municipios.csv` mantendo as colunas `cod_ibge`, `municipio`, `uf` e `bioma`.
 - **Resultados preliminares:** o IBGE classifica 2025 como preliminar, sujeito a revisão.
 - **Malha municipal:** projeto [geodata-br](https://github.com/tbrugz/geodata-br), simplificada e projetada (Albers). Base anterior a 2013: seis municípios criados depois não têm polígono próprio, mas seus dados entram nos totais e no ranking.

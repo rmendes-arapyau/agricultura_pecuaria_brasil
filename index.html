@@ -32,6 +32,10 @@
   .pm-seg button:disabled { opacity: .4; cursor: not-allowed; }
   .pm-seg-modo button { padding-inline: 1.1rem; }
   .pm-select { font-size: .85rem; padding: .45rem .6rem; border: 1px solid var(--line); border-radius: var(--raio); background: #fff; color: var(--fg); min-width: 13rem; max-width: 100%; }
+  .pm-select-if { max-width: min(100%, 24rem); }
+  .pm-table tr.pm-click { cursor: pointer; }
+  .pm-table tr.pm-click:hover td { background: #f6f4ec; }
+  .pm-table tr.is-sel td { font-weight: 800; }
   .pm-link { font-size: .85rem; background: transparent; border: 0; color: var(--indigo); text-decoration: underline; cursor: pointer; padding: .5rem 0; }
   button:focus-visible, select:focus-visible, a:focus-visible { outline: 3px solid var(--lima); outline-offset: 2px; }
   [hidden] { display: none !important; }
@@ -143,7 +147,8 @@
     <label class="pm-field"><span class="pm-label">Programa</span><select class="pm-select" id="pm-crprog"></select></label>
     <label class="pm-field" id="pm-crlinha-wrap" hidden><span class="pm-label">Linha</span><select class="pm-select" id="pm-crlinha"></select></label>
     <label class="pm-field"><span class="pm-label">Finalidade</span><select class="pm-select" id="pm-crfin"></select></label>
-    <label class="pm-field"><span class="pm-label">Instituição financeira</span><select class="pm-select" id="pm-crinst"></select></label>
+    <label class="pm-field"><span class="pm-label">Tipo de instituição</span><select class="pm-select" id="pm-crinst"></select></label>
+    <label class="pm-field"><span class="pm-label">Instituição financeira</span><select class="pm-select pm-select-if" id="pm-crif"></select></label>
     <div class="pm-field">
       <span class="pm-label" id="lb-crvar">Variável no mapa</span>
       <div class="pm-seg" role="group" aria-labelledby="lb-crvar" id="pm-crvar">
@@ -179,6 +184,17 @@
     </section>
   </div>
 
+  <section class="pm-card pm-cred" id="instituicoes" hidden>
+    <h2>Maiores instituições financeiras</h2>
+    <p class="pm-note" id="pm-if-note">—</p>
+    <div class="pm-tablebox">
+      <table class="pm-table">
+        <thead><tr><th class="pm-rank" scope="col">#</th><th scope="col">Instituição</th><th scope="col">Tipo</th><th scope="col" class="num">Valor contratado</th><th scope="col" class="num">Contratos</th><th scope="col" class="num">Participação</th></tr></thead>
+        <tbody id="pm-iftbody"></tbody>
+      </table>
+    </div>
+  </section>
+
   <section class="pm-method">
     <h2>Sobre os dados</h2>
     <p><strong>Fonte da agricultura.</strong> IBGE, Produção Agrícola Municipal (PAM) 2025: Tabela 1612 (lavouras temporárias) e Tabela 1613 (lavouras permanentes), por município. Para Minas Gerais, os dados de lavouras temporárias vêm da Tabela 5457, versão consolidada da mesma pesquisa (PAM 2025), com as mesmas variáveis por município e produto; as lavouras permanentes de Minas, que constam nas duas tabelas, coincidem em todos os municípios. O IBGE classifica o último ano divulgado como resultado preliminar, sujeito a revisão. <a href="dados/pam_2025.csv" download>Baixar a base de agricultura (CSV)</a>.</p>
@@ -188,7 +204,7 @@
     <p><strong>Café.</strong> “Café (em grão) — total” já soma arábica e canephora; as duas espécies também podem ser vistas em separado.</p>
     <p><strong>Pecuária.</strong> IBGE, Pesquisa da Pecuária Municipal (PPM) 2025, Tabela 3939: efetivo dos rebanhos em 31 de dezembro, em cabeças, também preliminar. “Suíno – matrizes” já está contido em “Suíno (total)”, e “Galináceos – galinhas” em “Galináceos (total)”, que inclui também frangos, galos e pintos. <a href="dados/ppm_2025.csv" download>Baixar a base de pecuária (CSV)</a>.</p>
     <p><strong>Todos os rebanhos.</strong> Para somar espécies diferentes, o efetivo foi convertido em unidades animais (UA), com os coeficientes da FAO para a América do Sul (FAO, 2011, <em>Guidelines for the preparation of livestock sector reviews</em>, Anexo 1): bovino 0,70; ovino e caprino 0,10; suíno 0,25; equino 0,65; galináceos 0,01. A FAO não traz coeficiente de búfalo para a América do Sul nem de codorna; usamos 0,70 para búfalos (valor da FAO para búfalos nas regiões em que aparece) e 0,01 para codornas (o mesmo das galinhas, o que superestima um pouco o peso delas). Os subgrupos (matrizes e galinhas) não entram na soma. O rebanho predominante é o grupo com mais unidades animais no município: bovinos, bubalinos, equinos, suínos, caprinos e ovinos, ou aves (galináceos e codornas).</p>
-    <p><strong>Crédito rural.</strong> Banco Central do Brasil, Matriz de Dados do Crédito Rural (SICOR): operações contratadas de janeiro a dezembro de 2025, pela data de emissão (ano civil, não o ano-safra de julho a junho), no município informado na operação. Valores nominais, em reais. A base foi agregada por município, programa, linha (Pronaf e RenovAgro), setor (agricultura ou pecuária, conforme a atividade agrícola ou pecuária informada ao Banco Central), finalidade (custeio, investimento, comercialização e industrialização) e tipo de instituição financeira, conforme o segmento informado pelo Banco Central: banco público, banco privado, cooperativa de crédito, banco cooperativo, banco de desenvolvimento e agência de fomento, e sociedade de crédito, financiamento e investimento (financeira). O nome de cada instituição, a fonte de recursos e o mês ficaram de fora. O Pronamp é o Programa Nacional de Apoio ao Médio Produtor Rural. <a href="dados/credito_2025.csv" download>Baixar a base de crédito rural (CSV)</a>.</p>
+    <p><strong>Crédito rural.</strong> Banco Central do Brasil, Matriz de Dados do Crédito Rural (SICOR): operações contratadas de janeiro a dezembro de 2025, pela data de emissão (ano civil, não o ano-safra de julho a junho), no município informado na operação. Valores nominais, em reais. A base foi agregada por município, programa, linha (Pronaf e RenovAgro), setor (agricultura ou pecuária, conforme a atividade agrícola ou pecuária informada ao Banco Central), finalidade (custeio, investimento, comercialização e industrialização) e tipo de instituição financeira, conforme o segmento informado pelo Banco Central: banco público, banco privado, cooperativa de crédito, banco cooperativo, banco de desenvolvimento e agência de fomento, e sociedade de crédito, financiamento e investimento (financeira). Também foi mantida cada instituição financeira, com o nome e o CNPJ (oito primeiros dígitos) informados pelo Banco Central; a fonte de recursos e o mês ficaram de fora. O Pronamp é o Programa Nacional de Apoio ao Médio Produtor Rural. <a href="dados/credito_2025.csv" download>Baixar a base de crédito rural (CSV)</a> e a <a href="dados/instituicoes_financeiras.csv" download>lista de instituições financeiras (CSV)</a>.</p>
     <div class="pm-fins">
       <p><strong>Quais as finalidades do crédito rural?</strong> As finalidades do crédito rural podem ser descritas como:</p>
       <ul>
@@ -220,14 +236,14 @@
   const UA = { Bovino: 0.70, Bubalino: 0.70, Equino: 0.65, 'Suíno (total)': 0.25, Caprino: 0.10, Ovino: 0.10, 'Galináceos (total)': 0.01, Codornas: 0.01 };
   const GRUPO = { Bovino: 'Bovinos', Bubalino: 'Bubalinos', Equino: 'Equinos', 'Suíno (total)': 'Suínos', Caprino: 'Caprinos e ovinos', Ovino: 'Caprinos e ovinos', 'Galináceos (total)': 'Aves', Codornas: 'Aves' };
   const GRUPOS = [['Bovinos', '#507651'], ['Aves', '#E76129'], ['Suínos', '#9F3597'], ['Caprinos e ovinos', '#C4D75B'], ['Equinos', '#A61F2D'], ['Bubalinos', '#443C8E']];
-  const DEFAULTS = { tema: 'producao', setor: 'agricultura', tipo: 'Todas', produto: 'Total', variavel: 'area', uf: 'BR', bioma: 'Todos', rebanho: 'Bovino', vista: 'ua', programa: 'Todos', linha: 'Todas', finalidade: 'Todas', instituicao: 'Todas', cvar: 'valor' };
+  const DEFAULTS = { tema: 'producao', setor: 'agricultura', tipo: 'Todas', produto: 'Total', variavel: 'area', uf: 'BR', bioma: 'Todos', rebanho: 'Bovino', vista: 'ua', programa: 'Todos', linha: 'Todas', finalidade: 'Todas', instituicao: 'Todas', ifin: 'Todas', cvar: 'valor' };
   const INST_TXT = { 'Banco público': 'bancos públicos', 'Banco privado': 'bancos privados', 'Cooperativa de crédito': 'cooperativas de crédito', 'Banco cooperativo': 'bancos cooperativos', 'Banco de desenvolvimento e agência de fomento': 'bancos de desenvolvimento e agências de fomento', 'Financeira (SCFI)': 'financeiras (SCFI)' };
   // Descrição do recorte de crédito: "o crédito rural de investimento do Pronaf (linha Floresta) para a agricultura contratado em cooperativas de crédito".
   const credTxt = (p) => 'o crédito rural' + (p.finalidade !== 'Todas' ? ' de ' + p.finalidade.toLowerCase() : '') +
     (p.programa === 'Todos' ? '' : p.programa === 'Sem vínculo a programa' ? ' sem vínculo a programa' : ' do ' + p.programa) +
     (p.linha !== 'Todas' ? ', na linha ' + p.linha + ',' : '') +
     (p.setor === 'agricultura' ? ' para a agricultura' : p.setor === 'pecuaria' ? ' para a pecuária' : '') +
-    (p.instituicao !== 'Todas' ? ' contratado em ' + INST_TXT[p.instituicao] : '');
+    (p.ifin !== 'Todas' && C && C.ifs.get(p.ifin) ? ' contratado com ' + C.ifs.get(p.ifin).nome : p.instituicao !== 'Todas' ? ' contratado em ' + INST_TXT[p.instituicao] : '');
   const NOTA_MAPA = 'Cores em sete faixas com o mesmo número de municípios cada. Passe o mouse (ou toque) em um município para ver os valores e, na agricultura, os principais produtos; na pecuária, todos os rebanhos.';
 
   const $ = (id) => document.getElementById(id);
@@ -316,16 +332,18 @@
   let C = null; // crédito rural
   function indexCred(raw) {
     const mun = raw.municipios.map(([cod, nome, uf]) => ({ cod, nome, uf }));
-    const ops = raw.dados.map(([m, pg, l, a, f, i, v, n]) => ({ cod: mun[m].cod, nome: mun[m].nome, uf: mun[m].uf, programa: raw.programas[pg], linha: l < 0 ? '' : raw.linhas[l], setor: a === 0 ? 'agricultura' : 'pecuaria', finalidade: raw.finalidades[f], instituicao: raw.instituicoes[i], valor: v, contratos: n }));
+    const insts = raw.instituicoes.map(([cnpj, nome, t]) => ({ cnpj, nome, segmento: raw.tipos_instituicao[t] }));
+    const ops = raw.dados.map(([m, pg, l, a, f, i, v, n]) => ({ cod: mun[m].cod, nome: mun[m].nome, uf: mun[m].uf, programa: raw.programas[pg], linha: l < 0 ? '' : raw.linhas[l], setor: a === 0 ? 'agricultura' : 'pecuaria', finalidade: raw.finalidades[f], instituicao: insts[i].segmento, cnpj: insts[i].cnpj, valor: v, contratos: n }));
     const linhasPorProg = new Map();
     for (const o of ops) if (o.linha) { if (!linhasPorProg.has(o.programa)) linhasPorProg.set(o.programa, new Map()); const m = linhasPorProg.get(o.programa); m.set(o.linha, (m.get(o.linha) || 0) + o.valor); }
-    return { ops, porMun: d3.group(ops, (o) => o.cod), programas: raw.programas, finalidades: raw.finalidades, instituicoes: raw.instituicoes,
+    return { ops, porMun: d3.group(ops, (o) => o.cod), programas: raw.programas, finalidades: raw.finalidades, instituicoes: raw.tipos_instituicao, ifs: new Map(insts.map((x) => [x.cnpj, x])), insts,
       linhas: new Map([...linhasPorProg].map(([k, m]) => [k, [...m].sort((a, b) => b[1] - a[1]).map(([l]) => l)])) };
   }
   // Filtra uma operação pelo recorte; "skip" ignora uma dimensão (para as divisões do tooltip).
   const credOk = (p, o, skip) => (skip === 'programa' || ((p.programa === 'Todos' || o.programa === p.programa) && (p.linha === 'Todas' || o.linha === p.linha))) &&
     (skip === 'setor' || p.setor === 'todos' || o.setor === p.setor) && (p.finalidade === 'Todas' || o.finalidade === p.finalidade) &&
-    (skip === 'instituicao' || p.instituicao === 'Todas' || o.instituicao === p.instituicao);
+    (skip === 'instituicao' || p.instituicao === 'Todas' || o.instituicao === p.instituicao) &&
+    (skip === 'instituicao' || skip === 'if' || p.ifin === 'Todas' || o.cnpj === p.ifin);
   const tipoEf = (p) => (p.tipo === 'Todas' && p.produto !== 'Total' ? A.tipoDe.get(p.produto) || 'Todas' : p.tipo);
 
   // ---------- controles ----------
@@ -339,6 +357,7 @@
       if (state.linha !== 'Todas' && !(C.linhas.get(state.programa) || []).includes(state.linha)) state.linha = 'Todas';
       if (state.finalidade !== 'Todas' && !C.finalidades.includes(state.finalidade)) state.finalidade = 'Todas';
       if (state.instituicao !== 'Todas' && !C.instituicoes.includes(state.instituicao)) state.instituicao = 'Todas';
+      if (state.ifin !== 'Todas' && (!C.ifs.get(state.ifin) || (state.instituicao !== 'Todas' && C.ifs.get(state.ifin).segmento !== state.instituicao))) state.ifin = 'Todas';
       if (!['valor', 'contratos'].includes(state.cvar)) state.cvar = 'valor';
     }
     if (A) {
@@ -360,7 +379,8 @@
   $('pm-crprog').addEventListener('change', (e) => setState({ programa: e.target.value, linha: 'Todas' }));
   $('pm-crlinha').addEventListener('change', (e) => setState({ linha: e.target.value }));
   $('pm-crfin').addEventListener('change', (e) => setState({ finalidade: e.target.value }));
-  $('pm-crinst').addEventListener('change', (e) => setState({ instituicao: e.target.value }));
+  $('pm-crinst').addEventListener('change', (e) => setState({ instituicao: e.target.value, ifin: 'Todas' }));
+  $('pm-crif').addEventListener('change', (e) => setState({ ifin: e.target.value }));
   $('pm-bioma').addEventListener('change', (e) => setState({ bioma: e.target.value }));
   $('pm-bioma').replaceChildren(new Option('Todos os biomas', 'Todos'), ...BIOMAS.map((b) => new Option(b, b)));
   $('pm-reset').addEventListener('click', () => setState({ ...DEFAULTS }));
@@ -380,7 +400,15 @@
     $('pm-crlinha-wrap').hidden = !ls;
     if (ls) opts('pm-crlinha', ['Todas', 'Todas as linhas'], ls, p.linha);
     opts('pm-crfin', ['Todas', 'Todas as finalidades'], C.finalidades, p.finalidade);
-    opts('pm-crinst', ['Todas', 'Todas as instituições'], C.instituicoes, p.instituicao);
+    opts('pm-crinst', ['Todas', 'Todos os tipos'], C.instituicoes, p.instituicao);
+    const cfi = $('pm-crif');
+    if (cfi.dataset.seg !== p.instituicao) {
+      const lista = C.insts.filter((i) => p.instituicao === 'Todas' || i.segmento === p.instituicao);
+      const grupos = C.instituicoes.map((sg) => { const g = document.createElement('optgroup'); g.label = sg; g.append(...lista.filter((i) => i.segmento === sg).map((i) => new Option(i.nome, i.cnpj))); return g; }).filter((g) => g.children.length);
+      cfi.replaceChildren(new Option('Todas as instituições', 'Todas'), ...grupos);
+      cfi.dataset.seg = p.instituicao;
+    }
+    cfi.value = p.ifin;
     for (const el of document.querySelectorAll('.pm-pec')) el.hidden = !pec;
     for (const el of document.querySelectorAll('.pm-ua')) el.hidden = !(pec && p.rebanho === 'Todos');
     const q = $('pm-var').querySelector('[data-v="qtd"]');
@@ -490,6 +518,7 @@
     };
     secao('Por setor', 'setor', 'setor', p.setor, (k) => (k === 'agricultura' ? 'Agricultura' : 'Pecuária'), true);
     secao('Principais programas', 'programa', 'programa', p.programa);
+    secao('Principais instituições', 'if', 'cnpj', p.ifin, (k) => (C.ifs.get(k) || { nome: k }).nome);
     secao('Por tipo de instituição', 'instituicao', 'instituicao', p.instituicao);
   }
   function tipPec(cod) {
@@ -665,6 +694,31 @@
   }
 
   // Combinação de estado e bioma sem nenhum município (por exemplo, Pantanal na Bahia).
+  // Quadro das instituições que mais financiaram no recorte; clicar filtra o mapa pela instituição.
+  function drawIFTable(p) {
+    const agg = new Map();
+    for (const o of C.ops) {
+      if (!credOk(p, o, 'if') || !inScope(p, o.cod)) continue;
+      let a = agg.get(o.cnpj);
+      if (!a) { a = { cnpj: o.cnpj, valor: 0, contratos: 0 }; agg.set(o.cnpj, a); }
+      a.valor += o.valor; a.contratos += o.contratos;
+    }
+    const lista = [...agg.values()].sort((a, b) => b.valor - a.valor), tot = d3.sum(lista, (a) => a.valor);
+    const top = lista.slice(0, 15);
+    if (p.ifin !== 'Todas' && agg.get(p.ifin) && !top.includes(agg.get(p.ifin))) top.push(agg.get(p.ifin));
+    $('pm-iftbody').replaceChildren(...top.map((a) => {
+      const inf = C.ifs.get(a.cnpj) || { nome: a.cnpj, segmento: '' }, sel = a.cnpj === p.ifin;
+      const tr = document.createElement('tr');
+      tr.className = 'pm-click' + (sel ? ' is-sel' : '');
+      tr.title = sel ? 'Clique para voltar a todas as instituições' : 'Clique para ver o mapa só desta instituição';
+      tr.addEventListener('click', () => setState(sel ? { ifin: 'Todas' } : { ifin: a.cnpj, instituicao: 'Todas' }));
+      const td = (t, c) => { const e = document.createElement('td'); if (c) e.className = c; e.textContent = t; tr.append(e); };
+      td(lista.indexOf(a) + 1, 'pm-rank'); td(inf.nome); td(inf.segmento); td(fmtReais(a.valor), 'num'); td(nInt.format(a.contratos), 'num'); td(tot ? pct(a.valor / tot) : '—', 'num');
+      return tr;
+    }));
+    $('pm-if-note').textContent = lista.length ? nInt.format(lista.length) + ' instituições financiaram ' + credTxt({ ...p, ifin: 'Todas' }) + ' ' + recorte(p) + '. Clique em uma instituição para ver o mapa só dela.' : 'Nenhuma instituição neste recorte.';
+  }
+
   function renderCred(p) {
     const rows = new Map();
     for (const o of C.ops) {
@@ -676,7 +730,8 @@
     for (const a of rows.values()) a.val = p.cvar === 'contratos' ? a.contratos : a.valor;
     current = { p, rows };
     drawChoro(p, rows, 'val', (x) => (p.cvar === 'valor' ? fmtReais(x) : fmtBig(x)), 'Sem crédito contratado');
-    const filtros = [p.programa !== 'Todos' ? p.programa + (p.linha !== 'Todas' ? ' – ' + p.linha : '') : null, p.setor !== 'todos' ? (p.setor === 'agricultura' ? 'agricultura' : 'pecuária') : null, p.finalidade !== 'Todas' ? p.finalidade : null, p.instituicao !== 'Todas' ? p.instituicao : null].filter(Boolean);
+    drawIFTable(p);
+    const filtros = [p.programa !== 'Todos' ? p.programa + (p.linha !== 'Todas' ? ' – ' + p.linha : '') : null, p.setor !== 'todos' ? (p.setor === 'agricultura' ? 'agricultura' : 'pecuária') : null, p.finalidade !== 'Todas' ? p.finalidade : null, p.ifin !== 'Todas' && C.ifs.get(p.ifin) ? C.ifs.get(p.ifin).nome : p.instituicao !== 'Todas' ? p.instituicao : null].filter(Boolean);
     $('pm-map-title').textContent = 'Crédito rural, ' + (p.cvar === 'valor' ? 'valor contratado' : 'número de contratos') + (filtros.length ? ': ' + filtros.join(', ') : '') + sufixo(p);
     $('pm-map-note').textContent = 'Cores em sete faixas com o mesmo número de municípios cada. Passe o mouse (ou toque) em um município para ver o crédito por setor, os principais programas e o tipo de instituição.';
     const { top, n } = drawTable(p, rows, 'val', p.cvar === 'valor' ? 'Valor contratado (R$)' : 'Contratos', false);
