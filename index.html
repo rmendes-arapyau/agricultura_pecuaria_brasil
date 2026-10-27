@@ -1,0 +1,588 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Produção agrícola e pecuária municipal do Brasil, 2025 | Instituto Arapyaú</title>
+<meta name="description" content="Mapa interativo da produção agrícola e dos rebanhos de cada município brasileiro em 2025, a partir da PAM e da PPM do IBGE. Ferramenta do Instituto Arapyaú.">
+<style>
+  @font-face { font-family: 'Open Sans'; font-style: normal; font-weight: 400; font-display: swap; src: url('vendor/fonts/open-sans-400.woff2') format('woff2'); }
+  @font-face { font-family: 'Open Sans'; font-style: normal; font-weight: 800; font-display: swap; src: url('vendor/fonts/open-sans-800.woff2') format('woff2'); }
+  :root {
+    --indigo: #443C8E; --lima: #C4D75B; --musgo: #507651; --laranja: #E76129; --vinho: #9F3597; --bordo: #A61F2D;
+    --fg: #1d1b2e; --fg-muted: #5d5a70; --bg: #ffffff; --panel: #ffffff; --line: #e3e0d3; --vazio: #e9e7df; --aviso: #fdf3ec;
+    --raio: 10px;
+  }
+  * { box-sizing: border-box; }
+  html, body { margin: 0; background: var(--bg); color: var(--fg); font-family: 'Open Sans', system-ui, -apple-system, 'Segoe UI', sans-serif; font-weight: 400; font-size: 16px; line-height: 1.55; }
+  button, select { font-family: inherit; font-weight: 400; }
+  b, strong { font-weight: 800; }
+  .pm { max-width: 1320px; margin: 0 auto; padding: 2rem clamp(1rem, 3vw, 2.5rem) 3rem; display: grid; grid-template-columns: minmax(0, 1fr); gap: 1.6rem; container-type: inline-size; }
+  .pm-title { font-weight: 800; font-size: clamp(1.9rem, 4.4cqi, 3.1rem); line-height: 1.1; letter-spacing: -0.01em; margin: 0; color: var(--indigo); text-wrap: balance; }
+  .pm-intro { margin: .9rem 0 0; font-size: 1.05rem; }
+  .pm-take { margin: .6rem 0 0; color: var(--fg-muted); font-size: 1.05rem; }
+  .pm-take b { color: var(--fg); }
+  .pm-notice { display: flex; gap: .9rem; align-items: flex-start; background: var(--aviso); border-radius: var(--raio); padding: 1rem 1.25rem; }
+  .pm-notice-dot { flex: none; width: .8rem; height: .8rem; border-radius: 50%; background: var(--laranja); margin-top: .4rem; }
+  .pm-notice p { margin: 0; flex: 1; min-width: 0; font-size: .95rem; }
+  .pm-controls { display: flex; flex-wrap: wrap; gap: 1rem 1.5rem; align-items: flex-end; }
+  .pm-field { display: grid; gap: .3rem; }
+  .pm-label { font-size: .8rem; color: var(--fg-muted); }
+  .pm-seg { display: inline-flex; flex-wrap: wrap; max-width: 100%; border: 1px solid var(--line); border-radius: var(--raio); overflow: hidden; }
+  .pm-seg button { font-size: .85rem; background: transparent; color: var(--fg); border: 0; padding: .5rem .85rem; cursor: pointer; }
+  .pm-seg button + button { border-left: 1px solid var(--line); }
+  .pm-seg button[aria-pressed="true"] { background: var(--indigo); color: #fff; }
+  .pm-seg button:disabled { opacity: .4; cursor: not-allowed; }
+  .pm-seg-modo button { padding-inline: 1.1rem; }
+  .pm-select { font-size: .85rem; padding: .45rem .6rem; border: 1px solid var(--line); border-radius: var(--raio); background: #fff; color: var(--fg); min-width: 13rem; max-width: 100%; }
+  .pm-link { font-size: .85rem; background: transparent; border: 0; color: var(--indigo); text-decoration: underline; cursor: pointer; padding: .5rem 0; }
+  button:focus-visible, select:focus-visible, a:focus-visible { outline: 3px solid var(--lima); outline-offset: 2px; }
+  [hidden] { display: none !important; }
+  .pm-tiles { display: grid; grid-template-columns: repeat(auto-fit, minmax(min(100%, 14rem), 1fr)); gap: 1rem; }
+  .pm-tile { border-top: 1px solid var(--line); padding-top: .75rem; display: grid; gap: .15rem; align-content: start; min-width: 0; }
+  .pm-tile-label, .pm-tile-note { font-size: .8rem; color: var(--fg-muted); }
+  .pm-tile-value { font-weight: 800; font-size: clamp(1.5rem, 2.6cqi, 2.2rem); line-height: 1.15; color: var(--indigo); font-variant-numeric: tabular-nums; overflow-wrap: anywhere; }
+  .pm-grid { display: grid; grid-template-columns: minmax(0, 2fr) minmax(0, 1fr); gap: 1.5rem; align-items: start; }
+  @container (max-width: 820px) { .pm-grid { grid-template-columns: minmax(0, 1fr); } }
+  .pm-card { display: grid; grid-template-columns: minmax(0, 1fr); gap: .6rem; min-width: 0; }
+  .pm-card h2 { font-size: 1.15rem; font-weight: 400; margin: 0; }
+  .pm-note { font-size: .82rem; color: var(--fg-muted); margin: 0; }
+  .pm-mapbox { position: relative; min-height: 18rem; }
+  .pm-mapbox svg { display: block; width: 100%; height: auto; }
+  .pm-mun { stroke: #fff; stroke-width: .15; vector-effect: non-scaling-stroke; transition: opacity .3s; }
+  .pm-mun.is-hover { stroke: var(--fg); stroke-width: 1.5; }
+  .pm-uf { fill: none; stroke: var(--indigo); stroke-opacity: .55; stroke-width: .8; vector-effect: non-scaling-stroke; pointer-events: none; }
+  .pm-loading { position: absolute; inset: 0; display: flex; align-items: center; justify-content: center; color: var(--fg-muted); font-size: .9rem; }
+  .pm-tip { position: absolute; pointer-events: none; background: #fff; border: 1px solid var(--line); border-radius: 8px; box-shadow: 0 6px 20px rgba(29, 27, 46, .14); padding: .5rem .7rem; font-size: .8rem; line-height: 1.45; width: 17rem; max-width: 80%; z-index: 2; display: none; }
+  .pm-tip-head { color: var(--fg-muted); }
+  .pm-tip-row, .pm-tip-grid { font-variant-numeric: tabular-nums; }
+  .pm-tip-row { display: flex; justify-content: space-between; gap: 1rem; }
+  .pm-tip-row span:first-child { color: var(--fg-muted); }
+  .pm-tip-sec { margin-top: .4rem; padding-top: .35rem; border-top: 1px solid var(--line); color: var(--fg-muted); }
+  .pm-tip-grid { display: grid; grid-template-columns: 1fr auto; gap: 0 .8rem; }
+  .pm-tip-grid span:nth-child(2n) { text-align: right; }
+  .pm-tip-grid .sub { padding-left: .8rem; color: var(--fg-muted); }
+  .pm-legend { display: flex; flex-wrap: wrap; gap: .4rem 1rem; font-size: .75rem; color: var(--fg-muted); align-items: flex-end; }
+  .pm-legend-scale { display: flex; flex-wrap: wrap; row-gap: .5rem; }
+  .pm-legend-step { display: grid; gap: .2rem; min-width: 5.2rem; padding-right: .5rem; white-space: nowrap; }
+  .pm-legend-sw { height: .6rem; }
+  .pm-legend-item { display: inline-flex; gap: .35rem; align-items: center; }
+  .pm-legend-item i { width: .85rem; height: .85rem; border-radius: 2px; display: inline-block; }
+  .pm-legend-item i.dot { border-radius: 50%; }
+  .pm-tablebox { max-height: min(40rem, 80vh); overflow: auto; }
+  .pm-table { width: 100%; border-collapse: collapse; font-size: .82rem; font-variant-numeric: tabular-nums; }
+  .pm-table th { position: sticky; top: 0; background: var(--bg); text-align: left; font-weight: 400; color: var(--fg-muted); padding: .4rem; border-bottom: 1px solid var(--line); }
+  .pm-table td { padding: .4rem; border-bottom: 1px solid var(--line); vertical-align: middle; }
+  .pm-table .num { text-align: right; }
+  .pm-rank { color: var(--fg-muted); width: 1.8rem; }
+  .pm-bar { height: .35rem; border-radius: 2px; background: var(--musgo); margin: .2rem 0 0 auto; }
+  .pm-method { font-size: .85rem; color: var(--fg-muted); display: grid; gap: .5rem; border-top: 1px solid var(--line); padding-top: 1.25rem; }
+  .pm-method h2 { font-size: 1.15rem; font-weight: 400; color: var(--fg); margin: 0 0 .25rem; }
+  .pm-method p { margin: 0; }
+  .pm-method strong { color: var(--fg); }
+  .pm-method a { color: var(--indigo); }
+  @media (prefers-reduced-motion: reduce) { .pm-mun { transition: none; } }
+</style>
+</head>
+<body>
+<main class="pm">
+  <header>
+    <h1 class="pm-title">Produção agrícola e pecuária municipal do Brasil, 2025</h1>
+    <p class="pm-intro">Esta é uma ferramenta desenvolvida pelo Instituto Arapyaú a partir dos dados da Produção Agrícola Municipal (PAM) e da Pesquisa da Pecuária Municipal (PPM), disponibilizados pelo Instituto Brasileiro de Geografia e Estatística (IBGE). Ela permite explorar, município a município, a área, a quantidade e o valor da produção das lavouras temporárias e permanentes e o efetivo dos rebanhos do Brasil em 2025, por produto, por rebanho e por estado.</p>
+    <p class="pm-take" id="pm-take">Carregando dados…</p>
+  </header>
+
+  <aside class="pm-notice" role="note">
+    <span class="pm-notice-dot" aria-hidden="true"></span>
+    <p><strong>Observação: os dados de agricultura não incluem as lavouras temporárias de Minas Gerais</strong> (Tabela 3.11 do IBGE, não disponível). Para os municípios mineiros aparecem apenas as lavouras permanentes. Por isso, os totais de Minas Gerais e do Brasil em “Temporárias” e “Todas as lavouras” estão subestimados, e produtos como soja, milho, cana e feijão aparecem sem dados em Minas. Os dados de pecuária de Minas Gerais estão completos.</p>
+  </aside>
+
+  <div class="pm-controls">
+    <div class="pm-field">
+      <span class="pm-label" id="lb-modo">Tema</span>
+      <div class="pm-seg pm-seg-modo" role="group" aria-labelledby="lb-modo" id="pm-modo">
+        <button type="button" data-v="agricultura">Agricultura</button>
+        <button type="button" data-v="pecuaria">Pecuária</button>
+      </div>
+    </div>
+    <div class="pm-field pm-agri">
+      <span class="pm-label" id="lb-tipo">Tipo de lavoura</span>
+      <div class="pm-seg" role="group" aria-labelledby="lb-tipo" id="pm-tipo">
+        <button type="button" data-v="Todas">Todas as lavouras</button>
+        <button type="button" data-v="Temporária">Temporárias</button>
+        <button type="button" data-v="Permanente">Permanentes</button>
+      </div>
+    </div>
+    <label class="pm-field pm-agri"><span class="pm-label">Produto</span><select class="pm-select" id="pm-produto"></select></label>
+    <div class="pm-field pm-agri">
+      <span class="pm-label" id="lb-var">Variável no mapa</span>
+      <div class="pm-seg" role="group" aria-labelledby="lb-var" id="pm-var">
+        <button type="button" data-v="area">Área (ha)</button>
+        <button type="button" data-v="qtd">Quantidade</button>
+        <button type="button" data-v="valor">Valor (R$)</button>
+      </div>
+    </div>
+    <label class="pm-field pm-pec" hidden><span class="pm-label">Rebanho</span><select class="pm-select" id="pm-rebanho"></select></label>
+    <div class="pm-field pm-pec pm-ua" hidden>
+      <span class="pm-label" id="lb-vista">Ver no mapa</span>
+      <div class="pm-seg" role="group" aria-labelledby="lb-vista" id="pm-vista">
+        <button type="button" data-v="ua">Unidades animais</button>
+        <button type="button" data-v="predominante">Rebanho predominante</button>
+      </div>
+    </div>
+    <label class="pm-field"><span class="pm-label">Estado</span><select class="pm-select" id="pm-uf"></select></label>
+    <button type="button" class="pm-link" id="pm-reset">Limpar filtros</button>
+  </div>
+
+  <section class="pm-tiles" aria-label="Totais da seleção">
+    <div class="pm-tile"><span class="pm-tile-label" id="pm-l1">Área</span><span class="pm-tile-value" id="pm-v1">—</span><span class="pm-tile-note" id="pm-n1">hectares</span></div>
+    <div class="pm-tile pm-agri"><span class="pm-tile-label">Quantidade produzida</span><span class="pm-tile-value" id="pm-v2">—</span><span class="pm-tile-note" id="pm-n2">—</span></div>
+    <div class="pm-tile pm-agri"><span class="pm-tile-label">Valor da produção</span><span class="pm-tile-value" id="pm-v3">—</span><span class="pm-tile-note">reais, preço pago ao produtor</span></div>
+    <div class="pm-tile"><span class="pm-tile-label" id="pm-l4">Municípios produtores</span><span class="pm-tile-value" id="pm-v4">—</span><span class="pm-tile-note" id="pm-n4">com área ou produção maior que zero</span></div>
+  </section>
+
+  <div class="pm-grid">
+    <section class="pm-card">
+      <h2 id="pm-map-title">Mapa por município</h2>
+      <p class="pm-note" id="pm-map-note">—</p>
+      <div class="pm-mapbox" id="pm-mapbox"><div class="pm-loading">Carregando o mapa…</div></div>
+      <div class="pm-legend" id="pm-legend"></div>
+    </section>
+    <section class="pm-card">
+      <h2>Maiores municípios</h2>
+      <p class="pm-note" id="pm-rank-note">—</p>
+      <div class="pm-tablebox">
+        <table class="pm-table">
+          <thead><tr><th class="pm-rank" scope="col">#</th><th scope="col">Município</th><th scope="col">UF</th><th scope="col" id="pm-th-pred" hidden>Predominante</th><th scope="col" class="num" id="pm-th-val">Área (ha)</th></tr></thead>
+          <tbody id="pm-tbody"></tbody>
+        </table>
+      </div>
+    </section>
+  </div>
+
+  <section class="pm-method">
+    <h2>Sobre os dados</h2>
+    <p><strong>Fonte da agricultura.</strong> IBGE, Produção Agrícola Municipal (PAM) 2025: Tabela 1612 (lavouras temporárias) e Tabela 1613 (lavouras permanentes), por município. O IBGE classifica o último ano divulgado como resultado preliminar, sujeito a revisão. <a href="dados/pam_2025.csv" download>Baixar a base de agricultura (CSV)</a>.</p>
+    <p><strong>Área.</strong> Nas temporárias, é a área plantada. Nas permanentes, o IBGE usa a área destinada à colheita, conceito equivalente para culturas que não são replantadas a cada ano. Em “Todas as lavouras”, as duas foram somadas. Como pode haver mais de um cultivo por ano no mesmo lugar, a área informada pode superar a área do município.</p>
+    <p><strong>Quantidade.</strong> Só aparece por produto, porque o IBGE não soma produtos com unidades diferentes. Está em toneladas, exceto abacaxi e coco-da-baía, medidos em mil frutos.</p>
+    <p><strong>Valor.</strong> Preço médio pago ao produtor vezes a quantidade, sem frete, taxas e impostos. Nas tabelas originais está em mil reais.</p>
+    <p><strong>Café.</strong> “Café (em grão) — total” já soma arábica e canephora; as duas espécies também podem ser vistas em separado.</p>
+    <p><strong>Pecuária.</strong> IBGE, Pesquisa da Pecuária Municipal (PPM) 2025, Tabela 3939: efetivo dos rebanhos em 31 de dezembro, em cabeças, também preliminar. “Suíno – matrizes” já está contido em “Suíno (total)”, e “Galináceos – galinhas” em “Galináceos (total)”, que inclui também frangos, galos e pintos. <a href="dados/ppm_2025.csv" download>Baixar a base de pecuária (CSV)</a>.</p>
+    <p><strong>Todos os rebanhos.</strong> Para somar espécies diferentes, o efetivo foi convertido em unidades animais (UA), com os coeficientes da FAO para a América do Sul (FAO, 2011, <em>Guidelines for the preparation of livestock sector reviews</em>, Anexo 1): bovino 0,70; ovino e caprino 0,10; suíno 0,25; equino 0,65; galináceos 0,01. A FAO não traz coeficiente de búfalo para a América do Sul nem de codorna; usamos 0,70 para búfalos (valor da FAO para búfalos nas regiões em que aparece) e 0,01 para codornas (o mesmo das galinhas, o que superestima um pouco o peso delas). Os subgrupos (matrizes e galinhas) não entram na soma. O rebanho predominante é o grupo com mais unidades animais no município: bovinos, bubalinos, equinos, suínos, caprinos e ovinos, ou aves (galináceos e codornas).</p>
+    <p><strong>Mapa.</strong> Malha municipal simplificada do projeto geodata-br, com base anterior a 2013. Seis municípios criados depois (Balneário Rincão e Pescaria Brava/SC, Mojuí dos Campos/PA, Nazária/PI, Paraíso das Águas/MS e Pinto Bandeira/RS) não têm polígono próprio: seus dados entram nos totais e no ranking, mas no mapa o território aparece dentro do município de origem.</p>
+    <p>Elaboração: Instituto Arapyaú.</p>
+  </section>
+</main>
+
+<script src="vendor/d3.v7.9.0.min.js"></script>
+<script>
+(() => {
+  const RAMP = ['#EFE7C4', '#DDE3A0', '#C4D75B', '#8DAA56', '#507651', '#4A5A73', '#443C8E'];
+  const UF_NOMES = { AC: 'Acre', AL: 'Alagoas', AP: 'Amapá', AM: 'Amazonas', BA: 'Bahia', CE: 'Ceará', DF: 'Distrito Federal', ES: 'Espírito Santo', GO: 'Goiás', MA: 'Maranhão', MT: 'Mato Grosso', MS: 'Mato Grosso do Sul', MG: 'Minas Gerais', PA: 'Pará', PB: 'Paraíba', PR: 'Paraná', PE: 'Pernambuco', PI: 'Piauí', RJ: 'Rio de Janeiro', RN: 'Rio Grande do Norte', RS: 'Rio Grande do Sul', RO: 'Rondônia', RR: 'Roraima', SC: 'Santa Catarina', SP: 'São Paulo', SE: 'Sergipe', TO: 'Tocantins' };
+  const COD_UF = { '12': 'AC', '27': 'AL', '16': 'AP', '13': 'AM', '29': 'BA', '23': 'CE', '53': 'DF', '32': 'ES', '52': 'GO', '21': 'MA', '51': 'MT', '50': 'MS', '31': 'MG', '15': 'PA', '25': 'PB', '41': 'PR', '26': 'PE', '22': 'PI', '33': 'RJ', '24': 'RN', '43': 'RS', '11': 'RO', '14': 'RR', '42': 'SC', '35': 'SP', '28': 'SE', '17': 'TO' };
+  const PREP = { AC: 'no', AL: 'em', AP: 'no', AM: 'no', BA: 'na', CE: 'no', DF: 'no', ES: 'no', GO: 'em', MA: 'no', MT: 'em', MS: 'em', MG: 'em', PA: 'no', PB: 'na', PR: 'no', PE: 'em', PI: 'no', RJ: 'no', RN: 'no', RS: 'no', RO: 'em', RR: 'em', SC: 'em', SP: 'em', SE: 'em', TO: 'no' };
+  const TIPO_TXT = { Todas: 'todas as lavouras', 'Temporária': 'lavouras temporárias', Permanente: 'lavouras permanentes' };
+  const VAR_TXT = { area: 'área', qtd: 'quantidade produzida', valor: 'valor da produção' };
+  const REB_SUB = new Set(['Suíno – matrizes', 'Galináceos – galinhas']);
+  const REB_TXT = { Bovino: 'o rebanho bovino', Bubalino: 'o rebanho bubalino', Equino: 'o rebanho equino', 'Suíno (total)': 'o rebanho suíno', 'Suíno – matrizes': 'as matrizes de suínos', Caprino: 'o rebanho caprino', Ovino: 'o rebanho ovino', 'Galináceos (total)': 'os galináceos', 'Galináceos – galinhas': 'as galinhas', Codornas: 'as codornas' };
+  // Coeficientes de unidade animal da FAO (2011, Anexo 1, América do Sul); búfalo e codorna, ver nota de método.
+  const UA = { Bovino: 0.70, Bubalino: 0.70, Equino: 0.65, 'Suíno (total)': 0.25, Caprino: 0.10, Ovino: 0.10, 'Galináceos (total)': 0.01, Codornas: 0.01 };
+  const GRUPO = { Bovino: 'Bovinos', Bubalino: 'Bubalinos', Equino: 'Equinos', 'Suíno (total)': 'Suínos', Caprino: 'Caprinos e ovinos', Ovino: 'Caprinos e ovinos', 'Galináceos (total)': 'Aves', Codornas: 'Aves' };
+  const GRUPOS = [['Bovinos', '#507651'], ['Aves', '#E76129'], ['Suínos', '#9F3597'], ['Caprinos e ovinos', '#C4D75B'], ['Equinos', '#A61F2D'], ['Bubalinos', '#443C8E']];
+  const DEFAULTS = { modo: 'agricultura', tipo: 'Todas', produto: 'Total', variavel: 'area', uf: 'BR', rebanho: 'Bovino', vista: 'ua' };
+  const NOTA_MAPA = 'Cores em sete faixas com o mesmo número de municípios cada. Passe o mouse (ou toque) em um município para ver os valores e, na agricultura, os principais produtos; na pecuária, todos os rebanhos.';
+
+  const $ = (id) => document.getElementById(id);
+  const nInt = new Intl.NumberFormat('pt-BR', { maximumFractionDigits: 0 });
+  const nCompact = new Intl.NumberFormat('pt-BR', { notation: 'compact', maximumFractionDigits: 1 });
+  const fmtBig = (v) => (v == null ? '—' : Math.abs(v) >= 10000 ? nCompact.format(v) : nInt.format(v));
+  const fmtReais = (v) => (v == null ? '—' : 'R$ ' + fmtBig(v));
+  const pct = (x) => (x < 0.005 ? '<1%' : Math.round(x * 100) + '%');
+  const noUF = (uf) => PREP[uf] + ' ' + UF_NOMES[uf];
+  const escopoTxt = (uf) => (uf === 'BR' ? 'No Brasil' : noUF(uf).charAt(0).toUpperCase() + noUF(uf).slice(1));
+  const areaLabel = (t) => (t === 'Temporária' ? 'Área plantada' : t === 'Permanente' ? 'Área destinada à colheita' : 'Área plantada ou destinada à colheita');
+
+  // Estado da página: lido e gravado no endereço (#modo=…&produto=…), para compartilhar uma visão.
+  let state = { ...DEFAULTS };
+  function readHash() {
+    const h = new URLSearchParams(location.hash.slice(1));
+    for (const k of Object.keys(DEFAULTS)) if (h.get(k)) state[k] = h.get(k);
+  }
+  function writeHash() {
+    const h = new URLSearchParams();
+    for (const k of Object.keys(DEFAULTS)) if (state[k] !== DEFAULTS[k]) h.set(k, state[k]);
+    const s = h.toString();
+    history.replaceState(null, '', s ? '#' + s : location.pathname + location.search);
+  }
+
+  // ---------- dados ----------
+  let A = null, P = null; // agricultura, pecuária
+  function indexAgri(raw) {
+    const mun = raw.municipios.map(([cod, nome, uf]) => ({ cod, nome, uf }));
+    const series = new Map(), info = new Map(), tipoDe = new Map(), lists = { 'Temporária': [], Permanente: [] }, porMun = new Map();
+    for (const p of raw.produtos) {
+      info.set(p.chave, p);
+      const m = new Map();
+      for (const [i, a, q, v] of raw.series[p.chave]) m.set(mun[i].cod, { cod: mun[i].cod, nome: mun[i].nome, uf: mun[i].uf, area: a, qtd: q, valor: v, unidade: p.unidade });
+      series.set(p.chave, m);
+      if (p.tipo !== 'Todas' && p.produto !== 'Total') {
+        lists[p.tipo].push(p.produto); tipoDe.set(p.produto, p.tipo);
+        if (!/arábica|canephora/.test(p.produto)) for (const r of m.values()) {
+          if (!porMun.has(r.cod)) porMun.set(r.cod, []);
+          porMun.get(r.cod).push({ produto: p.produto.replace(' — total', ''), tipo: p.tipo, area: r.area, valor: r.valor });
+        }
+      }
+    }
+    const coll = new Intl.Collator('pt-BR');
+    for (const t in lists) lists[t] = ['Total', ...lists[t].sort(coll.compare)];
+    lists.Todas = ['Total', ...[...tipoDe.keys()].sort(coll.compare)];
+    return { series, info, tipoDe, lists, porMun, names: new Map(mun.map((m) => [m.cod, m])) };
+  }
+  function indexPec(raw) {
+    const mun = raw.municipios.map(([cod, nome, uf]) => ({ cod, nome, uf }));
+    const byReb = new Map(), porMun = new Map();
+    for (const reb of raw.rebanhos) {
+      const m = new Map();
+      for (const [i, n] of raw.series[reb]) {
+        const r = { cod: mun[i].cod, nome: mun[i].nome, uf: mun[i].uf, val: n };
+        m.set(r.cod, r);
+        if (!porMun.has(r.cod)) porMun.set(r.cod, new Map());
+        porMun.get(r.cod).set(reb, n);
+      }
+      byReb.set(reb, m);
+    }
+    // Unidades animais e rebanho predominante por município.
+    const ua = new Map();
+    for (const [cod, m] of porMun) {
+      const g = {}; let total = 0;
+      for (const [reb, n] of m) if (reb in UA) { const v = n * UA[reb]; total += v; g[GRUPO[reb]] = (g[GRUPO[reb]] || 0) + v; }
+      if (total <= 0) continue;
+      const [pred, pv] = Object.entries(g).sort((x, y) => y[1] - x[1])[0];
+      ua.set(cod, { cod, val: total, predominante: pred, part: pv / total });
+    }
+    const names = new Map(mun.map((m) => [m.cod, m]));
+    for (const [cod, r] of ua) { r.nome = names.get(cod).nome; r.uf = names.get(cod).uf; }
+    return { reb: raw.rebanhos, byReb, porMun, ua, names };
+  }
+  const tipoEf = (p) => (p.tipo === 'Todas' && p.produto !== 'Total' ? A.tipoDe.get(p.produto) || 'Todas' : p.tipo);
+
+  // ---------- controles ----------
+  function setState(patch) {
+    state = { ...state, ...patch };
+    if (!['agricultura', 'pecuaria'].includes(state.modo)) state.modo = 'agricultura';
+    if (A) {
+      if (!A.lists[state.tipo]) state.tipo = 'Todas';
+      if (!A.lists[state.tipo].includes(state.produto)) state.produto = 'Total';
+      if (state.produto === 'Total' && state.variavel === 'qtd') state.variavel = 'area';
+    }
+    if (P && state.rebanho !== 'Todos' && !P.reb.includes(state.rebanho)) state.rebanho = 'Bovino';
+    if (state.uf !== 'BR' && !UF_NOMES[state.uf]) state.uf = 'BR';
+    writeHash();
+    render();
+  }
+  const bindSeg = (id, key) => { for (const b of $(id).querySelectorAll('button')) b.addEventListener('click', () => setState({ [key]: b.dataset.v })); };
+  bindSeg('pm-modo', 'modo'); bindSeg('pm-tipo', 'tipo'); bindSeg('pm-var', 'variavel'); bindSeg('pm-vista', 'vista');
+  $('pm-produto').addEventListener('change', (e) => setState({ produto: e.target.value }));
+  $('pm-rebanho').addEventListener('change', (e) => setState({ rebanho: e.target.value }));
+  $('pm-uf').addEventListener('change', (e) => setState({ uf: e.target.value }));
+  $('pm-reset').addEventListener('click', () => setState({ ...DEFAULTS }));
+  $('pm-uf').replaceChildren(new Option('Brasil', 'BR'), ...Object.keys(UF_NOMES).sort((a, b) => UF_NOMES[a].localeCompare(UF_NOMES[b], 'pt-BR')).map((u) => new Option(UF_NOMES[u], u)));
+
+  function drawControls(p) {
+    const pec = p.modo === 'pecuaria';
+    const press = (id, v) => { for (const b of $(id).querySelectorAll('button')) b.setAttribute('aria-pressed', String(b.dataset.v === v)); };
+    press('pm-modo', p.modo); press('pm-tipo', p.tipo); press('pm-var', p.variavel); press('pm-vista', p.vista);
+    for (const el of document.querySelectorAll('.pm-agri')) el.hidden = pec;
+    for (const el of document.querySelectorAll('.pm-pec')) el.hidden = !pec;
+    for (const el of document.querySelectorAll('.pm-ua')) el.hidden = !(pec && p.rebanho === 'Todos');
+    const q = $('pm-var').querySelector('[data-v="qtd"]');
+    q.disabled = p.produto === 'Total'; q.title = q.disabled ? 'Escolha um produto para ver a quantidade' : '';
+    const sel = $('pm-produto');
+    if (sel.dataset.tipo !== p.tipo) {
+      const opt = (v) => new Option(v === 'Total' ? 'Todos os produtos (total)' : v, v);
+      const list = A.lists[p.tipo];
+      if (p.tipo === 'Todas') {
+        const grupos = ['Temporária', 'Permanente'].map((t) => {
+          const g = document.createElement('optgroup');
+          g.label = t === 'Temporária' ? 'Lavouras temporárias' : 'Lavouras permanentes';
+          g.append(...list.filter((v) => A.tipoDe.get(v) === t).map(opt));
+          return g;
+        });
+        sel.replaceChildren(opt('Total'), ...grupos);
+      } else sel.replaceChildren(...list.map(opt));
+      sel.dataset.tipo = p.tipo;
+    }
+    sel.value = p.produto;
+    const rs = $('pm-rebanho');
+    if (!rs.options.length) rs.replaceChildren(new Option('Todos os rebanhos (unidades animais)', 'Todos'), ...P.reb.map((v) => new Option(v, v)));
+    rs.value = p.rebanho;
+    $('pm-uf').value = p.uf;
+  }
+
+  // ---------- mapa ----------
+  let svg, paths = new Map(), ufBoxes = new Map(), tip, current = null, baseViewBox;
+  function buildMap(malha) {
+    const box = $('pm-mapbox');
+    box.replaceChildren();
+    baseViewBox = malha.viewBox.join(' ');
+    svg = d3.select(box).append('svg').attr('viewBox', baseViewBox).attr('role', 'img').attr('aria-label', 'Mapa dos municípios do Brasil colorido pela variável escolhida');
+    const pat = svg.append('defs').append('pattern').attr('id', 'pm-hatch').attr('patternUnits', 'userSpaceOnUse').attr('width', 6).attr('height', 6).attr('patternTransform', 'rotate(45)');
+    pat.append('rect').attr('width', 6).attr('height', 6).attr('fill', '#fff');
+    pat.append('line').attr('x2', 0).attr('y2', 6).attr('stroke', '#E76129').attr('stroke-width', 2.2).attr('stroke-opacity', .6);
+    const gm = svg.append('g'), gu = svg.append('g');
+    gm.selectAll('path').data(malha.municipios).join('path').attr('class', 'pm-mun').attr('d', (d) => d[1]).each(function (d) { paths.set(d[0], this); });
+    gu.selectAll('path').data(malha.ufs).join('path').attr('class', 'pm-uf').attr('d', (d) => d[1]).each(function (d) { ufBoxes.set(d[0], this.getBBox()); });
+    tip = d3.select(box).append('div').attr('class', 'pm-tip');
+    let hover = null;
+    const move = (event) => {
+      const t = event.target, d = t && t.classList && t.classList.contains('pm-mun') ? t.__data__ : null;
+      if (hover && hover !== t) hover.classList.remove('is-hover');
+      if (!d) { tip.style('display', 'none'); hover = null; return; }
+      hover = t; t.classList.add('is-hover'); t.parentNode.appendChild(t);
+      (current.p.modo === 'pecuaria' ? tipPec : tipAgri)(d[0]);
+      placeTip(event);
+    };
+    svg.on('pointermove', move).on('pointerdown', move);
+    svg.on('pointerleave', () => { if (hover) hover.classList.remove('is-hover'); hover = null; tip.style('display', 'none'); });
+  }
+  function placeTip(event) {
+    const box = $('pm-mapbox').getBoundingClientRect(), tw = tip.node().offsetWidth, th = tip.node().offsetHeight;
+    let x = event.clientX - box.left + 14, y = event.clientY - box.top + 14;
+    if (x + tw > box.width) x = event.clientX - box.left - tw - 14;
+    if (y + th > box.height) y = event.clientY - box.top - th - 14;
+    tip.style('left', Math.max(0, x) + 'px').style('top', Math.max(0, y) + 'px').style('display', 'block');
+  }
+  const tipLine = (k, v) => { const row = tip.append('div').attr('class', 'pm-tip-row'); row.append('span').text(k); row.append('span').text(v); };
+  function tipHead(cod, names) {
+    tip.selectAll('*').remove();
+    const nm = names.get(cod) || A.names.get(cod);
+    tip.append('div').attr('class', 'pm-tip-head').text((nm ? nm.nome : 'Município ' + cod) + ' (' + COD_UF[cod.slice(0, 2)] + ')');
+  }
+  function tipAgri(cod) {
+    const { p, rows } = current, r = rows.get(cod), uf = COD_UF[cod.slice(0, 2)], te = tipoEf(p);
+    tipHead(cod, A.names);
+    tip.append('div').text(p.produto === 'Total' ? (p.tipo === 'Todas' ? 'Todas as lavouras' : 'Total de ' + TIPO_TXT[p.tipo]) : p.produto);
+    if (uf === 'MG' && te === 'Temporária') tip.append('div').text('Sem dados: a tabela de lavouras temporárias de Minas Gerais não foi incluída.');
+    else if (!r) tip.append('div').text('Sem produção registrada.');
+    else {
+      tipLine('Área', r.area == null ? '—' : nInt.format(r.area) + ' ha');
+      if (p.produto !== 'Total') tipLine('Quantidade', r.qtd == null ? '—' : nInt.format(r.qtd) + ' ' + (r.unidade || 't'));
+      tipLine('Valor', r.valor == null ? '—' : fmtReais(r.valor * 1000));
+      if (uf === 'MG' && te === 'Todas') tip.append('div').attr('class', 'pm-tip-head').text('Só lavouras permanentes');
+    }
+    const crit = p.variavel === 'area' ? 'area' : 'valor';
+    const todos = (A.porMun.get(cod) || []).filter((x) => (p.tipo === 'Todas' || x.tipo === p.tipo) && x[crit] > 0);
+    if (todos.length) {
+      const soma = d3.sum(todos, (x) => x[crit]);
+      tip.append('div').attr('class', 'pm-tip-sec').text('Principais produtos (por ' + (crit === 'area' ? 'área' : 'valor') + ')');
+      const g = tip.append('div').attr('class', 'pm-tip-grid');
+      for (const x of todos.slice().sort((a, b) => b[crit] - a[crit]).slice(0, 5)) {
+        const sel = x.produto === p.produto.replace(' — total', '');
+        g.append('span').style('font-weight', sel ? 800 : null).text(x.produto);
+        g.append('span').text(pct(x[crit] / soma));
+      }
+    }
+  }
+  function tipPec(cod) {
+    const { p } = current;
+    tipHead(cod, P.names);
+    const u = P.ua.get(cod);
+    if (p.rebanho === 'Todos' && u) {
+      tipLine('Unidades animais', nInt.format(u.val));
+      tipLine('Predominante', u.predominante + ' (' + pct(u.part) + ')');
+    }
+    tip.append('div').attr('class', p.rebanho === 'Todos' ? 'pm-tip-sec' : null).text('Efetivo dos rebanhos (cabeças)');
+    const m = P.porMun.get(cod);
+    if (!m) { tip.append('div').text('Sem criação registrada.'); return; }
+    const g = tip.append('div').attr('class', 'pm-tip-grid');
+    for (const r of P.reb) {
+      if (!m.has(r)) continue;
+      const w = r === p.rebanho ? 800 : null;
+      g.append('span').attr('class', REB_SUB.has(r) ? 'sub' : null).style('font-weight', w).text(r);
+      g.append('span').style('font-weight', w).text(nInt.format(m.get(r)));
+    }
+  }
+
+  const inScope = (p, cod) => p.uf === 'BR' || COD_UF[cod.slice(0, 2)] === p.uf;
+  function zoom(p) {
+    const b = p.uf !== 'BR' ? ufBoxes.get(p.uf) : null, pad = b ? Math.max(b.width, b.height) * 0.06 : 0;
+    svg.attr('viewBox', b ? [b.x - pad, b.y - pad, b.width + 2 * pad, b.height + 2 * pad].join(' ') : baseViewBox);
+  }
+  // Mapa coroplético genérico: rows = Map(cod → objeto), v = campo numérico.
+  function drawChoro(p, rows, v, fmtL, vazio, hatchMG) {
+    const vals = [];
+    for (const [cod, r] of rows) if (inScope(p, cod) && r[v] > 0) vals.push(r[v]);
+    const k = Math.max(1, Math.min(RAMP.length, new Set(vals).size));
+    const colors = k === RAMP.length ? RAMP : d3.quantize(d3.interpolateRgbBasis(RAMP), k);
+    const scale = d3.scaleQuantile(vals.length ? vals : [0, 1], colors);
+    for (const [cod, el] of paths) {
+      const r = rows.get(cod);
+      el.setAttribute('fill', hatchMG && cod.startsWith('31') ? 'url(#pm-hatch)' : r && r[v] > 0 ? scale(r[v]) : 'var(--vazio)');
+      el.style.opacity = inScope(p, cod) ? 1 : 0.18;
+    }
+    zoom(p);
+    const lg = d3.select('#pm-legend');
+    lg.selectAll('*').remove();
+    if (vals.length) {
+      const ext = d3.extent(vals), bounds = [ext[0], ...scale.quantiles(), ext[1]];
+      const sc = lg.append('div').attr('class', 'pm-legend-scale');
+      colors.forEach((c, i) => {
+        const st = sc.append('div').attr('class', 'pm-legend-step');
+        st.append('div').attr('class', 'pm-legend-sw').style('background', c);
+        st.append('span').text(i === 0 ? 'até ' + fmtL(bounds[1] ?? ext[1]) : i === colors.length - 1 ? 'acima de ' + fmtL(bounds[i]) : fmtL(bounds[i + 1]));
+      });
+    }
+    const it = lg.append('span').attr('class', 'pm-legend-item');
+    it.append('i').style('background', 'var(--vazio)'); it.append('span').text(vazio);
+    if (hatchMG && (p.uf === 'BR' || p.uf === 'MG')) {
+      const it2 = lg.append('span').attr('class', 'pm-legend-item');
+      it2.append('i').style('background', 'repeating-linear-gradient(45deg, rgba(231,97,41,.6) 0 2px, #fff 2px 5px)');
+      it2.append('span').text('Minas Gerais: sem dados de temporárias');
+    }
+  }
+  function drawPred(p, rows) {
+    const cor = Object.fromEntries(GRUPOS);
+    const cont = Object.fromEntries(GRUPOS.map(([g]) => [g, 0]));
+    for (const [cod, el] of paths) {
+      const r = rows.get(cod);
+      el.setAttribute('fill', r ? cor[r.predominante] : 'var(--vazio)');
+      el.style.opacity = inScope(p, cod) ? 1 : 0.18;
+    }
+    for (const [cod, r] of rows) if (inScope(p, cod)) cont[r.predominante] += 1;
+    zoom(p);
+    const lg = d3.select('#pm-legend');
+    lg.selectAll('*').remove();
+    for (const [g, c] of GRUPOS) {
+      const it = lg.append('span').attr('class', 'pm-legend-item');
+      it.append('i').attr('class', 'dot').style('background', c);
+      it.append('span').text(g + ': ' + nInt.format(cont[g]));
+    }
+    const it = lg.append('span').attr('class', 'pm-legend-item');
+    it.append('i').style('background', 'var(--vazio)'); it.append('span').text('Sem criação');
+    return cont;
+  }
+
+  // ---------- ranking ----------
+  function drawTable(p, rows, v, header, pred) {
+    const list = [];
+    for (const r of rows.values()) if ((p.uf === 'BR' || r.uf === p.uf) && r[v] > 0) list.push(r);
+    list.sort((a, b) => b[v] - a[v]);
+    const top = list.slice(0, 25), max = top.length ? top[0][v] : 1;
+    $('pm-th-val').textContent = header;
+    $('pm-th-pred').hidden = !pred;
+    $('pm-tbody').replaceChildren(...top.map((r, i) => {
+      const tr = document.createElement('tr');
+      const td = (t, c) => { const e = document.createElement('td'); if (c) e.className = c; e.textContent = t; tr.append(e); return e; };
+      td(i + 1, 'pm-rank'); td(r.nome); td(r.uf);
+      if (pred) td(r.predominante);
+      const cell = td(nInt.format(r[v]), 'num');
+      const bar = document.createElement('div'); bar.className = 'pm-bar'; bar.style.width = Math.max(2, (r[v] / max) * 100) + '%'; cell.append(bar);
+      return tr;
+    }));
+    return { top: top[0] || null, n: list.length };
+  }
+  const rankNote = (p, n, txt, vazio) => { $('pm-rank-note').textContent = n ? 'Os ' + Math.min(25, n) + ' municípios com maior ' + txt + ' ' + (p.uf === 'BR' ? 'no Brasil' : noUF(p.uf)) + '.' : vazio; };
+
+  // ---------- frase-resumo ----------
+  function take(parts) {
+    const t = $('pm-take');
+    t.replaceChildren();
+    for (const [s, b] of parts) { if (b) { const e = document.createElement('b'); e.textContent = s; t.append(e); } else t.append(document.createTextNode(s)); }
+  }
+  function tiles(l1, v1, n1, l4, v4, n4) {
+    $('pm-l1').textContent = l1; $('pm-v1').textContent = v1; $('pm-n1').textContent = n1;
+    $('pm-l4').textContent = l4; $('pm-v4').textContent = v4; $('pm-n4').textContent = n4;
+  }
+
+  function renderAgri(p) {
+    const te = tipoEf(p), rows = A.series.get(te + '|' + p.produto) || new Map();
+    current = { p, rows };
+    drawChoro(p, rows, p.variavel, (x) => (p.variavel === 'valor' ? fmtReais(x * 1000) : fmtBig(x) + (p.variavel === 'area' ? ' ha' : '')), 'Sem produção', te === 'Temporária');
+    const prodTxt = p.produto === 'Total' ? (p.tipo === 'Todas' ? 'todas as lavouras' : TIPO_TXT[p.tipo]) : p.produto;
+    const varTxt = p.variavel === 'area' ? areaLabel(te).toLowerCase() : VAR_TXT[p.variavel];
+    $('pm-map-title').textContent = varTxt.charAt(0).toUpperCase() + varTxt.slice(1) + ', ' + prodTxt + (p.uf === 'BR' ? '' : ' — ' + UF_NOMES[p.uf]);
+    const unid = A.info.get(te + '|' + p.produto)?.unidade || 't';
+    const { top, n } = drawTable(p, rows, p.variavel, p.variavel === 'area' ? 'Área (ha)' : p.variavel === 'qtd' ? 'Quantidade (' + unid + ')' : 'Valor (mil R$)', false);
+    rankNote(p, n, VAR_TXT[p.variavel], 'Nenhum município com produção nesta seleção.');
+    const t = { area: 0, qtd: 0, valor: 0, n: 0 };
+    for (const r of rows.values()) {
+      if (p.uf !== 'BR' && r.uf !== p.uf) continue;
+      t.area += r.area || 0; t.qtd += r.qtd || 0; t.valor += (r.valor || 0) * 1000;
+      if (r.area > 0 || r.qtd > 0 || r.valor > 0) t.n += 1;
+    }
+    tiles(areaLabel(te), t.n ? fmtBig(t.area) : '—', 'hectares', 'Municípios produtores', nInt.format(t.n), 'com área ou produção maior que zero');
+    $('pm-v2').textContent = p.produto === 'Total' || !t.n ? '—' : fmtBig(t.qtd);
+    $('pm-n2').textContent = p.produto === 'Total' ? 'escolha um produto: unidades diferem entre produtos' : unid === 't' ? 'toneladas' : unid;
+    $('pm-v3').textContent = t.n ? fmtReais(t.valor) : '—';
+    const prod = p.produto === 'Total' ? TIPO_TXT[p.tipo] : p.produto.toLowerCase();
+    if (!t.n) return take([[escopoTxt(p.uf) + ', não há registro de ' + prod + ' na PAM 2025.']]);
+    take([[escopoTxt(p.uf) + ', ' + prod + (p.produto === 'Total' ? ' somaram ' : ' somou ')], [fmtReais(t.valor), 1], [' em '], [nInt.format(t.n), 1], [' municípios.'],
+      ...(top ? [[' O maior em ' + VAR_TXT[p.variavel] + ' é '], [top.nome, 1], [' (' + top.uf + ').']] : [])]);
+  }
+
+  function renderPec(p) {
+    if (p.rebanho === 'Todos') {
+      const rows = P.ua;
+      current = { p, rows };
+      let cont = null;
+      if (p.vista === 'predominante') cont = drawPred(p, rows);
+      else drawChoro(p, rows, 'val', fmtBig, 'Sem criação', false);
+      $('pm-map-title').textContent = (p.vista === 'predominante' ? 'Rebanho predominante' : 'Todos os rebanhos, em unidades animais') + (p.uf === 'BR' ? '' : ' — ' + UF_NOMES[p.uf]);
+      $('pm-map-note').textContent = p.vista === 'predominante' ? 'Cada município aparece na cor do grupo de rebanho com mais unidades animais. Passe o mouse (ou toque) para ver todos os rebanhos.' : 'Cores em sete faixas com o mesmo número de municípios cada. Passe o mouse (ou toque) para ver o rebanho predominante e todos os rebanhos.';
+      const { top, n } = drawTable(p, rows, 'val', 'Unidades animais', true);
+      rankNote(p, n, 'número de unidades animais', 'Nenhum município com criação nesta seleção.');
+      let total = 0; const c = Object.fromEntries(GRUPOS.map(([g]) => [g, 0]));
+      for (const [cod, r] of rows) if (inScope(p, cod)) { total += r.val; c[r.predominante] += 1; }
+      tiles('Todos os rebanhos', fmtBig(total), 'unidades animais (coeficientes FAO)', 'Municípios com criação', nInt.format(n), 'com algum rebanho registrado');
+      const [gTop, nTop] = Object.entries(cont || c).sort((a, b) => b[1] - a[1])[0];
+      return take([[escopoTxt(p.uf) + ', os rebanhos somaram '], [fmtBig(total), 1], [' unidades animais. ' + gTop + ' predominam em '], [nInt.format(nTop), 1], [' dos '], [nInt.format(n), 1], [' municípios com criação.'],
+        ...(top ? [[' O maior em unidades animais é '], [top.nome, 1], [' (' + top.uf + ').']] : [])]);
+    }
+    const rows = P.byReb.get(p.rebanho) || new Map();
+    current = { p, rows };
+    drawChoro(p, rows, 'val', fmtBig, 'Sem criação', false);
+    $('pm-map-title').textContent = 'Efetivo do rebanho, ' + p.rebanho.toLowerCase() + (p.uf === 'BR' ? '' : ' — ' + UF_NOMES[p.uf]);
+    const { top, n } = drawTable(p, rows, 'val', 'Cabeças', false);
+    rankNote(p, n, 'efetivo de ' + p.rebanho.toLowerCase(), 'Nenhum município com criação nesta seleção.');
+    let total = 0;
+    for (const [cod, r] of rows) if (inScope(p, cod)) total += r.val;
+    tiles('Efetivo do rebanho', n ? fmtBig(total) : '—', 'cabeças em 31/12', 'Municípios com criação', nInt.format(n), 'com efetivo maior que zero');
+    const txt = REB_TXT[p.rebanho];
+    if (!n) return take([[escopoTxt(p.uf) + ', não há registro de ' + txt.replace(/^(o|os|as) /, '') + ' na PPM 2025.']]);
+    take([[escopoTxt(p.uf) + ', ' + txt + (/^(os|as) /.test(txt) ? ' somaram ' : ' somou ')], [fmtBig(total), 1], [' cabeças em '], [nInt.format(n), 1], [' municípios.'],
+      ...(top ? [[' O maior efetivo está em '], [top.nome, 1], [' (' + top.uf + ').']] : [])]);
+  }
+
+  function render() {
+    if (!A || !P || !svg) return;
+    const p = state;
+    drawControls(p);
+    $('pm-map-note').textContent = NOTA_MAPA;
+    (p.modo === 'pecuaria' ? renderPec : renderAgri)(p);
+    postHeight();
+  }
+
+  // Avisa a página que incorpora este painel (iframe) sobre a altura, para ajuste automático.
+  function postHeight() {
+    if (window.parent !== window) window.parent.postMessage({ tipo: 'pam-arapyau-altura', altura: document.documentElement.scrollHeight }, '*');
+  }
+  window.addEventListener('resize', postHeight);
+  new ResizeObserver(postHeight).observe(document.body);
+
+  readHash();
+  window.addEventListener('hashchange', () => { state = { ...DEFAULTS }; readHash(); setState({}); });
+  const get = (u) => fetch(u).then((r) => { if (!r.ok) throw new Error(u); return r.json(); });
+  Promise.all([get('dados/pam_2025.json'), get('dados/ppm_2025.json'), get('dados/malha.json')])
+    .then(([pam, ppm, malha]) => {
+      A = indexAgri(pam); P = indexPec(ppm);
+      buildMap(malha);
+      setState({});
+    })
+    .catch(() => {
+      $('pm-take').textContent = 'Não foi possível carregar os dados. Se você abriu o arquivo direto do computador, publique a pasta no GitHub Pages ou use um servidor local (veja o README).';
+      $('pm-mapbox').replaceChildren();
+    });
+})();
+</script>
+</body>
+</html>

@@ -1,0 +1,19 @@
+<!--
+  Código para incorporar o painel em outro site (por exemplo, num bloco "HTML personalizado" do WordPress).
+  Troque o endereço em src pelo endereço do GitHub Pages do repositório.
+  O script abaixo ajusta a altura do quadro automaticamente, evitando barra de rolagem dupla.
+-->
+<iframe
+  id="painel-pam-arapyau"
+  src="https://SUA-CONTA.github.io/pam-2025-arapyau/"
+  title="Produção agrícola municipal do Brasil, 2025"
+  style="width: 100%; height: 1900px; border: 0;"
+  loading="lazy">
+</iframe>
+<script>
+  window.addEventListener('message', function (e) {
+    if (e.data && e.data.tipo === 'pam-arapyau-altura') {
+      document.getElementById('painel-pam-arapyau').style.height = e.data.altura + 'px';
+    }
+  });
+</script>
