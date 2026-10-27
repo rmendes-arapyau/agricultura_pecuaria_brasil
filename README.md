@@ -12,6 +12,8 @@ dados/pam_2025.csv         agricultura em CSV, para download
 dados/ppm_2025.json        pecuária, no formato lido pela página
 dados/ppm_2025.csv         pecuária em CSV, para download
 dados/malha.json           contornos dos municípios e estados, já projetados
+dados/biomas_municipios.csv  bioma predominante de cada município (IBGE)
+dados/malha_biomas.json    contornos dos biomas, já projetados
 vendor/d3.v7.9.0.min.js    biblioteca de gráficos (D3)
 vendor/fonts/              fonte Open Sans (Regular e ExtraBold)
 scripts/consolidar.py      gera os arquivos de dados/ a partir das planilhas do IBGE
@@ -37,6 +39,7 @@ Os filtros ficam gravados no endereço da página. Exemplos:
 
 - `…/#tipo=Permanente&produto=Açaí&variavel=valor&uf=PA`: valor da produção de açaí no Pará.
 - `…/#modo=pecuaria&rebanho=Todos&vista=predominante`: rebanho predominante em cada município.
+- `…/#bioma=Amazônia&tipo=Permanente&produto=Cacau (em amêndoa)&variavel=valor`: valor do cacau nos municípios da Amazônia.
 
 ## Como atualizar os dados
 
@@ -55,6 +58,7 @@ Para Minas Gerais, as lavouras temporárias desta versão vieram da Tabela 5457 
 - **Agricultura:** IBGE, PAM 2025, Tabelas 1612 e 1613 (para as temporárias de Minas Gerais, Tabela 5457 por município, versão consolidada da mesma pesquisa). Área plantada (temporárias) ou área destinada à colheita (permanentes); em "Todas as lavouras", as duas são somadas. Quantidade só por produto, em toneladas (abacaxi e coco-da-baía em mil frutos). Valor em mil reais, preço pago ao produtor.
 - **Pecuária:** IBGE, PPM 2025, Tabela 3939, efetivo em 31/12, em cabeças. Matrizes de suínos e galinhas são subgrupos de suínos e galináceos.
 - **Todos os rebanhos:** efetivo convertido em unidades animais com os coeficientes da FAO para a América do Sul (FAO, 2011, *Guidelines for the preparation of livestock sector reviews*, Anexo 1): bovino 0,70; suíno 0,25; equino 0,65; ovino e caprino 0,10; galináceos 0,01. Búfalo (0,70) e codorna (0,01) por aproximação, pois a FAO não traz coeficiente para eles na região. O rebanho predominante é o grupo com mais unidades animais no município.
+- **Biomas:** bioma predominante por município, IBGE (lista de 2024, com base na Malha Municipal 2022). Municípios na transição entre biomas entram inteiros no bioma que ocupa a maior parte do território; o filtro é um recorte por município, não uma medição exata dentro de cada bioma. Para atualizar, substitua `dados/biomas_municipios.csv` mantendo as colunas `cod_ibge`, `municipio`, `uf` e `bioma`.
 - **Resultados preliminares:** o IBGE classifica 2025 como preliminar, sujeito a revisão.
 - **Malha municipal:** projeto [geodata-br](https://github.com/tbrugz/geodata-br), simplificada e projetada (Albers). Base anterior a 2013: seis municípios criados depois não têm polígono próprio, mas seus dados entram nos totais e no ranking.
 - **Códigos IBGE:** atribuídos pelo nome do município e UF, com a lista do projeto [municipios-brasileiros](https://github.com/kelvins/municipios-brasileiros). Dezesseis grafias foram ajustadas (ver `scripts/consolidar.py`).
