@@ -15,6 +15,8 @@ dados/ppm_2025.json        pecuária, no formato lido pela página
 dados/ppm_2025.csv         pecuária em CSV, para download
 dados/credito_2025.json    crédito rural, no formato lido pela página
 dados/credito_2025.csv     crédito rural em CSV, para download
+dados/credito_produtos_2025.json  crédito por produto financiado e estado, no formato lido pela página
+dados/credito_produtos_2025.csv   a mesma base em CSV, para download
 dados/instituicoes_financeiras.csv  nome e tipo de cada instituição financeira (CNPJ de 8 dígitos)
 dados/malha.json           contornos dos municípios e estados, já projetados
 dados/biomas_municipios.csv  bioma predominante de cada município (IBGE)
@@ -46,6 +48,8 @@ Os filtros ficam gravados no endereço da página. Exemplos:
 - `…/#setor=pecuaria&rebanho=Todos&vista=predominante`: rebanho predominante em cada município.
 - `…/#tema=credito&setor=agricultura&programa=Pronaf&linha=Floresta (sistemas agroflorestais)&bioma=Amazônia`: Pronaf Floresta na Amazônia.
 - `…/#tema=credito&setor=todos&instituicao=Cooperativa de crédito`: crédito rural contratado em cooperativas de crédito.
+- `…/#tema=credito&setor=todos&produtoCr=Cacau`: crédito rural para cacau, por estado.
+- `…/#tema=credito&setor=todos&uf=PA`: crédito rural no Pará, com o quadro dos produtos mais financiados no estado.
 - `…/#tema=credito&setor=todos&ifin=04902979`: crédito rural contratado com o Banco da Amazônia (o código é o CNPJ de 8 dígitos da instituição, que aparece no endereço ao clicar nela no quadro "Maiores instituições financeiras").
 - `…/#bioma=Amazônia&tipo=Permanente&produto=Cacau (em amêndoa)&variavel=valor`: valor do cacau nos municípios da Amazônia.
 
@@ -53,7 +57,7 @@ Os filtros ficam gravados no endereço da página. Exemplos:
 
 Quando o IBGE publicar uma revisão:
 
-1. Baixe as planilhas do SIDRA, nível município, um arquivo por UF: Tabela 1612 (lavouras temporárias, arquivos `Tabela_3_*`), Tabela 1613 (lavouras permanentes, `Tabela_6_*`) e Tabela 3939 (rebanhos, `Tabela_2_*`). Para o crédito rural, baixe a Matriz de Dados do Crédito Rural do Banco Central (arquivo `MATRIZ_CR_*.csv`). Coloque tudo em uma pasta.
+1. Baixe as planilhas do SIDRA, nível município, um arquivo por UF: Tabela 1612 (lavouras temporárias, arquivos `Tabela_3_*`), Tabela 1613 (lavouras permanentes, `Tabela_6_*`) e Tabela 3939 (rebanhos, `Tabela_2_*`). Para o crédito rural, baixe a Matriz de Dados do Crédito Rural do Banco Central (arquivo `MATRIZ_CR_REGIAO_*.csv`) e a matriz por produto, base por estado (`MATRIZ_CR_PRODUTO_REGIAO_*.csv`). Coloque tudo em uma pasta.
 2. Rode `pip install openpyxl` e depois `python scripts/consolidar.py CAMINHO/DA/PASTA`. O script processa os arquivos que encontrar na pasta: dá para atualizar só a agricultura, só a pecuária ou só o crédito.
 3. Suba os novos arquivos de `dados/` no repositório, substituindo os antigos.
 
@@ -67,6 +71,7 @@ Para Minas Gerais, as lavouras temporárias desta versão vieram da Tabela 5457 
 - **Pecuária:** IBGE, PPM 2025, Tabela 3939, efetivo em 31/12, em cabeças. Matrizes de suínos e galinhas são subgrupos de suínos e galináceos.
 - **Todos os rebanhos:** efetivo convertido em unidades animais com os coeficientes da FAO para a América do Sul (FAO, 2011, *Guidelines for the preparation of livestock sector reviews*, Anexo 1): bovino 0,70; suíno 0,25; equino 0,65; ovino e caprino 0,10; galináceos 0,01. Búfalo (0,70) e codorna (0,01) por aproximação, pois a FAO não traz coeficiente para eles na região. O rebanho predominante é o grupo com mais unidades animais no município.
 - **Crédito rural:** Banco Central, Matriz de Dados do Crédito Rural (SICOR), operações contratadas de janeiro a dezembro de 2025 pela data de emissão (não o ano-safra), no município informado na operação, em valores nominais. Agregado por município, programa, linha (Pronaf e RenovAgro), setor, finalidade e instituição financeira (nome, CNPJ de 8 dígitos e tipo); fonte de recursos e mês ficaram de fora. Programas não listados em `PROGRAMAS` no script são avisados na execução.
+- **Produtos financiados:** Matriz de Dados do Crédito Rural por produto, base por estado (completa). A base por município não é usada porque o Banco Central omite o município das combinações com até 3 contratos (sigilo bancário), o que deixa sem município 49% do valor, de forma desigual entre produtos e programas. Por isso, o recorte por produto mostra estados e não aceita o filtro de bioma.
 - **Biomas:** bioma predominante por município, IBGE (lista de 2024, com base na Malha Municipal 2022). Municípios na transição entre biomas entram inteiros no bioma que ocupa a maior parte do território; o filtro é um recorte por município, não uma medição exata dentro de cada bioma. Para atualizar, substitua `dados/biomas_municipios.csv` mantendo as colunas `cod_ibge`, `municipio`, `uf` e `bioma`.
 - **Resultados preliminares:** o IBGE classifica 2025 como preliminar, sujeito a revisão.
 - **Malha municipal:** projeto [geodata-br](https://github.com/tbrugz/geodata-br), simplificada e projetada (Albers). Base anterior a 2013: seis municípios criados depois não têm polígono próprio, mas seus dados entram nos totais e no ranking.

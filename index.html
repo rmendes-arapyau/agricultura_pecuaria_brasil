@@ -36,6 +36,8 @@
   .pm-table tr.pm-click { cursor: pointer; }
   .pm-table tr.pm-click:hover td { background: #f6f4ec; }
   .pm-table tr.is-sel td { font-weight: 800; }
+  .pm-ufill { stroke: #fff; stroke-width: .6; vector-effect: non-scaling-stroke; }
+  .pm-ufill.is-hover { stroke: var(--fg); stroke-width: 1.8; }
   .pm-link { font-size: .85rem; background: transparent; border: 0; color: var(--indigo); text-decoration: underline; cursor: pointer; padding: .5rem 0; }
   button:focus-visible, select:focus-visible, a:focus-visible { outline: 3px solid var(--lima); outline-offset: 2px; }
   [hidden] { display: none !important; }
@@ -144,6 +146,8 @@
   </div>
 
   <div class="pm-controls pm-cred" hidden>
+    <label class="pm-field"><span class="pm-label">Modalidade</span><select class="pm-select" id="pm-crmod"></select></label>
+    <label class="pm-field"><span class="pm-label">Produto financiado</span><select class="pm-select pm-select-if" id="pm-crprod"></select></label>
     <label class="pm-field"><span class="pm-label">Programa</span><select class="pm-select" id="pm-crprog"></select></label>
     <label class="pm-field" id="pm-crlinha-wrap" hidden><span class="pm-label">Linha</span><select class="pm-select" id="pm-crlinha"></select></label>
     <label class="pm-field"><span class="pm-label">Finalidade</span><select class="pm-select" id="pm-crfin"></select></label>
@@ -173,11 +177,11 @@
       <div class="pm-legend" id="pm-legend"></div>
     </section>
     <section class="pm-card">
-      <h2>Maiores municípios</h2>
+      <h2 id="pm-rank-title">Maiores municípios</h2>
       <p class="pm-note" id="pm-rank-note">—</p>
       <div class="pm-tablebox">
         <table class="pm-table">
-          <thead><tr><th class="pm-rank" scope="col">#</th><th scope="col">Município</th><th scope="col">UF</th><th scope="col" id="pm-th-pred" hidden>Predominante</th><th scope="col" class="num" id="pm-th-val">Área (ha)</th></tr></thead>
+          <thead><tr><th class="pm-rank" scope="col">#</th><th scope="col" id="pm-th-nome">Município</th><th scope="col">UF</th><th scope="col" id="pm-th-pred" hidden>Predominante</th><th scope="col" class="num" id="pm-th-val">Área (ha)</th></tr></thead>
           <tbody id="pm-tbody"></tbody>
         </table>
       </div>
@@ -191,6 +195,17 @@
       <table class="pm-table">
         <thead><tr><th class="pm-rank" scope="col">#</th><th scope="col">Instituição</th><th scope="col">Tipo</th><th scope="col" class="num">Valor contratado</th><th scope="col" class="num">Contratos</th><th scope="col" class="num">Participação</th></tr></thead>
         <tbody id="pm-iftbody"></tbody>
+      </table>
+    </div>
+  </section>
+
+  <section class="pm-card pm-cred pm-cred-uf" id="produtos-uf" hidden>
+    <h2 id="pm-produf-title">Produtos mais financiados no estado</h2>
+    <p class="pm-note" id="pm-produf-note">—</p>
+    <div class="pm-tablebox">
+      <table class="pm-table">
+        <thead><tr><th class="pm-rank" scope="col">#</th><th scope="col">Produto</th><th scope="col">Modalidade</th><th scope="col" class="num">Valor contratado</th><th scope="col" class="num">Contratos</th><th scope="col" class="num">Área financiada (ha)</th><th scope="col" class="num">Participação</th></tr></thead>
+        <tbody id="pm-produftbody"></tbody>
       </table>
     </div>
   </section>
@@ -215,6 +230,7 @@
       </ul>
       <p>Fonte: Banco Central do Brasil, <a href="https://www.bcb.gov.br/estabilidadefinanceira/creditorural" target="_blank" rel="noopener">bcb.gov.br/estabilidadefinanceira/creditorural</a>.</p>
     </div>
+    <p><strong>Produtos financiados.</strong> Banco Central do Brasil, Matriz de Dados do Crédito Rural por produto, 2025. O filtro “Produto financiado” e o quadro de produtos por estado usam a base por estado, que é completa. Existe também uma base por município, mas nela o Banco Central omite o município sempre que a combinação de município, produto, programa, fonte de recursos e semestre tem até 3 contratos, por sigilo bancário. Isso deixa sem município 18% dos contratos e 49% do valor, de forma desigual entre produtos e programas (por exemplo, 37% do valor da soja, 62% do cacau e 92% do RenovAgro). Por isso, ao escolher um produto ou uma modalidade, o mapa passa a mostrar estados, e o filtro de bioma deixa de valer. A área financiada soma as áreas informadas nas operações de custeio e de investimento. <a href="dados/credito_produtos_2025.csv" download>Baixar a base de produtos financiados por estado (CSV)</a>.</p>
     <p><strong>Biomas.</strong> Cada município foi associado ao seu bioma predominante, conforme a lista do IBGE (Bioma predominante por município, 2024, com base na Malha Municipal 2022 e no mapa de Biomas e Sistema Costeiro-Marinho do Brasil). Municípios na transição entre dois biomas, comuns no norte de Mato Grosso e no oeste de Minas Gerais, entram inteiros no bioma que ocupa a maior parte do território. Por isso, o filtro é um recorte por município, não uma medição exata da produção dentro de cada bioma. <a href="dados/biomas_municipios.csv" download>Baixar a lista de biomas (CSV)</a>.</p>
     <p><strong>Mapa.</strong> Malha municipal simplificada do projeto geodata-br, com base anterior a 2013. Seis municípios criados depois (Balneário Rincão e Pescaria Brava/SC, Mojuí dos Campos/PA, Nazária/PI, Paraíso das Águas/MS e Pinto Bandeira/RS) não têm polígono próprio: seus dados entram nos totais e no ranking, mas no mapa o território aparece dentro do município de origem.</p>
     <p>Elaboração: Instituto Arapyaú.</p>
@@ -236,10 +252,11 @@
   const UA = { Bovino: 0.70, Bubalino: 0.70, Equino: 0.65, 'Suíno (total)': 0.25, Caprino: 0.10, Ovino: 0.10, 'Galináceos (total)': 0.01, Codornas: 0.01 };
   const GRUPO = { Bovino: 'Bovinos', Bubalino: 'Bubalinos', Equino: 'Equinos', 'Suíno (total)': 'Suínos', Caprino: 'Caprinos e ovinos', Ovino: 'Caprinos e ovinos', 'Galináceos (total)': 'Aves', Codornas: 'Aves' };
   const GRUPOS = [['Bovinos', '#507651'], ['Aves', '#E76129'], ['Suínos', '#9F3597'], ['Caprinos e ovinos', '#C4D75B'], ['Equinos', '#A61F2D'], ['Bubalinos', '#443C8E']];
-  const DEFAULTS = { tema: 'producao', setor: 'agricultura', tipo: 'Todas', produto: 'Total', variavel: 'area', uf: 'BR', bioma: 'Todos', rebanho: 'Bovino', vista: 'ua', programa: 'Todos', linha: 'Todas', finalidade: 'Todas', instituicao: 'Todas', ifin: 'Todas', cvar: 'valor' };
+  const DEFAULTS = { tema: 'producao', setor: 'agricultura', tipo: 'Todas', produto: 'Total', variavel: 'area', uf: 'BR', bioma: 'Todos', rebanho: 'Bovino', vista: 'ua', programa: 'Todos', linha: 'Todas', finalidade: 'Todas', instituicao: 'Todas', ifin: 'Todas', cvar: 'valor', modalidade: 'Todas', produtoCr: 'Todos' };
+  const prodMode = (p) => p.modo === 'credito' && (p.modalidade !== 'Todas' || p.produtoCr !== 'Todos');
   const INST_TXT = { 'Banco público': 'bancos públicos', 'Banco privado': 'bancos privados', 'Cooperativa de crédito': 'cooperativas de crédito', 'Banco cooperativo': 'bancos cooperativos', 'Banco de desenvolvimento e agência de fomento': 'bancos de desenvolvimento e agências de fomento', 'Financeira (SCFI)': 'financeiras (SCFI)' };
   // Descrição do recorte de crédito: "o crédito rural de investimento do Pronaf (linha Floresta) para a agricultura contratado em cooperativas de crédito".
-  const credTxt = (p) => 'o crédito rural' + (p.finalidade !== 'Todas' ? ' de ' + p.finalidade.toLowerCase() : '') +
+  const credTxt = (p) => 'o crédito rural' + (prodMode(p) ? (p.produtoCr !== 'Todos' ? ' para ' + p.produtoCr.toLowerCase() : ' na modalidade ' + p.modalidade.toLowerCase()) : '') + (p.finalidade !== 'Todas' ? ' de ' + p.finalidade.toLowerCase() : '') +
     (p.programa === 'Todos' ? '' : p.programa === 'Sem vínculo a programa' ? ' sem vínculo a programa' : ' do ' + p.programa) +
     (p.linha !== 'Todas' ? ', na linha ' + p.linha + ',' : '') +
     (p.setor === 'agricultura' ? ' para a agricultura' : p.setor === 'pecuaria' ? ' para a pecuária' : '') +
@@ -339,6 +356,18 @@
     return { ops, porMun: d3.group(ops, (o) => o.cod), programas: raw.programas, finalidades: raw.finalidades, instituicoes: raw.tipos_instituicao, ifs: new Map(insts.map((x) => [x.cnpj, x])), insts,
       linhas: new Map([...linhasPorProg].map(([k, m]) => [k, [...m].sort((a, b) => b[1] - a[1]).map(([l]) => l)])) };
   }
+  let PR = null; // produtos financiados, por estado
+  function indexProd(raw) {
+    const ops = raw.dados.map(([u, m, pr, pg, l, a, f, i, v, n, ar]) => ({ uf: raw.ufs[u], modalidade: raw.modalidades[m], produto: raw.produtos[pr], programa: raw.programas[pg], linha: l < 0 ? '' : raw.linhas[l],
+      setor: a === 0 ? 'agricultura' : 'pecuaria', finalidade: raw.finalidades[f], cnpj: raw.instituicoes_cnpj[i], valor: v, contratos: n, area: ar }));
+    const porMod = d3.group(ops, (o) => o.modalidade);
+    const ordem = (lista) => [...d3.rollup(lista, (v) => d3.sum(v, (o) => o.valor), (o) => o.produto)].sort((a, b) => b[1] - a[1]).map(([k]) => k);
+    return { ops, modalidades: raw.modalidades, produtos: raw.produtos, prodPorMod: new Map([...porMod].map(([k, v]) => [k, ordem(v)])) };
+  }
+  const prodOk = (p, o, skip) => (p.modalidade === 'Todas' || o.modalidade === p.modalidade) && (skip === 'produto' || p.produtoCr === 'Todos' || o.produto === p.produtoCr) &&
+    (skip === 'programa' || ((p.programa === 'Todos' || o.programa === p.programa) && (p.linha === 'Todas' || o.linha === p.linha))) &&
+    (p.setor === 'todos' || o.setor === p.setor) && (p.finalidade === 'Todas' || o.finalidade === p.finalidade) &&
+    (skip === 'if' || p.instituicao === 'Todas' || (C.ifs.get(o.cnpj) || {}).segmento === p.instituicao) && (skip === 'if' || p.ifin === 'Todas' || o.cnpj === p.ifin);
   // Filtra uma operação pelo recorte; "skip" ignora uma dimensão (para as divisões do tooltip).
   const credOk = (p, o, skip) => (skip === 'programa' || ((p.programa === 'Todos' || o.programa === p.programa) && (p.linha === 'Todas' || o.linha === p.linha))) &&
     (skip === 'setor' || p.setor === 'todos' || o.setor === p.setor) && (p.finalidade === 'Todas' || o.finalidade === p.finalidade) &&
@@ -360,6 +389,10 @@
       if (state.ifin !== 'Todas' && (!C.ifs.get(state.ifin) || (state.instituicao !== 'Todas' && C.ifs.get(state.ifin).segmento !== state.instituicao))) state.ifin = 'Todas';
       if (!['valor', 'contratos'].includes(state.cvar)) state.cvar = 'valor';
     }
+    if (PR) {
+      if (state.modalidade !== 'Todas' && !PR.prodPorMod.has(state.modalidade)) state.modalidade = 'Todas';
+      if (state.produtoCr !== 'Todos' && !(state.modalidade === 'Todas' ? PR.produtos : PR.prodPorMod.get(state.modalidade)).includes(state.produtoCr)) state.produtoCr = 'Todos';
+    }
     if (A) {
       if (!A.lists[state.tipo]) state.tipo = 'Todas';
       if (!A.lists[state.tipo].includes(state.produto)) state.produto = 'Total';
@@ -377,6 +410,8 @@
   $('pm-rebanho').addEventListener('change', (e) => setState({ rebanho: e.target.value }));
   $('pm-uf').addEventListener('change', (e) => setState({ uf: e.target.value }));
   $('pm-crprog').addEventListener('change', (e) => setState({ programa: e.target.value, linha: 'Todas' }));
+  $('pm-crmod').addEventListener('change', (e) => setState({ modalidade: e.target.value, produtoCr: 'Todos' }));
+  $('pm-crprod').addEventListener('change', (e) => setState({ produtoCr: e.target.value }));
   $('pm-crlinha').addEventListener('change', (e) => setState({ linha: e.target.value }));
   $('pm-crfin').addEventListener('change', (e) => setState({ finalidade: e.target.value }));
   $('pm-crinst').addEventListener('change', (e) => setState({ instituicao: e.target.value, ifin: 'Todas' }));
@@ -401,6 +436,11 @@
     if (ls) opts('pm-crlinha', ['Todas', 'Todas as linhas'], ls, p.linha);
     opts('pm-crfin', ['Todas', 'Todas as finalidades'], C.finalidades, p.finalidade);
     opts('pm-crinst', ['Todas', 'Todos os tipos'], C.instituicoes, p.instituicao);
+    opts('pm-crmod', ['Todas', 'Todas as modalidades'], PR.modalidades, p.modalidade);
+    opts('pm-crprod', ['Todos', 'Todos os produtos'], p.modalidade === 'Todas' ? PR.produtos : PR.prodPorMod.get(p.modalidade) || [], p.produtoCr);
+    for (const el of document.querySelectorAll('.pm-cred-uf')) el.hidden = p.modo !== 'credito' || p.uf === 'BR';
+    $('pm-bioma').disabled = prodMode(p);
+    $('pm-bioma').title = prodMode(p) ? 'No recorte por produto, os dados são por estado e o filtro de bioma não se aplica' : '';
     const cfi = $('pm-crif');
     if (cfi.dataset.seg !== p.instituicao) {
       const lista = C.insts.filter((i) => p.instituicao === 'Todas' || i.segmento === p.instituicao);
@@ -437,24 +477,29 @@
   }
 
   // ---------- mapa ----------
+  let gMunL, gUfL, gBioL, ufFill = new Map(), ufBox = new Map();
   let svg, paths = new Map(), munBoxes = new Map(), bioPaths = new Map(), biomaDe = new Map(), tip, current = null, baseViewBox;
   function buildMap(malha, bios) {
     const box = $('pm-mapbox');
     box.replaceChildren();
     baseViewBox = malha.viewBox.join(' ');
     svg = d3.select(box).append('svg').attr('viewBox', baseViewBox).attr('role', 'img').attr('aria-label', 'Mapa dos municípios do Brasil colorido pela variável escolhida');
-    const gm = svg.append('g'), gu = svg.append('g');
+    const gm = svg.append('g'), gf = svg.append('g').style('display', 'none'), gu = svg.append('g');
+    gMunL = gm; gUfL = gf;
+    gf.selectAll('path').data(malha.ufs).join('path').attr('class', 'pm-ufill').attr('d', (d) => d[1]).each(function (d) { ufFill.set(d[0], this); ufBox.set(d[0], this.getBBox()); });
     gm.selectAll('path').data(malha.municipios).join('path').attr('class', 'pm-mun').attr('d', (d) => d[1]).each(function (d) { paths.set(d[0], this); munBoxes.set(d[0], this.getBBox()); });
     gu.selectAll('path').data(malha.ufs).join('path').attr('class', 'pm-uf').attr('d', (d) => d[1]);
-    svg.append('g').selectAll('path').data(bios).join('path').attr('class', 'pm-bio').attr('d', (d) => d[1]).style('display', 'none').each(function (d) { bioPaths.set(d[0], this); });
+    gBioL = svg.append('g');
+    gBioL.selectAll('path').data(bios).join('path').attr('class', 'pm-bio').attr('d', (d) => d[1]).style('display', 'none').each(function (d) { bioPaths.set(d[0], this); });
     tip = d3.select(box).append('div').attr('class', 'pm-tip');
     let hover = null;
     const move = (event) => {
-      const t = event.target, d = t && t.classList && t.classList.contains('pm-mun') ? t.__data__ : null;
+      const t = event.target, d = t && t.classList && (t.classList.contains('pm-mun') || t.classList.contains('pm-ufill')) ? t.__data__ : null;
       if (hover && hover !== t) hover.classList.remove('is-hover');
       if (!d) { tip.style('display', 'none'); hover = null; return; }
       hover = t; t.classList.add('is-hover'); t.parentNode.appendChild(t);
-      (current.p.modo === 'credito' ? tipCred : current.p.modo === 'pecuaria' ? tipPec : tipAgri)(d[0]);
+      if (t.classList.contains('pm-ufill')) tipUF(d[0]);
+      else (current.p.modo === 'credito' ? tipCred : current.p.modo === 'pecuaria' ? tipPec : tipAgri)(d[0]);
       placeTip(event);
     };
     svg.on('pointermove', move).on('pointerdown', move);
@@ -543,7 +588,9 @@
 
   const inScope = (p, cod) => (p.uf === 'BR' || COD_UF[cod.slice(0, 2)] === p.uf) && (p.bioma === 'Todos' || biomaDe.get(cod) === p.bioma);
   // Enquadra o mapa nos municípios do recorte (estado e/ou bioma) e mostra o contorno do bioma escolhido.
+  function camadaMunicipal() { gMunL.style('display', null); gUfL.style('display', 'none'); gBioL.style('display', null); }
   function zoom(p) {
+    camadaMunicipal();
     for (const [b, el] of bioPaths) el.style.display = b === p.bioma ? null : 'none';
     if (p.uf === 'BR' && p.bioma === 'Todos') { svg.attr('viewBox', baseViewBox); return; }
     let x0 = Infinity, y0 = Infinity, x1 = -Infinity, y1 = -Infinity;
@@ -603,6 +650,7 @@
 
   // ---------- ranking ----------
   function drawTable(p, rows, v, header, pred) {
+    $('pm-th-nome').textContent = 'Município'; $('pm-rank-title').textContent = 'Maiores municípios';
     const list = [];
     for (const [cod, r] of rows) if (inScope(p, cod) && r[v] > 0) list.push(r);
     list.sort((a, b) => b[v] - a[v]);
@@ -703,20 +751,7 @@
       if (!a) { a = { cnpj: o.cnpj, valor: 0, contratos: 0 }; agg.set(o.cnpj, a); }
       a.valor += o.valor; a.contratos += o.contratos;
     }
-    const lista = [...agg.values()].sort((a, b) => b.valor - a.valor), tot = d3.sum(lista, (a) => a.valor);
-    const top = lista.slice(0, 15);
-    if (p.ifin !== 'Todas' && agg.get(p.ifin) && !top.includes(agg.get(p.ifin))) top.push(agg.get(p.ifin));
-    $('pm-iftbody').replaceChildren(...top.map((a) => {
-      const inf = C.ifs.get(a.cnpj) || { nome: a.cnpj, segmento: '' }, sel = a.cnpj === p.ifin;
-      const tr = document.createElement('tr');
-      tr.className = 'pm-click' + (sel ? ' is-sel' : '');
-      tr.title = sel ? 'Clique para voltar a todas as instituições' : 'Clique para ver o mapa só desta instituição';
-      tr.addEventListener('click', () => setState(sel ? { ifin: 'Todas' } : { ifin: a.cnpj, instituicao: 'Todas' }));
-      const td = (t, c) => { const e = document.createElement('td'); if (c) e.className = c; e.textContent = t; tr.append(e); };
-      td(lista.indexOf(a) + 1, 'pm-rank'); td(inf.nome); td(inf.segmento); td(fmtReais(a.valor), 'num'); td(nInt.format(a.contratos), 'num'); td(tot ? pct(a.valor / tot) : '—', 'num');
-      return tr;
-    }));
-    $('pm-if-note').textContent = lista.length ? nInt.format(lista.length) + ' instituições financiaram ' + credTxt({ ...p, ifin: 'Todas' }) + ' ' + recorte(p) + '. Clique em uma instituição para ver o mapa só dela.' : 'Nenhuma instituição neste recorte.';
+    fillIF(p, agg, recorte(p));
   }
 
   function renderCred(p) {
@@ -731,6 +766,7 @@
     current = { p, rows };
     drawChoro(p, rows, 'val', (x) => (p.cvar === 'valor' ? fmtReais(x) : fmtBig(x)), 'Sem crédito contratado');
     drawIFTable(p);
+    drawProdUF(p);
     const filtros = [p.programa !== 'Todos' ? p.programa + (p.linha !== 'Todas' ? ' – ' + p.linha : '') : null, p.setor !== 'todos' ? (p.setor === 'agricultura' ? 'agricultura' : 'pecuária') : null, p.finalidade !== 'Todas' ? p.finalidade : null, p.ifin !== 'Todas' && C.ifs.get(p.ifin) ? C.ifs.get(p.ifin).nome : p.instituicao !== 'Todas' ? p.instituicao : null].filter(Boolean);
     $('pm-map-title').textContent = 'Crédito rural, ' + (p.cvar === 'valor' ? 'valor contratado' : 'número de contratos') + (filtros.length ? ': ' + filtros.join(', ') : '') + sufixo(p);
     $('pm-map-note').textContent = 'Cores em sete faixas com o mesmo número de municípios cada. Passe o mouse (ou toque) em um município para ver o crédito por setor, os principais programas e o tipo de instituição.';
@@ -746,17 +782,151 @@
       ...(top ? [[' O maior em ' + (p.cvar === 'valor' ? 'valor contratado' : 'número de contratos') + ' é '], [top.nome, 1], [' (' + top.uf + ').']] : [])]);
   }
 
+  // ---------- recorte por produto financiado (dados por estado) ----------
+  function tipUF(uf) {
+    const { p, rows } = current, r = rows.get(uf);
+    tip.selectAll('*').remove();
+    tip.append('div').attr('class', 'pm-tip-head').text(UF_NOMES[uf]);
+    if (!r) { tip.append('div').text('Sem crédito contratado neste recorte.'); return; }
+    tipLine('Valor contratado', fmtReais(r.valor));
+    tipLine('Contratos', nInt.format(r.contratos));
+    if (r.area > 0) tipLine('Área financiada', fmtBig(r.area) + ' ha');
+    const ops = PR.ops.filter((o) => o.uf === uf);
+    const secao = (titulo, skip, chave, sel, rotulo) => {
+      const g0 = d3.rollups(ops.filter((o) => prodOk(p, o, skip)), (v) => d3.sum(v, (o) => o.valor), (o) => o[chave]).sort((a, b) => b[1] - a[1]);
+      const tot = d3.sum(g0, (x) => x[1]);
+      if (!tot) return;
+      tip.append('div').attr('class', 'pm-tip-sec').text(titulo);
+      const g = tip.append('div').attr('class', 'pm-tip-grid');
+      for (const [k, v] of g0.slice(0, 5)) { const w = k === sel ? 800 : null; g.append('span').style('font-weight', w).text(rotulo ? rotulo(k) : k); g.append('span').style('font-weight', w).text(pct(v / tot)); }
+    };
+    secao('Principais produtos', 'produto', 'produto', p.produtoCr);
+    secao('Principais programas', 'programa', 'programa', p.programa);
+    secao('Principais instituições', 'if', 'cnpj', p.ifin, (k) => (C.ifs.get(k) || { nome: k }).nome);
+  }
+  function fillIF(p, agg, notaRecorte) {
+    const lista = [...agg.values()].sort((a, b) => b.valor - a.valor), tot = d3.sum(lista, (a) => a.valor);
+    const top = lista.slice(0, 15);
+    if (p.ifin !== 'Todas' && agg.get(p.ifin) && !top.includes(agg.get(p.ifin))) top.push(agg.get(p.ifin));
+    $('pm-iftbody').replaceChildren(...top.map((a) => {
+      const inf = C.ifs.get(a.cnpj) || { nome: a.cnpj, segmento: '' }, sel = a.cnpj === p.ifin;
+      const tr = document.createElement('tr');
+      tr.className = 'pm-click' + (sel ? ' is-sel' : '');
+      tr.title = sel ? 'Clique para voltar a todas as instituições' : 'Clique para ver o mapa só desta instituição';
+      tr.addEventListener('click', () => setState(sel ? { ifin: 'Todas' } : { ifin: a.cnpj, instituicao: 'Todas' }));
+      const td = (t, c) => { const e = document.createElement('td'); if (c) e.className = c; e.textContent = t; tr.append(e); };
+      td(lista.indexOf(a) + 1, 'pm-rank'); td(inf.nome); td(inf.segmento); td(fmtReais(a.valor), 'num'); td(nInt.format(a.contratos), 'num'); td(tot ? pct(a.valor / tot) : '—', 'num');
+      return tr;
+    }));
+    $('pm-if-note').textContent = lista.length ? nInt.format(lista.length) + ' instituições financiaram ' + credTxt({ ...p, ifin: 'Todas' }) + ' ' + notaRecorte + '. Clique em uma instituição para ver o mapa só dela.' : 'Nenhuma instituição neste recorte.';
+  }
+  // Quadro dos produtos mais financiados no estado escolhido.
+  function drawProdUF(p) {
+    if (p.modo !== 'credito' || p.uf === 'BR') return;
+    const agg = new Map();
+    for (const o of PR.ops) {
+      if (o.uf !== p.uf || !prodOk(p, o, 'produto')) continue;
+      const k = o.produto + '|' + o.modalidade;
+      let a = agg.get(k);
+      if (!a) { a = { produto: o.produto, modalidade: o.modalidade, valor: 0, contratos: 0, area: 0 }; agg.set(k, a); }
+      a.valor += o.valor; a.contratos += o.contratos; a.area += o.area;
+    }
+    const lista = [...agg.values()].sort((a, b) => b.valor - a.valor), tot = d3.sum(lista, (a) => a.valor), top = lista.slice(0, 25);
+    const selP = lista.find((x) => x.produto === p.produtoCr && (p.modalidade === 'Todas' || x.modalidade === p.modalidade));
+    if (selP && !top.includes(selP)) top.push(selP);
+    $('pm-produftbody').replaceChildren(...top.map((a) => {
+      const sel = a.produto === p.produtoCr, tr = document.createElement('tr');
+      tr.className = 'pm-click' + (sel ? ' is-sel' : '');
+      tr.title = sel ? 'Clique para voltar a todos os produtos' : 'Clique para ver este produto no mapa';
+      tr.addEventListener('click', () => setState(sel ? { produtoCr: 'Todos', modalidade: 'Todas' } : { produtoCr: a.produto, modalidade: a.modalidade }));
+      const td = (t, c) => { const e = document.createElement('td'); if (c) e.className = c; e.textContent = t; tr.append(e); };
+      td(lista.indexOf(a) + 1, 'pm-rank'); td(a.produto); td(a.modalidade); td(fmtReais(a.valor), 'num'); td(nInt.format(a.contratos), 'num'); td(a.area > 0 ? nInt.format(a.area) : '—', 'num'); td(tot ? pct(a.valor / tot) : '—', 'num');
+      return tr;
+    }));
+    $('pm-produf-title').textContent = 'Produtos mais financiados ' + noUF(p.uf);
+    const nota = $('pm-produf-note');
+    nota.replaceChildren();
+    if (!lista.length) { nota.textContent = 'Nenhum produto financiado neste recorte ' + noUF(p.uf) + '.'; return; }
+    nota.append('Os ' + top.length + ' produtos com maior valor contratado em ' + credTxt({ ...p, produtoCr: 'Todos' }).replace(/^o /, '') + ', de ' + nInt.format(lista.length) + ' financiados ' + noUF(p.uf) + '. Dados por estado (base completa).');
+    if (p.bioma !== 'Todos' && !prodMode(p)) { const b = document.createElement('b'); b.textContent = 'O filtro de bioma não se aplica a este quadro.'; nota.append(' ', b); }
+    nota.append(' Clique em um produto para vê-lo no mapa.');
+  }
+  function renderProd(p) {
+    const rows = new Map();
+    for (const o of PR.ops) {
+      if (!prodOk(p, o)) continue;
+      let a = rows.get(o.uf);
+      if (!a) { a = { uf: o.uf, nome: UF_NOMES[o.uf], valor: 0, contratos: 0, area: 0 }; rows.set(o.uf, a); }
+      a.valor += o.valor; a.contratos += o.contratos; a.area += o.area;
+    }
+    for (const a of rows.values()) a.val = p.cvar === 'contratos' ? a.contratos : a.valor;
+    current = { p, rows };
+    // mapa por estado
+    gMunL.style('display', 'none'); gUfL.style('display', null); gBioL.style('display', 'none');
+    const vals = [...rows.values()].map((r) => r.val).filter((v) => v > 0);
+    const k = Math.max(1, Math.min(5, new Set(vals).size)), colors = d3.quantize(d3.interpolateRgbBasis(RAMP), k);
+    const scale = d3.scaleQuantile(vals.length ? vals : [0, 1], colors);
+    for (const [uf, el] of ufFill) { const r = rows.get(uf); el.setAttribute('fill', r && r.val > 0 ? scale(r.val) : 'var(--vazio)'); el.style.opacity = p.uf === 'BR' || p.uf === uf ? 1 : 0.25; }
+    const b = p.uf !== 'BR' ? ufBox.get(p.uf) : null, pad = b ? Math.max(b.width, b.height) * 0.06 : 0;
+    svg.attr('viewBox', b ? [b.x - pad, b.y - pad, b.width + 2 * pad, b.height + 2 * pad].join(' ') : baseViewBox);
+    const fmtL = (x) => (p.cvar === 'valor' ? fmtReais(x) : fmtBig(x));
+    const lg = d3.select('#pm-legend');
+    lg.selectAll('*').remove();
+    if (vals.length) {
+      const ext = d3.extent(vals), bounds = [ext[0], ...scale.quantiles(), ext[1]], sc = lg.append('div').attr('class', 'pm-legend-scale');
+      colors.forEach((c, i) => { const st = sc.append('div').attr('class', 'pm-legend-step'); st.append('div').attr('class', 'pm-legend-sw').style('background', c); st.append('span').text(i === 0 ? 'até ' + fmtL(bounds[1] ?? ext[1]) : i === colors.length - 1 ? 'acima de ' + fmtL(bounds[i]) : fmtL(bounds[i + 1])); });
+    }
+    const it = lg.append('span').attr('class', 'pm-legend-item');
+    it.append('i').style('background', 'var(--vazio)'); it.append('span').text('Sem crédito contratado');
+    const filtros = [p.produtoCr !== 'Todos' ? p.produtoCr : p.modalidade, p.programa !== 'Todos' ? p.programa + (p.linha !== 'Todas' ? ' – ' + p.linha : '') : null, p.setor !== 'todos' ? (p.setor === 'agricultura' ? 'agricultura' : 'pecuária') : null, p.finalidade !== 'Todas' ? p.finalidade : null, p.ifin !== 'Todas' && C.ifs.get(p.ifin) ? C.ifs.get(p.ifin).nome : p.instituicao !== 'Todas' ? p.instituicao : null].filter(Boolean);
+    $('pm-map-title').textContent = 'Crédito rural por estado, ' + (p.cvar === 'valor' ? 'valor contratado' : 'número de contratos') + ': ' + filtros.join(', ') + (p.uf === 'BR' ? '' : ' — ' + UF_NOMES[p.uf]);
+    $('pm-map-note').textContent = 'No recorte por produto, o mapa mostra estados, porque a base por município omite operações por sigilo bancário (veja Sobre os dados). Passe o mouse (ou toque) em um estado para ver os principais produtos, programas e instituições.' + (p.bioma !== 'Todos' ? ' O filtro de bioma não se aplica a este recorte.' : '');
+    // ranking de estados
+    const lista = [...rows.values()].filter((r) => r.val > 0).sort((a, b) => b.val - a.val), max = lista.length ? lista[0].val : 1;
+    $('pm-rank-title').textContent = 'Estados'; $('pm-th-nome').textContent = 'Estado'; $('pm-th-val').textContent = p.cvar === 'valor' ? 'Valor contratado (R$)' : 'Contratos'; $('pm-th-pred').hidden = true;
+    $('pm-tbody').replaceChildren(...lista.map((r, i) => {
+      const tr = document.createElement('tr');
+      const td = (t, c) => { const e = document.createElement('td'); if (c) e.className = c; e.textContent = t; tr.append(e); return e; };
+      td(i + 1, 'pm-rank'); const n = td(r.nome); if (r.uf === p.uf) n.style.fontWeight = 800; td(r.uf);
+      const cell = td(p.cvar === 'valor' ? fmtReais(r.valor) : nInt.format(r.contratos), 'num');
+      const bar = document.createElement('div'); bar.className = 'pm-bar'; bar.style.width = Math.max(2, (r.val / max) * 100) + '%'; cell.append(bar);
+      return tr;
+    }));
+    $('pm-rank-note').textContent = lista.length ? 'Os ' + lista.length + ' estados com crédito neste recorte, por ' + (p.cvar === 'valor' ? 'valor contratado' : 'número de contratos') + '.' : 'Nenhum estado com crédito contratado neste recorte.';
+    // totais
+    let v = 0, c = 0, a = 0, ne = 0;
+    for (const r of rows.values()) if (p.uf === 'BR' || r.uf === p.uf) { v += r.valor; c += r.contratos; a += r.area; ne += 1; }
+    tiles('Crédito contratado', ne ? fmtReais(v) : '—', 'reais, valores nominais', 'Estados', nInt.format(ne), 'com ao menos um contrato');
+    $('pm-l2').textContent = 'Contratos'; $('pm-v2').textContent = ne ? fmtBig(c) : '—'; $('pm-n2').textContent = 'operações contratadas em 2025';
+    $('pm-l3').textContent = 'Área financiada'; $('pm-v3').textContent = a > 0 ? fmtBig(a) : '—'; $('pm-n3').textContent = 'hectares, em custeio e investimento';
+    const esc = p.uf === 'BR' ? 'No Brasil' : escopoTxt({ ...p, bioma: 'Todos' });
+    if (!ne) take([[esc + ', não há registro de ' + credTxt(p).replace(/^o /, '') + ' em 2025.']]);
+    else take([[esc + ', ' + credTxt(p) + ' somou '], [fmtReais(v), 1], [' em '], [fmtBig(c), 1], [' contratos'], ...(a > 0 ? [[', com '], [fmtBig(a), 1], [' hectares financiados']] : []), ['.'],
+      ...(lista[0] && p.uf === 'BR' ? [[' O estado com maior ' + (p.cvar === 'valor' ? 'valor contratado' : 'número de contratos') + ' é '], [lista[0].nome, 1], ['.']] : [])]);
+    // instituições e produtos do estado
+    const agg = new Map();
+    for (const o of PR.ops) {
+      if (!prodOk(p, o, 'if') || (p.uf !== 'BR' && o.uf !== p.uf)) continue;
+      let x = agg.get(o.cnpj);
+      if (!x) { x = { cnpj: o.cnpj, valor: 0, contratos: 0 }; agg.set(o.cnpj, x); }
+      x.valor += o.valor; x.contratos += o.contratos;
+    }
+    fillIF(p, agg, recorte({ ...p, bioma: 'Todos' }));
+    drawProdUF(p);
+  }
+
   function semRecorte(p) {
+    if (prodMode(p)) return;
     if (p.uf === 'BR' || p.bioma === 'Todos' || [...munBoxes.keys()].some((c) => inScope(p, c))) return;
     take([['Nenhum município ' + DE[PREP[p.uf]] + ' ' + UF_NOMES[p.uf] + ' tem ' + (BIO_PREP[p.bioma] === 'na' ? 'a ' : 'o ') + p.bioma + ' como bioma predominante.']]);
   }
 
   function render() {
-    if (!A || !P || !C || !svg) return;
+    if (!A || !P || !C || !PR || !svg) return;
     const p = state;
     drawControls(p);
     $('pm-map-note').textContent = NOTA_MAPA;
-    (p.modo === 'credito' ? renderCred : p.modo === 'pecuaria' ? renderPec : renderAgri)(p);
+    (prodMode(p) ? renderProd : p.modo === 'credito' ? renderCred : p.modo === 'pecuaria' ? renderPec : renderAgri)(p);
     semRecorte(p);
     postHeight();
   }
@@ -772,9 +942,9 @@
   window.addEventListener('hashchange', () => { state = { ...DEFAULTS }; readHash(); setState({}); });
   const get = (u) => fetch(u).then((r) => { if (!r.ok) throw new Error(u); return r.json(); });
   const getTxt = (u) => fetch(u).then((r) => { if (!r.ok) throw new Error(u); return r.text(); });
-  Promise.all([get('dados/pam_2025.json'), get('dados/ppm_2025.json'), get('dados/malha.json'), getTxt('dados/biomas_municipios.csv'), get('dados/malha_biomas.json'), get('dados/credito_2025.json')])
-    .then(([pam, ppm, malha, biomas, bios, cred]) => {
-      A = indexAgri(pam); P = indexPec(ppm); C = indexCred(cred);
+  Promise.all([get('dados/pam_2025.json'), get('dados/ppm_2025.json'), get('dados/malha.json'), getTxt('dados/biomas_municipios.csv'), get('dados/malha_biomas.json'), get('dados/credito_2025.json'), get('dados/credito_produtos_2025.json')])
+    .then(([pam, ppm, malha, biomas, bios, cred, prodCr]) => {
+      A = indexAgri(pam); P = indexPec(ppm); C = indexCred(cred); PR = indexProd(prodCr);
       biomaDe = new Map(d3.csvParse(biomas).map((b) => [b.cod_ibge, b.bioma]));
       buildMap(malha, bios);
       setState({});
