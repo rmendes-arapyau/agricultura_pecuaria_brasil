@@ -2,6 +2,8 @@
 
 Painel interativo com a área, a quantidade e o valor da produção agrícola, o efetivo dos rebanhos e o crédito rural contratado em cada município brasileiro em 2025, a partir da Produção Agrícola Municipal (PAM) e da Pesquisa da Pecuária Municipal (PPM) do IBGE e da Matriz de Dados do Crédito Rural do Banco Central. Elaboração: Instituto Arapyaú.
 
+Ao selecionar um bioma ou um estado no tema Produção, aparece uma tabela com os produtos mais produzidos (agricultura, por valor da produção) ou com os rebanhos (pecuária, por número de cabeças) do recorte.
+
 O painel tem dois temas, **Produção** e **Crédito rural**, e dois setores, **Agricultura** e **Pecuária** (no crédito, também **Todos**). Os filtros de bioma e estado valem para todos.
 
 ## Estrutura
@@ -69,7 +71,7 @@ Para Minas Gerais, as lavouras temporárias desta versão vieram da Tabela 5457 
 
 - **Agricultura:** IBGE, PAM 2025, Tabelas 1612 e 1613 (para as temporárias de Minas Gerais, Tabela 5457 por município, versão consolidada da mesma pesquisa). Área plantada (temporárias) ou área destinada à colheita (permanentes); em "Todas as lavouras", as duas são somadas. Quantidade só por produto, em toneladas (abacaxi e coco-da-baía em mil frutos). Valor em mil reais, preço pago ao produtor.
 - **Pecuária:** IBGE, PPM 2025, Tabela 3939, efetivo em 31/12, em cabeças. Matrizes de suínos e galinhas são subgrupos de suínos e galináceos.
-- **Todos os rebanhos:** efetivo convertido em unidades animais com os coeficientes da FAO para a América do Sul (FAO, 2011, *Guidelines for the preparation of livestock sector reviews*, Anexo 1): bovino 0,70; suíno 0,25; equino 0,65; ovino e caprino 0,10; galináceos 0,01. Búfalo (0,70) e codorna (0,01) por aproximação, pois a FAO não traz coeficiente para eles na região. O rebanho predominante é o grupo com mais unidades animais no município.
+- **Todos os rebanhos:** soma das cabeças de todos os rebanhos do município, sem os subgrupos (matrizes de suínos e galinhas), que já estão nos totais. O rebanho predominante é o grupo com mais cabeças no município; como as aves são muito mais numerosas, predominam em muitos municípios.
 - **Crédito rural:** Banco Central, Matriz de Dados do Crédito Rural (SICOR), operações contratadas de janeiro a dezembro de 2025 pela data de emissão (não o ano-safra), no município informado na operação, em valores nominais. Agregado por município, programa, linha (Pronaf e RenovAgro), setor, finalidade e instituição financeira (nome, CNPJ de 8 dígitos e tipo); fonte de recursos e mês ficaram de fora. Programas não listados em `PROGRAMAS` no script são avisados na execução.
 - **Produtos financiados:** Matriz de Dados do Crédito Rural por produto, base por estado (completa). A base por município não é usada porque o Banco Central omite o município das combinações com até 3 contratos (sigilo bancário), o que deixa sem município 49% do valor, de forma desigual entre produtos e programas. Por isso, o recorte por produto mostra estados e não aceita o filtro de bioma.
 - **Biomas:** bioma predominante por município, IBGE (lista de 2024, com base na Malha Municipal 2022). Municípios na transição entre biomas entram inteiros no bioma que ocupa a maior parte do território; o filtro é um recorte por município, não uma medição exata dentro de cada bioma. Para atualizar, substitua `dados/biomas_municipios.csv` mantendo as colunas `cod_ibge`, `municipio`, `uf` e `bioma`.

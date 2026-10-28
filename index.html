@@ -136,7 +136,7 @@
     <div class="pm-field pm-pec pm-ua" hidden>
       <span class="pm-label" id="lb-vista">Ver no mapa</span>
       <div class="pm-seg" role="group" aria-labelledby="lb-vista" id="pm-vista">
-        <button type="button" data-v="ua">Unidades animais</button>
+        <button type="button" data-v="ua">Total de cabeças</button>
         <button type="button" data-v="predominante">Rebanho predominante</button>
       </div>
     </div>
@@ -199,6 +199,17 @@
     </div>
   </section>
 
+  <section class="pm-card" id="producao-recorte" hidden>
+    <h2 id="pm-prodrec-title">Produtos mais produzidos</h2>
+    <p class="pm-note" id="pm-prodrec-note">—</p>
+    <div class="pm-tablebox">
+      <table class="pm-table">
+        <thead><tr id="pm-prodrec-head"></tr></thead>
+        <tbody id="pm-prodrectbody"></tbody>
+      </table>
+    </div>
+  </section>
+
   <section class="pm-card pm-cred pm-cred-uf" id="produtos-uf" hidden>
     <h2 id="pm-produf-title">Produtos mais financiados no estado</h2>
     <p class="pm-note" id="pm-produf-note">—</p>
@@ -218,7 +229,7 @@
     <p><strong>Valor.</strong> Preço médio pago ao produtor vezes a quantidade, sem frete, taxas e impostos. Nas tabelas originais está em mil reais.</p>
     <p><strong>Café.</strong> “Café (em grão) — total” já soma arábica e canephora; as duas espécies também podem ser vistas em separado.</p>
     <p><strong>Pecuária.</strong> IBGE, Pesquisa da Pecuária Municipal (PPM) 2025, Tabela 3939: efetivo dos rebanhos em 31 de dezembro, em cabeças, também preliminar. “Suíno – matrizes” já está contido em “Suíno (total)”, e “Galináceos – galinhas” em “Galináceos (total)”, que inclui também frangos, galos e pintos. <a href="dados/ppm_2025.csv" download>Baixar a base de pecuária (CSV)</a>.</p>
-    <p><strong>Todos os rebanhos.</strong> Para somar espécies diferentes, o efetivo foi convertido em unidades animais (UA), com os coeficientes da FAO para a América do Sul (FAO, 2011, <em>Guidelines for the preparation of livestock sector reviews</em>, Anexo 1): bovino 0,70; ovino e caprino 0,10; suíno 0,25; equino 0,65; galináceos 0,01. A FAO não traz coeficiente de búfalo para a América do Sul nem de codorna; usamos 0,70 para búfalos (valor da FAO para búfalos nas regiões em que aparece) e 0,01 para codornas (o mesmo das galinhas, o que superestima um pouco o peso delas). Os subgrupos (matrizes e galinhas) não entram na soma. O rebanho predominante é o grupo com mais unidades animais no município: bovinos, bubalinos, equinos, suínos, caprinos e ovinos, ou aves (galináceos e codornas).</p>
+    <p><strong>Todos os rebanhos.</strong> Soma o número de cabeças de todos os rebanhos do município (bovinos, bubalinos, equinos, suínos, caprinos, ovinos, galináceos e codornas); matrizes de suínos e galinhas não entram na soma, porque já estão contidas nos totais de suínos e de galináceos. O rebanho predominante é o grupo com mais cabeças no município: bovinos, bubalinos, equinos, suínos, caprinos e ovinos, ou aves (galináceos e codornas). Como aves são muito mais numerosas, elas predominam em muitos municípios mesmo onde a pecuária bovina tem grande peso econômico.</p>
     <p><strong>Crédito rural.</strong> Banco Central do Brasil, Matriz de Dados do Crédito Rural (SICOR): operações contratadas de janeiro a dezembro de 2025, pela data de emissão (ano civil, não o ano-safra de julho a junho), no município informado na operação. Valores nominais, em reais. A base foi agregada por município, programa, linha (Pronaf e RenovAgro), setor (agricultura ou pecuária, conforme a atividade agrícola ou pecuária informada ao Banco Central), finalidade (custeio, investimento, comercialização e industrialização) e tipo de instituição financeira, conforme o segmento informado pelo Banco Central: banco público, banco privado, cooperativa de crédito, banco cooperativo, banco de desenvolvimento e agência de fomento, e sociedade de crédito, financiamento e investimento (financeira). Também foi mantida cada instituição financeira, com o nome e o CNPJ (oito primeiros dígitos) informados pelo Banco Central; a fonte de recursos e o mês ficaram de fora. O Pronamp é o Programa Nacional de Apoio ao Médio Produtor Rural. <a href="dados/credito_2025.csv" download>Baixar a base de crédito rural (CSV)</a> e a <a href="dados/instituicoes_financeiras.csv" download>lista de instituições financeiras (CSV)</a>.</p>
     <div class="pm-fins">
       <p><strong>Quais as finalidades do crédito rural?</strong> As finalidades do crédito rural podem ser descritas como:</p>
@@ -248,8 +259,6 @@
   const VAR_TXT = { area: 'área', qtd: 'quantidade produzida', valor: 'valor da produção' };
   const REB_SUB = new Set(['Suíno – matrizes', 'Galináceos – galinhas']);
   const REB_TXT = { Bovino: 'o rebanho bovino', Bubalino: 'o rebanho bubalino', Equino: 'o rebanho equino', 'Suíno (total)': 'o rebanho suíno', 'Suíno – matrizes': 'as matrizes de suínos', Caprino: 'o rebanho caprino', Ovino: 'o rebanho ovino', 'Galináceos (total)': 'os galináceos', 'Galináceos – galinhas': 'as galinhas', Codornas: 'as codornas' };
-  // Coeficientes de unidade animal da FAO (2011, Anexo 1, América do Sul); búfalo e codorna, ver nota de método.
-  const UA = { Bovino: 0.70, Bubalino: 0.70, Equino: 0.65, 'Suíno (total)': 0.25, Caprino: 0.10, Ovino: 0.10, 'Galináceos (total)': 0.01, Codornas: 0.01 };
   const GRUPO = { Bovino: 'Bovinos', Bubalino: 'Bubalinos', Equino: 'Equinos', 'Suíno (total)': 'Suínos', Caprino: 'Caprinos e ovinos', Ovino: 'Caprinos e ovinos', 'Galináceos (total)': 'Aves', Codornas: 'Aves' };
   const GRUPOS = [['Bovinos', '#507651'], ['Aves', '#E76129'], ['Suínos', '#9F3597'], ['Caprinos e ovinos', '#C4D75B'], ['Equinos', '#A61F2D'], ['Bubalinos', '#443C8E']];
   const DEFAULTS = { tema: 'producao', setor: 'agricultura', tipo: 'Todas', produto: 'Total', variavel: 'area', uf: 'BR', bioma: 'Todos', rebanho: 'Bovino', vista: 'ua', programa: 'Todos', linha: 'Todas', finalidade: 'Todas', instituicao: 'Todas', ifin: 'Todas', cvar: 'valor', modalidade: 'Todas', produtoCr: 'Todos' };
@@ -333,11 +342,11 @@
       }
       byReb.set(reb, m);
     }
-    // Unidades animais e rebanho predominante por município.
+    // Total de cabeças e rebanho predominante por município (sem os subgrupos matrizes e galinhas).
     const ua = new Map();
     for (const [cod, m] of porMun) {
       const g = {}; let total = 0;
-      for (const [reb, n] of m) if (reb in UA) { const v = n * UA[reb]; total += v; g[GRUPO[reb]] = (g[GRUPO[reb]] || 0) + v; }
+      for (const [reb, n] of m) if (reb in GRUPO) { total += n; g[GRUPO[reb]] = (g[GRUPO[reb]] || 0) + n; }
       if (total <= 0) continue;
       const [pred, pv] = Object.entries(g).sort((x, y) => y[1] - x[1])[0];
       ua.set(cod, { cod, val: total, predominante: pred, part: pv / total });
@@ -470,7 +479,7 @@
     }
     sel.value = p.produto;
     const rs = $('pm-rebanho');
-    if (!rs.options.length) rs.replaceChildren(new Option('Todos os rebanhos (unidades animais)', 'Todos'), ...P.reb.map((v) => new Option(v, v)));
+    if (!rs.options.length) rs.replaceChildren(new Option('Todos os rebanhos', 'Todos'), ...P.reb.map((v) => new Option(v, v)));
     rs.value = p.rebanho;
     $('pm-uf').value = p.uf;
     $('pm-bioma').value = p.bioma;
@@ -571,7 +580,7 @@
     tipHead(cod, P.names);
     const u = P.ua.get(cod);
     if (p.rebanho === 'Todos' && u) {
-      tipLine('Unidades animais', nInt.format(u.val));
+      tipLine('Total de cabeças', nInt.format(u.val));
       tipLine('Predominante', u.predominante + ' (' + pct(u.part) + ')');
     }
     tip.append('div').attr('class', p.rebanho === 'Todos' ? 'pm-tip-sec' : null).text('Efetivo dos rebanhos (cabeças)');
@@ -715,16 +724,16 @@
       let cont = null;
       if (p.vista === 'predominante') cont = drawPred(p, rows);
       else drawChoro(p, rows, 'val', fmtBig, 'Sem criação');
-      $('pm-map-title').textContent = (p.vista === 'predominante' ? 'Rebanho predominante' : 'Todos os rebanhos, em unidades animais') + sufixo(p);
-      $('pm-map-note').textContent = p.vista === 'predominante' ? 'Cada município aparece na cor do grupo de rebanho com mais unidades animais. Passe o mouse (ou toque) para ver todos os rebanhos.' : 'Cores em sete faixas com o mesmo número de municípios cada. Passe o mouse (ou toque) para ver o rebanho predominante e todos os rebanhos.';
-      const { top, n } = drawTable(p, rows, 'val', 'Unidades animais', true);
-      rankNote(p, n, 'número de unidades animais', 'Nenhum município com criação nesta seleção.');
+      $('pm-map-title').textContent = (p.vista === 'predominante' ? 'Rebanho predominante' : 'Todos os rebanhos, total de cabeças') + sufixo(p);
+      $('pm-map-note').textContent = p.vista === 'predominante' ? 'Cada município aparece na cor do grupo de rebanho com mais cabeças. Passe o mouse (ou toque) para ver todos os rebanhos.' : 'Cores em sete faixas com o mesmo número de municípios cada. Passe o mouse (ou toque) para ver o rebanho predominante e todos os rebanhos.';
+      const { top, n } = drawTable(p, rows, 'val', 'Cabeças', true);
+      rankNote(p, n, 'número de cabeças', 'Nenhum município com criação nesta seleção.');
       let total = 0; const c = Object.fromEntries(GRUPOS.map(([g]) => [g, 0]));
       for (const [cod, r] of rows) if (inScope(p, cod)) { total += r.val; c[r.predominante] += 1; }
-      tiles('Todos os rebanhos', fmtBig(total), 'unidades animais (coeficientes FAO)', 'Municípios com criação', nInt.format(n), 'com algum rebanho registrado');
+      tiles('Todos os rebanhos', fmtBig(total), 'cabeças, sem contar os subgrupos', 'Municípios com criação', nInt.format(n), 'com algum rebanho registrado');
       const [gTop, nTop] = Object.entries(cont || c).sort((a, b) => b[1] - a[1])[0];
-      return take([[escopoTxt(p) + ', os rebanhos somaram '], [fmtBig(total), 1], [' unidades animais. ' + gTop + ' predominam em '], [nInt.format(nTop), 1], [' dos '], [nInt.format(n), 1], [' municípios com criação.'],
-        ...(top ? [[' O maior em unidades animais é '], [top.nome, 1], [' (' + top.uf + ').']] : [])]);
+      return take([[escopoTxt(p) + ', os rebanhos somaram '], [fmtBig(total), 1], [' cabeças. ' + gTop + ' predominam em '], [nInt.format(nTop), 1], [' dos '], [nInt.format(n), 1], [' municípios com criação.'],
+        ...(top ? [[' O maior em número de cabeças é '], [top.nome, 1], [' (' + top.uf + ').']] : [])]);
     }
     const rows = P.byReb.get(p.rebanho) || new Map();
     current = { p, rows };
@@ -921,12 +930,70 @@
     take([['Nenhum município ' + DE[PREP[p.uf]] + ' ' + UF_NOMES[p.uf] + ' tem ' + (BIO_PREP[p.bioma] === 'na' ? 'a ' : 'o ') + p.bioma + ' como bioma predominante.']]);
   }
 
+  // ---------- produtos e rebanhos do recorte (estado e/ou bioma) ----------
+  function drawProducaoRecorte(p) {
+    const card = $('producao-recorte');
+    card.hidden = p.modo === 'credito' || (p.uf === 'BR' && p.bioma === 'Todos');
+    if (card.hidden) return;
+    const tb = $('pm-prodrectbody');
+    tb.replaceChildren();
+    const head = (cols) => $('pm-prodrec-head').replaceChildren(...cols.map(([t, c]) => { const th = document.createElement('th'); th.scope = 'col'; th.textContent = t; if (c) th.className = c; return th; }));
+    const linha = (cells, sel, titulo, onClick, sub) => {
+      const tr = document.createElement('tr');
+      tr.className = 'pm-click' + (sel ? ' is-sel' : ''); tr.title = titulo; tr.addEventListener('click', onClick);
+      for (const [t, c] of cells) { const td = document.createElement('td'); if (c) td.className = c; td.textContent = t; tr.append(td); }
+      if (sub) tr.children[1].style.paddingLeft = '1.2rem';
+      tb.append(tr);
+    };
+    if (p.modo === 'agricultura') {
+      const lista = [];
+      for (const [k, m] of A.series) {
+        const info = A.info.get(k);
+        if (info.tipo === 'Todas' || info.produto === 'Total' || /arábica|canephora/.test(info.produto) || (p.tipo !== 'Todas' && info.tipo !== p.tipo)) continue;
+        let area = 0, qtd = 0, valor = 0, n = 0;
+        for (const [cod, r] of m) if (inScope(p, cod)) { area += r.area || 0; qtd += r.qtd || 0; valor += r.valor || 0; if ((r.area || 0) > 0 || (r.valor || 0) > 0) n += 1; }
+        if (valor > 0 || area > 0) lista.push({ produto: info.produto, tipo: info.tipo, unidade: info.unidade || 't', area, qtd, valor, n });
+      }
+      lista.sort((a, b) => b.valor - a.valor);
+      const tot = d3.sum(lista, (x) => x.valor), top = lista.slice(0, 25), sel = lista.find((x) => x.produto === p.produto);
+      if (sel && !top.includes(sel)) top.push(sel);
+      head([['#', 'pm-rank'], ['Produto'], ['Lavoura'], ['Valor da produção', 'num'], ['Área (ha)', 'num'], ['Quantidade', 'num'], ['Participação', 'num'], ['Municípios', 'num']]);
+      for (const x of top) {
+        const s = x.produto === p.produto;
+        linha([[lista.indexOf(x) + 1, 'pm-rank'], [x.produto.replace(' — total', '')], [x.tipo], [fmtReais(x.valor * 1000), 'num'], [nInt.format(x.area), 'num'], [fmtBig(x.qtd) + ' ' + x.unidade, 'num'], [tot ? pct(x.valor / tot) : '—', 'num'], [nInt.format(x.n), 'num']],
+          s, s ? 'Clique para voltar a todos os produtos' : 'Clique para ver este produto no mapa', () => setState(s ? { produto: 'Total' } : { produto: x.produto }));
+      }
+      $('pm-prodrec-title').textContent = 'Produtos mais produzidos ' + recorte(p);
+      $('pm-prodrec-note').textContent = lista.length ? 'Os ' + Math.min(25, lista.length) + ' produtos com maior valor da produção ' + recorte(p) + ', de ' + lista.length + ' cultivados (' + TIPO_TXT[p.tipo] + '). A quantidade usa a unidade de cada produto. Clique em um produto para vê-lo no mapa.' : 'Nenhuma produção registrada neste recorte.';
+    } else {
+      const lista = [];
+      for (const reb of P.reb) {
+        let cab = 0, n = 0;
+        for (const [cod, r] of P.byReb.get(reb) || new Map()) if (inScope(p, cod)) { cab += r.val; if (r.val > 0) n += 1; }
+        if (cab > 0) lista.push({ reb, cab, n, sub: REB_SUB.has(reb) });
+      }
+      const principais = lista.filter((x) => !x.sub).sort((a, b) => b.cab - a.cab), totCab = d3.sum(principais, (x) => x.cab);
+      const pai = { 'Suíno – matrizes': 'Suíno (total)', 'Galináceos – galinhas': 'Galináceos (total)' };
+      const ordem = [];
+      for (const x of principais) { ordem.push(x); for (const y of lista.filter((z) => z.sub && pai[z.reb] === x.reb)) ordem.push(y); }
+      head([['#', 'pm-rank'], ['Rebanho'], ['Cabeças', 'num'], ['Participação', 'num'], ['Municípios', 'num']]);
+      for (const x of ordem) {
+        const s = x.reb === p.rebanho;
+        linha([[x.sub ? '' : principais.indexOf(x) + 1, 'pm-rank'], [x.reb], [nInt.format(x.cab), 'num'], [x.sub ? '—' : totCab ? pct(x.cab / totCab) : '—', 'num'], [nInt.format(x.n), 'num']],
+          s, s ? 'Clique para voltar a todos os rebanhos' : 'Clique para ver este rebanho no mapa', () => setState({ rebanho: s ? 'Todos' : x.reb }), x.sub);
+      }
+      $('pm-prodrec-title').textContent = 'Rebanhos ' + recorte(p);
+      $('pm-prodrec-note').textContent = ordem.length ? 'Rebanhos ordenados pelo número de cabeças. A participação é calculada sobre o total de cabeças dos rebanhos; matrizes de suínos e galinhas são subgrupos e não entram nesse total. Clique em um rebanho para vê-lo no mapa.' : 'Nenhum rebanho registrado neste recorte.';
+    }
+  }
+
   function render() {
     if (!A || !P || !C || !PR || !svg) return;
     const p = state;
     drawControls(p);
     $('pm-map-note').textContent = NOTA_MAPA;
     (prodMode(p) ? renderProd : p.modo === 'credito' ? renderCred : p.modo === 'pecuaria' ? renderPec : renderAgri)(p);
+    drawProducaoRecorte(p);
     semRecorte(p);
     postHeight();
   }
