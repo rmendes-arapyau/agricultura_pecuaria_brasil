@@ -21,6 +21,7 @@ dados/credito_produtos_2025.json  crédito por produto financiado e estado, no f
 dados/credito_produtos_2025.csv   a mesma base em CSV, para download
 dados/instituicoes_financeiras.csv  nome e tipo de cada instituição financeira (CNPJ de 8 dígitos)
 dados/malha.json           contornos dos municípios e estados, já projetados
+dados/pecuaria_produtos_uf_2025.csv  origem animal e aquicultura por estado (IBGE, PPM)
 dados/biomas_municipios.csv  bioma predominante de cada município (IBGE)
 dados/malha_biomas.json    contornos dos biomas, já projetados
 vendor/d3.v7.9.0.min.js    biblioteca de gráficos (D3)
@@ -50,6 +51,7 @@ Os filtros ficam gravados no endereço da página. Exemplos:
 - `…/#setor=pecuaria&rebanho=Todos&vista=predominante`: rebanho predominante em cada município.
 - `…/#tema=credito&setor=agricultura&programa=Pronaf&linha=Floresta (sistemas agroflorestais)&bioma=Amazônia`: Pronaf Floresta na Amazônia.
 - `…/#tema=credito&setor=todos&instituicao=Cooperativa de crédito`: crédito rural contratado em cooperativas de crédito.
+- `…/#setor=pecuaria&pecVer=aquicultura&pecProd=Tilápia`: produção de tilápia por estado.
 - `…/#tema=credito&setor=todos&produtoCr=Cacau`: crédito rural para cacau, por estado.
 - `…/#tema=credito&setor=todos&uf=PA`: crédito rural no Pará, com o quadro dos produtos mais financiados no estado.
 - `…/#tema=credito&setor=todos&ifin=04902979`: crédito rural contratado com o Banco da Amazônia (o código é o CNPJ de 8 dígitos da instituição, que aparece no endereço ao clicar nela no quadro "Maiores instituições financeiras").
@@ -71,6 +73,7 @@ Para Minas Gerais, as lavouras temporárias desta versão vieram da Tabela 5457 
 
 - **Agricultura:** IBGE, PAM 2025, Tabelas 1612 e 1613 (para as temporárias de Minas Gerais, Tabela 5457 por município, versão consolidada da mesma pesquisa). Área plantada (temporárias) ou área destinada à colheita (permanentes); em "Todas as lavouras", as duas são somadas. Quantidade só por produto, em toneladas (abacaxi e coco-da-baía em mil frutos). Valor em mil reais, preço pago ao produtor.
 - **Pecuária:** IBGE, PPM 2025, Tabela 3939, efetivo em 31/12, em cabeças. Matrizes de suínos e galinhas são subgrupos de suínos e galináceos.
+- **Origem animal e aquicultura:** IBGE, PPM 2025, Tabelas 74 e 3940, por estado (no painel, em Produção → Pecuária → Ver). Nessas visões o mapa mostra estados e o filtro de bioma não aparece. As quantidades são exibidas em toneladas, litros, dúzias ou unidades. Para atualizar, coloque as planilhas das duas tabelas (por estado) na pasta do script.
 - **Todos os rebanhos:** soma das cabeças de todos os rebanhos do município, sem os subgrupos (matrizes de suínos e galinhas), que já estão nos totais. O rebanho predominante é o grupo com mais cabeças no município; como as aves são muito mais numerosas, predominam em muitos municípios.
 - **Crédito rural:** Banco Central, Matriz de Dados do Crédito Rural (SICOR), operações contratadas de janeiro a dezembro de 2025 pela data de emissão (não o ano-safra), no município informado na operação, em valores nominais. Agregado por município, programa, linha (Pronaf e RenovAgro), setor, finalidade e instituição financeira (nome, CNPJ de 8 dígitos e tipo); fonte de recursos e mês ficaram de fora. Programas não listados em `PROGRAMAS` no script são avisados na execução.
 - **Produtos financiados:** Matriz de Dados do Crédito Rural por produto, base por estado (completa). A base por município não é usada porque o Banco Central omite o município das combinações com até 3 contratos (sigilo bancário), o que deixa sem município 49% do valor, de forma desigual entre produtos e programas. Por isso, o recorte por produto mostra estados e não aceita o filtro de bioma.

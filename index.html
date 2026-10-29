@@ -132,7 +132,23 @@
         <button type="button" data-v="valor">Valor (R$)</button>
       </div>
     </div>
-    <label class="pm-field pm-pec" hidden><span class="pm-label">Rebanho</span><select class="pm-select" id="pm-rebanho"></select></label>
+    <div class="pm-field pm-pec" hidden>
+      <span class="pm-label" id="lb-pecver">Ver</span>
+      <div class="pm-seg" role="group" aria-labelledby="lb-pecver" id="pm-pecver">
+        <button type="button" data-v="rebanhos">Rebanhos</button>
+        <button type="button" data-v="origem">Origem animal</button>
+        <button type="button" data-v="aquicultura">Aquicultura</button>
+      </div>
+    </div>
+    <label class="pm-field pm-pec pm-pecreb" hidden><span class="pm-label">Rebanho</span><select class="pm-select" id="pm-rebanho"></select></label>
+    <label class="pm-field pm-pec pm-pecuf" hidden><span class="pm-label">Produto</span><select class="pm-select pm-select-if" id="pm-pecprod"></select></label>
+    <div class="pm-field pm-pec pm-pecuf" hidden>
+      <span class="pm-label" id="lb-pecvar">Variável no mapa</span>
+      <div class="pm-seg" role="group" aria-labelledby="lb-pecvar" id="pm-pecvar">
+        <button type="button" data-v="valor">Valor (R$)</button>
+        <button type="button" data-v="quantidade">Quantidade</button>
+      </div>
+    </div>
     <div class="pm-field pm-pec pm-ua" hidden>
       <span class="pm-label" id="lb-vista">Ver no mapa</span>
       <div class="pm-seg" role="group" aria-labelledby="lb-vista" id="pm-vista">
@@ -229,6 +245,7 @@
     <p><strong>Valor.</strong> Preço médio pago ao produtor vezes a quantidade, sem frete, taxas e impostos. Nas tabelas originais está em mil reais.</p>
     <p><strong>Café.</strong> “Café (em grão) — total” já soma arábica e canephora; as duas espécies também podem ser vistas em separado.</p>
     <p><strong>Pecuária.</strong> IBGE, Pesquisa da Pecuária Municipal (PPM) 2025, Tabela 3939: efetivo dos rebanhos em 31 de dezembro, em cabeças, também preliminar. “Suíno – matrizes” já está contido em “Suíno (total)”, e “Galináceos – galinhas” em “Galináceos (total)”, que inclui também frangos, galos e pintos. <a href="dados/ppm_2025.csv" download>Baixar a base de pecuária (CSV)</a>.</p>
+    <p><strong>Produtos de origem animal e aquicultura.</strong> IBGE, Pesquisa da Pecuária Municipal (PPM) 2025, Tabela 74 (produção de origem animal: leite, ovos de galinha e de codorna, mel, casulos do bicho-da-seda e lã) e Tabela 3940 (aquicultura: peixes por espécie, alevinos, camarão, larvas e pós-larvas de camarão, ostras, vieiras e mexilhões, sementes de moluscos e outros produtos), resultados preliminares. Os dados usados aqui são por estado; por isso, nessas visões o mapa mostra estados e o filtro de bioma não aparece. A quantidade está na unidade de cada produto, convertida para facilitar a leitura (toneladas, litros, dúzias ou unidades, a partir dos quilogramas, mil litros, mil dúzias e milheiros do IBGE), e só aparece com um produto escolhido; “Todos os produtos” soma o valor da produção. “Peixes (total)” já soma as espécies, que não são contadas duas vezes. Para “Outros produtos” da aquicultura, o IBGE informa apenas o valor. <a href="dados/pecuaria_produtos_uf_2025.csv" download>Baixar a base (CSV)</a>.</p>
     <p><strong>Todos os rebanhos.</strong> Soma o número de cabeças de todos os rebanhos do município (bovinos, bubalinos, equinos, suínos, caprinos, ovinos, galináceos e codornas); matrizes de suínos e galinhas não entram na soma, porque já estão contidas nos totais de suínos e de galináceos. O rebanho predominante é o grupo com mais cabeças no município: bovinos, bubalinos, equinos, suínos, caprinos e ovinos, ou aves (galináceos e codornas). Como aves são muito mais numerosas, elas predominam em muitos municípios mesmo onde a pecuária bovina tem grande peso econômico.</p>
     <p><strong>Crédito rural.</strong> Banco Central do Brasil, Matriz de Dados do Crédito Rural (SICOR): operações contratadas de janeiro a dezembro de 2025, pela data de emissão (ano civil, não o ano-safra de julho a junho), no município informado na operação. Valores nominais, em reais. A base foi agregada por município, programa, linha (Pronaf e RenovAgro), setor (agricultura ou pecuária, conforme a atividade agrícola ou pecuária informada ao Banco Central), finalidade (custeio, investimento, comercialização e industrialização) e tipo de instituição financeira, conforme o segmento informado pelo Banco Central: banco público, banco privado, cooperativa de crédito, banco cooperativo, banco de desenvolvimento e agência de fomento, e sociedade de crédito, financiamento e investimento (financeira). Também foi mantida cada instituição financeira, com o nome e o CNPJ (oito primeiros dígitos) informados pelo Banco Central; a fonte de recursos e o mês ficaram de fora. O Pronamp é o Programa Nacional de Apoio ao Médio Produtor Rural. <a href="dados/credito_2025.csv" download>Baixar a base de crédito rural (CSV)</a> e a <a href="dados/instituicoes_financeiras.csv" download>lista de instituições financeiras (CSV)</a>.</p>
     <div class="pm-fins">
@@ -241,7 +258,7 @@
       </ul>
       <p>Fonte: Banco Central do Brasil, <a href="https://www.bcb.gov.br/estabilidadefinanceira/creditorural" target="_blank" rel="noopener">bcb.gov.br/estabilidadefinanceira/creditorural</a>.</p>
     </div>
-    <p><strong>Produtos financiados.</strong> Banco Central do Brasil, Matriz de Dados do Crédito Rural por produto, 2025. O filtro “Produto financiado” e o quadro de produtos por estado usam a base por estado, que é completa. Existe também uma base por município, mas nela o Banco Central omite o município sempre que a combinação de município, produto, programa, fonte de recursos e semestre tem até 3 contratos, por sigilo bancário. Isso deixa sem município 18% dos contratos e 49% do valor, de forma desigual entre produtos e programas (por exemplo, 37% do valor da soja, 62% do cacau e 92% do RenovAgro). Por isso, ao escolher um produto ou uma modalidade, o mapa passa a mostrar estados, e o filtro de bioma deixa de valer. A área financiada soma as áreas informadas nas operações de custeio e de investimento. <a href="dados/credito_produtos_2025.csv" download>Baixar a base de produtos financiados por estado (CSV)</a>.</p>
+    <p><strong>Produtos financiados.</strong> Banco Central do Brasil, Matriz de Dados do Crédito Rural por produto, 2025. O filtro “Produto financiado” e o quadro de produtos por estado usam a base por estado, que é completa. Existe também uma base por município, mas nela o Banco Central omite o município sempre que a combinação de município, produto, programa, fonte de recursos e semestre tem até 3 contratos, por sigilo bancário. Isso deixa sem município 18% dos contratos e 49% do valor, de forma desigual entre produtos e programas (por exemplo, 37% do valor da soja, 62% do cacau e 92% do RenovAgro). Por isso, ao escolher um produto ou uma modalidade, o mapa passa a mostrar estados, e o filtro de bioma deixa de aparecer. A área financiada soma as áreas informadas nas operações de custeio e de investimento. <a href="dados/credito_produtos_2025.csv" download>Baixar a base de produtos financiados por estado (CSV)</a>.</p>
     <p><strong>Biomas.</strong> Cada município foi associado ao seu bioma predominante, conforme a lista do IBGE (Bioma predominante por município, 2024, com base na Malha Municipal 2022 e no mapa de Biomas e Sistema Costeiro-Marinho do Brasil). Municípios na transição entre dois biomas, comuns no norte de Mato Grosso e no oeste de Minas Gerais, entram inteiros no bioma que ocupa a maior parte do território. Por isso, o filtro é um recorte por município, não uma medição exata da produção dentro de cada bioma. <a href="dados/biomas_municipios.csv" download>Baixar a lista de biomas (CSV)</a>.</p>
     <p><strong>Mapa.</strong> Malha municipal simplificada do projeto geodata-br, com base anterior a 2013. Seis municípios criados depois (Balneário Rincão e Pescaria Brava/SC, Mojuí dos Campos/PA, Nazária/PI, Paraíso das Águas/MS e Pinto Bandeira/RS) não têm polígono próprio: seus dados entram nos totais e no ranking, mas no mapa o território aparece dentro do município de origem.</p>
     <p>Elaboração: Instituto Arapyaú.</p>
@@ -261,7 +278,9 @@
   const REB_TXT = { Bovino: 'o rebanho bovino', Bubalino: 'o rebanho bubalino', Equino: 'o rebanho equino', 'Suíno (total)': 'o rebanho suíno', 'Suíno – matrizes': 'as matrizes de suínos', Caprino: 'o rebanho caprino', Ovino: 'o rebanho ovino', 'Galináceos (total)': 'os galináceos', 'Galináceos – galinhas': 'as galinhas', Codornas: 'as codornas' };
   const GRUPO = { Bovino: 'Bovinos', Bubalino: 'Bubalinos', Equino: 'Equinos', 'Suíno (total)': 'Suínos', Caprino: 'Caprinos e ovinos', Ovino: 'Caprinos e ovinos', 'Galináceos (total)': 'Aves', Codornas: 'Aves' };
   const GRUPOS = [['Bovinos', '#507651'], ['Aves', '#E76129'], ['Suínos', '#9F3597'], ['Caprinos e ovinos', '#C4D75B'], ['Equinos', '#A61F2D'], ['Bubalinos', '#443C8E']];
-  const DEFAULTS = { tema: 'producao', setor: 'agricultura', tipo: 'Todas', produto: 'Total', variavel: 'area', uf: 'BR', bioma: 'Todos', rebanho: 'Bovino', vista: 'ua', programa: 'Todos', linha: 'Todas', finalidade: 'Todas', instituicao: 'Todas', ifin: 'Todas', cvar: 'valor', modalidade: 'Todas', produtoCr: 'Todos' };
+  const DEFAULTS = { tema: 'producao', setor: 'agricultura', pecVer: 'rebanhos', pecProd: 'Todos', pecVar: 'valor', tipo: 'Todas', produto: 'Total', variavel: 'area', uf: 'BR', bioma: 'Todos', rebanho: 'Bovino', vista: 'ua', programa: 'Todos', linha: 'Todas', finalidade: 'Todas', instituicao: 'Todas', ifin: 'Todas', cvar: 'valor', modalidade: 'Todas', produtoCr: 'Todos' };
+  const pecUF = (p) => p.modo === 'pecuaria' && p.pecVer !== 'rebanhos';
+  const GRUPO_PEC = { origem: 'Origem animal', aquicultura: 'Aquicultura' };
   const prodMode = (p) => p.modo === 'credito' && (p.modalidade !== 'Todas' || p.produtoCr !== 'Todos');
   const INST_TXT = { 'Banco público': 'bancos públicos', 'Banco privado': 'bancos privados', 'Cooperativa de crédito': 'cooperativas de crédito', 'Banco cooperativo': 'bancos cooperativos', 'Banco de desenvolvimento e agência de fomento': 'bancos de desenvolvimento e agências de fomento', 'Financeira (SCFI)': 'financeiras (SCFI)' };
   // Descrição do recorte de crédito: "o crédito rural de investimento do Pronaf (linha Floresta) para a agricultura contratado em cooperativas de crédito".
@@ -390,6 +409,9 @@
     if (!['producao', 'credito'].includes(state.tema)) state.tema = 'producao';
     if (!['agricultura', 'pecuaria', 'todos'].includes(state.setor) || (state.tema === 'producao' && state.setor === 'todos')) state.setor = 'agricultura';
     state.modo = state.tema === 'credito' ? 'credito' : state.setor;
+    if (!['rebanhos', 'origem', 'aquicultura'].includes(state.pecVer)) state.pecVer = 'rebanhos';
+    if (Q && state.pecVer !== 'rebanhos' && state.pecProd !== 'Todos' && !Q.lista[GRUPO_PEC[state.pecVer]].includes(state.pecProd)) state.pecProd = 'Todos';
+    if (state.pecProd === 'Todos' || !['valor', 'quantidade'].includes(state.pecVar)) state.pecVar = 'valor';
     if (C) {
       if (state.programa !== 'Todos' && !C.programas.includes(state.programa)) state.programa = 'Todos';
       if (state.linha !== 'Todas' && !(C.linhas.get(state.programa) || []).includes(state.linha)) state.linha = 'Todas';
@@ -414,7 +436,10 @@
     render();
   }
   const bindSeg = (id, key) => { for (const b of $(id).querySelectorAll('button')) b.addEventListener('click', () => setState({ [key]: b.dataset.v })); };
-  bindSeg('pm-tema', 'tema'); bindSeg('pm-setor', 'setor'); bindSeg('pm-crvar', 'cvar'); bindSeg('pm-tipo', 'tipo'); bindSeg('pm-var', 'variavel'); bindSeg('pm-vista', 'vista');
+  for (const b of $('pm-tema').querySelectorAll('button')) b.addEventListener('click', () => { if (b.dataset.v !== state.tema) setState({ tema: b.dataset.v, setor: b.dataset.v === 'credito' ? 'todos' : state.setor === 'todos' ? 'agricultura' : state.setor }); });
+  bindSeg('pm-setor', 'setor'); bindSeg('pm-pecvar', 'pecVar');
+  for (const b of $('pm-pecver').querySelectorAll('button')) b.addEventListener('click', () => setState({ pecVer: b.dataset.v, pecProd: 'Todos', pecVar: 'valor' }));
+  $('pm-pecprod').addEventListener('change', (e) => setState({ pecProd: e.target.value })); bindSeg('pm-crvar', 'cvar'); bindSeg('pm-tipo', 'tipo'); bindSeg('pm-var', 'variavel'); bindSeg('pm-vista', 'vista');
   $('pm-produto').addEventListener('change', (e) => setState({ produto: e.target.value }));
   $('pm-rebanho').addEventListener('change', (e) => setState({ rebanho: e.target.value }));
   $('pm-uf').addEventListener('change', (e) => setState({ uf: e.target.value }));
@@ -437,7 +462,8 @@
     $('pm-setor').querySelector('[data-v="todos"]').hidden = p.tema !== 'credito'; press('pm-var', p.variavel); press('pm-vista', p.vista);
     for (const el of document.querySelectorAll('.pm-agri')) el.hidden = p.modo !== 'agricultura';
     for (const el of document.querySelectorAll('.pm-cred')) el.hidden = p.modo !== 'credito';
-    for (const el of document.querySelectorAll('.pm-t23')) el.hidden = pec;
+    for (const el of document.querySelectorAll('.pm-t23')) el.hidden = pec && !pecUF(p);
+    if (pecUF(p)) $('pm-v3').closest('.pm-tile').hidden = true;
     const opts = (id, todos, list, v) => { const e = $(id); const key = list.join('|'); if (e.dataset.k !== key) { e.replaceChildren(new Option(todos[1], todos[0]), ...list.map((x) => new Option(x, x))); e.dataset.k = key; } e.value = v; };
     opts('pm-crprog', ['Todos', 'Todos os programas'], C.programas, p.programa);
     const ls = C.linhas.get(p.programa);
@@ -448,8 +474,7 @@
     opts('pm-crmod', ['Todas', 'Todas as modalidades'], PR.modalidades, p.modalidade);
     opts('pm-crprod', ['Todos', 'Todos os produtos'], p.modalidade === 'Todas' ? PR.produtos : PR.prodPorMod.get(p.modalidade) || [], p.produtoCr);
     for (const el of document.querySelectorAll('.pm-cred-uf')) el.hidden = p.modo !== 'credito' || p.uf === 'BR';
-    $('pm-bioma').disabled = prodMode(p);
-    $('pm-bioma').title = prodMode(p) ? 'No recorte por produto, os dados são por estado e o filtro de bioma não se aplica' : '';
+    $('pm-bioma').closest('.pm-field').hidden = prodMode(p) || pecUF(p);
     const cfi = $('pm-crif');
     if (cfi.dataset.seg !== p.instituicao) {
       const lista = C.insts.filter((i) => p.instituicao === 'Todas' || i.segmento === p.instituicao);
@@ -459,7 +484,12 @@
     }
     cfi.value = p.ifin;
     for (const el of document.querySelectorAll('.pm-pec')) el.hidden = !pec;
-    for (const el of document.querySelectorAll('.pm-ua')) el.hidden = !(pec && p.rebanho === 'Todos');
+    for (const el of document.querySelectorAll('.pm-pecreb')) el.hidden = !pec || pecUF(p);
+    for (const el of document.querySelectorAll('.pm-pecuf')) el.hidden = !pecUF(p);
+    for (const el of document.querySelectorAll('.pm-ua')) el.hidden = !(pec && !pecUF(p) && p.rebanho === 'Todos');
+    press('pm-pecver', p.pecVer); press('pm-pecvar', p.pecVar);
+    const qb = $('pm-pecvar').querySelector('[data-v="quantidade"]'); qb.disabled = p.pecProd === 'Todos'; qb.title = qb.disabled ? 'Escolha um produto para ver a quantidade' : '';
+    if (pecUF(p)) opts('pm-pecprod', ['Todos', 'Todos os produtos'], Q.lista[GRUPO_PEC[p.pecVer]], p.pecProd);
     const q = $('pm-var').querySelector('[data-v="qtd"]');
     q.disabled = p.produto === 'Total'; q.title = q.disabled ? 'Escolha um produto para ver a quantidade' : '';
     const sel = $('pm-produto');
@@ -507,7 +537,7 @@
       if (hover && hover !== t) hover.classList.remove('is-hover');
       if (!d) { tip.style('display', 'none'); hover = null; return; }
       hover = t; t.classList.add('is-hover'); t.parentNode.appendChild(t);
-      if (t.classList.contains('pm-ufill')) tipUF(d[0]);
+      if (t.classList.contains('pm-ufill')) (pecUF(current.p) ? tipPecUF : tipUF)(d[0]);
       else (current.p.modo === 'credito' ? tipCred : current.p.modo === 'pecuaria' ? tipPec : tipAgri)(d[0]);
       placeTip(event);
     };
@@ -889,7 +919,7 @@
     it.append('i').style('background', 'var(--vazio)'); it.append('span').text('Sem crédito contratado');
     const filtros = [p.produtoCr !== 'Todos' ? p.produtoCr : p.modalidade, p.programa !== 'Todos' ? p.programa + (p.linha !== 'Todas' ? ' – ' + p.linha : '') : null, p.setor !== 'todos' ? (p.setor === 'agricultura' ? 'agricultura' : 'pecuária') : null, p.finalidade !== 'Todas' ? p.finalidade : null, p.ifin !== 'Todas' && C.ifs.get(p.ifin) ? C.ifs.get(p.ifin).nome : p.instituicao !== 'Todas' ? p.instituicao : null].filter(Boolean);
     $('pm-map-title').textContent = 'Crédito rural por estado, ' + (p.cvar === 'valor' ? 'valor contratado' : 'número de contratos') + ': ' + filtros.join(', ') + (p.uf === 'BR' ? '' : ' — ' + UF_NOMES[p.uf]);
-    $('pm-map-note').textContent = 'No recorte por produto, o mapa mostra estados, porque a base por município omite operações por sigilo bancário (veja Sobre os dados). Passe o mouse (ou toque) em um estado para ver os principais produtos, programas e instituições.' + (p.bioma !== 'Todos' ? ' O filtro de bioma não se aplica a este recorte.' : '');
+    $('pm-map-note').textContent = 'No recorte por produto, o mapa mostra estados, porque a base por município omite operações por sigilo bancário (veja Sobre os dados). Passe o mouse (ou toque) em um estado para ver os principais produtos, programas e instituições.';
     // ranking de estados
     const lista = [...rows.values()].filter((r) => r.val > 0).sort((a, b) => b.val - a.val), max = lista.length ? lista[0].val : 1;
     $('pm-rank-title').textContent = 'Estados'; $('pm-th-nome').textContent = 'Estado'; $('pm-th-val').textContent = p.cvar === 'valor' ? 'Valor contratado (R$)' : 'Contratos'; $('pm-th-pred').hidden = true;
@@ -933,8 +963,9 @@
   // ---------- produtos e rebanhos do recorte (estado e/ou bioma) ----------
   function drawProducaoRecorte(p) {
     const card = $('producao-recorte');
-    card.hidden = p.modo === 'credito' || (p.uf === 'BR' && p.bioma === 'Todos');
+    card.hidden = p.modo === 'credito' || (!pecUF(p) && p.uf === 'BR' && p.bioma === 'Todos');
     if (card.hidden) return;
+    if (pecUF(p)) return drawPecUFRecorte(p);
     const tb = $('pm-prodrectbody');
     tb.replaceChildren();
     const head = (cols) => $('pm-prodrec-head').replaceChildren(...cols.map(([t, c]) => { const th = document.createElement('th'); th.scope = 'col'; th.textContent = t; if (c) th.className = c; return th; }));
@@ -987,12 +1018,120 @@
     }
   }
 
+  // ---------- origem animal e aquicultura (dados por estado) ----------
+  let Q = null;
+  const CONV_UN = { kg: [0.001, 't'], 'mil litros': [1000, 'litros'], 'mil dúzias': [1000, 'dúzias'], milheiros: [1000, 'unidades'] };
+  function indexPecUF(txt) {
+    const all = d3.csvParse(txt).map((r) => { const c = CONV_UN[r.unidade] || [1, r.unidade]; return { ...r, unidade: c[1], agregado: r.agregado === '1', q: r.quantidade === '' ? null : +r.quantidade * c[0], v: r.valor_mil_reais === '' ? null : +r.valor_mil_reais }; });
+    const lista = {};
+    for (const g of ['Origem animal', 'Aquicultura']) lista[g] = [...d3.rollup(all.filter((r) => r.grupo === g), (x) => d3.sum(x, (r) => r.v || 0), (r) => r.produto)].sort((a, b) => b[1] - a[1]).map(([k]) => k);
+    return { all, lista };
+  }
+  function tipPecUF(uf) {
+    const { p, rows } = current, r = rows.get(uf);
+    tip.selectAll('*').remove();
+    tip.append('div').attr('class', 'pm-tip-head').text(UF_NOMES[uf]);
+    if (!r) { tip.append('div').text('Sem produção registrada.'); return; }
+    tipLine('Valor da produção', fmtReais(r.valor));
+    if (p.pecProd !== 'Todos' && r.unidade) tipLine('Quantidade', fmtBig(r.q) + ' ' + r.unidade);
+    const prods = Q.all.filter((x) => x.uf === uf && x.grupo === GRUPO_PEC[p.pecVer] && !x.agregado && x.v > 0).sort((a, b) => b.v - a.v), tot = d3.sum(prods, (x) => x.v);
+    if (!tot) return;
+    tip.append('div').attr('class', 'pm-tip-sec').text('Principais produtos');
+    const g = tip.append('div').attr('class', 'pm-tip-grid');
+    for (const x of prods.slice(0, 5)) { const w = x.produto === p.pecProd ? 800 : null; g.append('span').style('font-weight', w).text(x.produto); g.append('span').style('font-weight', w).text(pct(x.v / tot)); }
+  }
+  function renderPecUF(p) {
+    const g = GRUPO_PEC[p.pecVer], qtd = p.pecVar === 'quantidade' && p.pecProd !== 'Todos', rows = new Map();
+    for (const r of Q.all) {
+      if (r.grupo !== g || (p.pecProd === 'Todos' ? r.agregado : r.produto !== p.pecProd)) continue;
+      let a = rows.get(r.uf);
+      if (!a) { a = { uf: r.uf, nome: UF_NOMES[r.uf], valor: 0, q: 0, unidade: r.unidade }; rows.set(r.uf, a); }
+      a.valor += (r.v || 0) * 1000; a.q += r.q || 0;
+    }
+    for (const a of rows.values()) a.val = qtd ? a.q : a.valor;
+    current = { p, rows };
+    const unidade = rows.size ? [...rows.values()][0].unidade : '';
+    // mapa por estado
+    gMunL.style('display', 'none'); gUfL.style('display', null); gBioL.style('display', 'none');
+    const vals = [...rows.values()].map((r) => r.val).filter((v) => v > 0);
+    const k = Math.max(1, Math.min(5, new Set(vals).size)), colors = d3.quantize(d3.interpolateRgbBasis(RAMP), k), scale = d3.scaleQuantile(vals.length ? vals : [0, 1], colors);
+    for (const [uf, el] of ufFill) { const r = rows.get(uf); el.setAttribute('fill', r && r.val > 0 ? scale(r.val) : 'var(--vazio)'); el.style.opacity = p.uf === 'BR' || p.uf === uf ? 1 : 0.25; }
+    const b = p.uf !== 'BR' ? ufBox.get(p.uf) : null, pad = b ? Math.max(b.width, b.height) * 0.06 : 0;
+    svg.attr('viewBox', b ? [b.x - pad, b.y - pad, b.width + 2 * pad, b.height + 2 * pad].join(' ') : baseViewBox);
+    const fmtL = (x) => (qtd ? fmtBig(x) + (unidade ? ' ' + unidade : '') : fmtReais(x));
+    const lg = d3.select('#pm-legend');
+    lg.selectAll('*').remove();
+    if (vals.length) {
+      const ext = d3.extent(vals), bounds = [ext[0], ...scale.quantiles(), ext[1]], sc = lg.append('div').attr('class', 'pm-legend-scale');
+      colors.forEach((c, i) => { const st = sc.append('div').attr('class', 'pm-legend-step'); st.append('div').attr('class', 'pm-legend-sw').style('background', c); st.append('span').text(i === 0 ? 'até ' + fmtL(bounds[1] ?? ext[1]) : i === colors.length - 1 ? 'acima de ' + fmtL(bounds[i]) : fmtL(bounds[i + 1])); });
+    }
+    const it = lg.append('span').attr('class', 'pm-legend-item');
+    it.append('i').style('background', 'var(--vazio)'); it.append('span').text('Sem produção registrada');
+    const nome = g === 'Aquicultura' ? 'Aquicultura' : 'Produção de origem animal';
+    $('pm-map-title').textContent = nome + ' por estado, ' + (qtd ? 'quantidade' : 'valor da produção') + (p.pecProd !== 'Todos' ? ': ' + p.pecProd : '') + (p.uf === 'BR' ? '' : ' — ' + UF_NOMES[p.uf]);
+    $('pm-map-note').textContent = 'Os dados de ' + (g === 'Aquicultura' ? 'aquicultura' : 'produção de origem animal') + ' disponíveis são por estado; por isso, o mapa mostra estados. Passe o mouse (ou toque) em um estado para ver os principais produtos.';
+    // ranking de estados
+    const lista = [...rows.values()].filter((r) => r.val > 0).sort((a, b) => b.val - a.val), max = lista.length ? lista[0].val : 1;
+    $('pm-rank-title').textContent = 'Estados'; $('pm-th-nome').textContent = 'Estado'; $('pm-th-pred').hidden = true;
+    $('pm-th-val').textContent = qtd ? 'Quantidade' + (unidade ? ' (' + unidade + ')' : '') : 'Valor da produção';
+    $('pm-tbody').replaceChildren(...lista.map((r, i) => {
+      const tr = document.createElement('tr');
+      const td = (t, c) => { const e = document.createElement('td'); if (c) e.className = c; e.textContent = t; tr.append(e); return e; };
+      td(i + 1, 'pm-rank'); const n = td(r.nome); if (r.uf === p.uf) n.style.fontWeight = 800; td(r.uf);
+      const cell = td(qtd ? nInt.format(r.q) : fmtReais(r.valor), 'num');
+      const bar = document.createElement('div'); bar.className = 'pm-bar'; bar.style.width = Math.max(2, (r.val / max) * 100) + '%'; cell.append(bar);
+      return tr;
+    }));
+    $('pm-rank-note').textContent = lista.length ? 'Os ' + lista.length + ' estados com produção, por ' + (qtd ? 'quantidade' : 'valor da produção') + '.' : 'Nenhum estado com produção registrada.';
+    // totais
+    let v = 0, q = 0, ne = 0;
+    for (const r of rows.values()) if (p.uf === 'BR' || r.uf === p.uf) { v += r.valor; q += r.q; if (r.valor > 0 || r.q > 0) ne += 1; }
+    tiles('Valor da produção', ne ? fmtReais(v) : '—', 'reais', 'Estados produtores', nInt.format(ne), 'com produção registrada');
+    $('pm-l2').textContent = 'Quantidade produzida'; $('pm-v2').textContent = p.pecProd !== 'Todos' && unidade && ne ? fmtBig(q) : '—';
+    $('pm-n2').textContent = p.pecProd === 'Todos' ? 'escolha um produto: unidades diferem entre produtos' : unidade || 'o IBGE informa só o valor';
+    const esc = p.uf === 'BR' ? 'No Brasil' : escopoTxt({ ...p, bioma: 'Todos' });
+    const sujeito = p.pecProd === 'Todos' ? (g === 'Aquicultura' ? 'a aquicultura' : 'a produção de origem animal') : 'a produção de ' + p.pecProd.toLowerCase();
+    if (!ne) return take([[esc + ', não há registro de ' + sujeito.replace(/^a /, '') + ' na PPM 2025.']]);
+    take([[esc + ', ' + sujeito + ' somou '], [fmtReais(v), 1], [' em valor da produção'], ...(p.pecProd !== 'Todos' && unidade ? [[', com '], [fmtBig(q), 1], [' ' + unidade]] : []), ['.'],
+      ...(p.uf === 'BR' && lista[0] ? [[' O estado com maior ' + (qtd ? 'quantidade' : 'valor da produção') + ' é '], [lista[0].nome, 1], ['.']] : [])]);
+  }
+  function drawPecUFRecorte(p) {
+    const g = GRUPO_PEC[p.pecVer], agg = new Map();
+    for (const r of Q.all) {
+      if (r.grupo !== g || (p.uf !== 'BR' && r.uf !== p.uf)) continue;
+      let a = agg.get(r.produto);
+      if (!a) { a = { produto: r.produto, agregado: r.agregado, unidade: r.unidade, v: 0, q: 0, n: 0 }; agg.set(r.produto, a); }
+      a.v += (r.v || 0) * 1000; a.q += r.q || 0; if ((r.v || 0) > 0) a.n += 1;
+    }
+    const principais = [...agg.values()].filter((a) => !a.agregado && a.v > 0).sort((a, b) => b.v - a.v), tot = d3.sum(principais, (a) => a.v);
+    const peixes = agg.get('Peixes (total)');
+    const especie = (a) => g === 'Aquicultura' && a.unidade === 't' && !['Camarão', 'Ostras, vieiras e mexilhões'].includes(a.produto);
+    const lin = principais.filter((a) => !especie(a));
+    if (peixes && peixes.v > 0) lin.push(peixes);
+    lin.sort((a, b) => b.v - a.v);
+    const final = [];
+    for (const a of lin) { final.push(a); if (a === peixes) for (const x of principais.filter(especie)) final.push({ ...x, sub: true }); }
+    $('pm-prodrec-head').replaceChildren(...[['#', 'pm-rank'], ['Produto'], ['Valor da produção', 'num'], ['Quantidade', 'num'], ['Participação', 'num'], ['Estados', 'num']].map(([t, c]) => { const th = document.createElement('th'); th.scope = 'col'; th.textContent = t; if (c) th.className = c; return th; }));
+    const tb = $('pm-prodrectbody');
+    tb.replaceChildren();
+    for (const a of final) {
+      const s = a.produto === p.pecProd, tr = document.createElement('tr');
+      tr.className = 'pm-click' + (s ? ' is-sel' : ''); tr.title = s ? 'Clique para voltar a todos os produtos' : 'Clique para ver este produto no mapa';
+      tr.addEventListener('click', () => setState({ pecProd: s ? 'Todos' : a.produto }));
+      for (const [t, c] of [[a.sub ? '' : lin.indexOf(a) + 1, 'pm-rank'], [a.produto], [fmtReais(a.v), 'num'], [a.unidade ? fmtBig(a.q) + ' ' + a.unidade : '—', 'num'], [a.agregado ? '—' : tot ? pct(a.v / tot) : '—', 'num'], [nInt.format(a.n), 'num']]) { const td = document.createElement('td'); if (c) td.className = c; td.textContent = t; tr.append(td); }
+      if (a.sub) tr.children[1].style.paddingLeft = '1.2rem';
+      tb.append(tr);
+    }
+    $('pm-prodrec-title').textContent = (g === 'Aquicultura' ? 'Produtos da aquicultura ' : 'Produtos de origem animal ') + (p.uf === 'BR' ? 'no Brasil' : noUF(p.uf));
+    $('pm-prodrec-note').textContent = final.length ? 'Produtos ordenados pelo valor da produção (dados por estado).' + (peixes ? ' As espécies de peixes aparecem recuadas abaixo de “Peixes (total)”.' : '') + ' Clique em um produto para vê-lo no mapa.' : 'Nenhuma produção registrada neste recorte.';
+  }
+
   function render() {
-    if (!A || !P || !C || !PR || !svg) return;
+    if (!A || !P || !C || !PR || !Q || !svg) return;
     const p = state;
     drawControls(p);
     $('pm-map-note').textContent = NOTA_MAPA;
-    (prodMode(p) ? renderProd : p.modo === 'credito' ? renderCred : p.modo === 'pecuaria' ? renderPec : renderAgri)(p);
+    (pecUF(p) ? renderPecUF : prodMode(p) ? renderProd : p.modo === 'credito' ? renderCred : p.modo === 'pecuaria' ? renderPec : renderAgri)(p);
     drawProducaoRecorte(p);
     semRecorte(p);
     postHeight();
@@ -1009,9 +1148,9 @@
   window.addEventListener('hashchange', () => { state = { ...DEFAULTS }; readHash(); setState({}); });
   const get = (u) => fetch(u).then((r) => { if (!r.ok) throw new Error(u); return r.json(); });
   const getTxt = (u) => fetch(u).then((r) => { if (!r.ok) throw new Error(u); return r.text(); });
-  Promise.all([get('dados/pam_2025.json'), get('dados/ppm_2025.json'), get('dados/malha.json'), getTxt('dados/biomas_municipios.csv'), get('dados/malha_biomas.json'), get('dados/credito_2025.json'), get('dados/credito_produtos_2025.json')])
-    .then(([pam, ppm, malha, biomas, bios, cred, prodCr]) => {
-      A = indexAgri(pam); P = indexPec(ppm); C = indexCred(cred); PR = indexProd(prodCr);
+  Promise.all([get('dados/pam_2025.json'), get('dados/ppm_2025.json'), get('dados/malha.json'), getTxt('dados/biomas_municipios.csv'), get('dados/malha_biomas.json'), get('dados/credito_2025.json'), get('dados/credito_produtos_2025.json'), getTxt('dados/pecuaria_produtos_uf_2025.csv')])
+    .then(([pam, ppm, malha, biomas, bios, cred, prodCr, pecTxt]) => {
+      A = indexAgri(pam); P = indexPec(ppm); C = indexCred(cred); PR = indexProd(prodCr); Q = indexPecUF(pecTxt);
       biomaDe = new Map(d3.csvParse(biomas).map((b) => [b.cod_ibge, b.bioma]));
       buildMap(malha, bios);
       setState({});
