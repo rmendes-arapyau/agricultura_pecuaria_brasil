@@ -4,7 +4,7 @@ Painel interativo com a área, a quantidade e o valor da produção agrícola, o
 
 Ao selecionar um bioma ou um estado no tema Produção, aparece uma tabela com os produtos mais produzidos (agricultura, por valor da produção) ou com os rebanhos (pecuária, por número de cabeças) do recorte.
 
-O painel tem dois temas, **Produção** e **Crédito rural**, e dois setores, **Agricultura** e **Pecuária** (no crédito, também **Todos**). Os filtros de bioma e estado valem para todos.
+O painel tem três temas, **Produção**, **Crédito rural** e **Imóveis rurais (CAR)**, e dois setores, **Agricultura** e **Pecuária** (no crédito, também **Todos**). Os filtros de bioma e estado valem para todos.
 
 ## Estrutura
 
@@ -22,6 +22,8 @@ dados/credito_produtos_2025.csv   a mesma base em CSV, para download
 dados/instituicoes_financeiras.csv  nome e tipo de cada instituição financeira (CNPJ de 8 dígitos)
 dados/malha.json           contornos dos municípios e estados, já projetados
 dados/pecuaria_produtos_uf_2025.csv  origem animal e aquicultura por estado (IBGE, PPM)
+dados/car_2025.json         imóveis rurais no CAR (cadastros e área), no formato lido pela página
+dados/car_2025.csv          a mesma base em CSV, para download
 dados/biomas_municipios.csv  bioma predominante de cada município (IBGE)
 dados/malha_biomas.json    contornos dos biomas, já projetados
 vendor/d3.v7.9.0.min.js    biblioteca de gráficos (D3)
@@ -52,6 +54,7 @@ Os filtros ficam gravados no endereço da página. Exemplos:
 - `…/#tema=credito&setor=agricultura&programa=Pronaf&linha=Floresta (sistemas agroflorestais)&bioma=Amazônia`: Pronaf Floresta na Amazônia.
 - `…/#tema=credito&setor=todos&instituicao=Cooperativa de crédito`: crédito rural contratado em cooperativas de crédito.
 - `…/#setor=pecuaria&pecVer=aquicultura&pecProd=Tilápia`: produção de tilápia por estado.
+- `…/#tema=car&carTam=Grande&carVar=pct_area&bioma=Amazônia`: participação das grandes propriedades na área cadastrada no CAR, na Amazônia.
 - `…/#tema=credito&setor=todos&produtoCr=Cacau`: crédito rural para cacau, por estado.
 - `…/#tema=credito&setor=todos&uf=PA`: crédito rural no Pará, com o quadro dos produtos mais financiados no estado.
 - `…/#tema=credito&setor=todos&ifin=04902979`: crédito rural contratado com o Banco da Amazônia (o código é o CNPJ de 8 dígitos da instituição, que aparece no endereço ao clicar nela no quadro "Maiores instituições financeiras").
@@ -77,6 +80,7 @@ Para Minas Gerais, as lavouras temporárias desta versão vieram da Tabela 5457 
 - **Todos os rebanhos:** soma das cabeças de todos os rebanhos do município, sem os subgrupos (matrizes de suínos e galinhas), que já estão nos totais. O rebanho predominante é o grupo com mais cabeças no município; como as aves são muito mais numerosas, predominam em muitos municípios.
 - **Crédito rural:** Banco Central, Matriz de Dados do Crédito Rural (SICOR), operações contratadas de janeiro a dezembro de 2025 pela data de emissão (não o ano-safra), no município informado na operação, em valores nominais. Agregado por município, programa, linha (Pronaf e RenovAgro), setor, finalidade e instituição financeira (nome, CNPJ de 8 dígitos e tipo); fonte de recursos e mês ficaram de fora. Programas não listados em `PROGRAMAS` no script são avisados na execução.
 - **Produtos financiados:** Matriz de Dados do Crédito Rural por produto, base por estado (completa). A base por município não é usada porque o Banco Central omite o município das combinações com até 3 contratos (sigilo bancário), o que deixa sem município 49% do valor, de forma desigual entre produtos e programas. Por isso, o recorte por produto mostra estados e não aceita o filtro de bioma.
+- **Imóveis rurais (CAR):** Ministério do Meio Ambiente e Mudança do Clima, Painel de Regularização Ambiental, extração de outubro de 2026: número de cadastros e área cadastrada (declarada) por município, tamanho (pequena até 4, média de 4 a 15 e grande acima de 15 módulos fiscais), tipo de imóvel (IRU, AST, PCT) e condição do CAR. O tema abre com os imóveis rurais (IRU), porque assentamentos e territórios tradicionais costumam ser cadastrados como um único imóvel coletivo na faixa de até 4 módulos fiscais. Pode haver sobreposição entre cadastros, e a área cadastrada não equivale à área ocupada. Para atualizar, coloque as duas planilhas exportadas do Painel (cadastros e área) na pasta do script.
 - **Biomas:** bioma predominante por município, IBGE (lista de 2024, com base na Malha Municipal 2022). Municípios na transição entre biomas entram inteiros no bioma que ocupa a maior parte do território; o filtro é um recorte por município, não uma medição exata dentro de cada bioma. Para atualizar, substitua `dados/biomas_municipios.csv` mantendo as colunas `cod_ibge`, `municipio`, `uf` e `bioma`.
 - **Resultados preliminares:** o IBGE classifica 2025 como preliminar, sujeito a revisão.
 - **Malha municipal:** projeto [geodata-br](https://github.com/tbrugz/geodata-br), simplificada e projetada (Albers). Base anterior a 2013: seis municípios criados depois não têm polígono próprio, mas seus dados entram nos totais e no ranking.

@@ -38,6 +38,9 @@
   .pm-table tr.is-sel td { font-weight: 800; }
   .pm-ufill { stroke: #fff; stroke-width: .6; vector-effect: non-scaling-stroke; }
   .pm-ufill.is-hover { stroke: var(--fg); stroke-width: 1.8; }
+  .pm-notice { display: flex; gap: .9rem; align-items: flex-start; background: var(--aviso); border-radius: var(--raio); padding: 1rem 1.25rem; }
+  .pm-notice-dot { flex: none; width: .8rem; height: .8rem; border-radius: 50%; background: var(--laranja); margin-top: .4rem; }
+  .pm-notice p { margin: 0; flex: 1; min-width: 0; font-size: .95rem; }
   .pm-link { font-size: .85rem; background: transparent; border: 0; color: var(--indigo); text-decoration: underline; cursor: pointer; padding: .5rem 0; }
   button:focus-visible, select:focus-visible, a:focus-visible { outline: 3px solid var(--lima); outline-offset: 2px; }
   [hidden] { display: none !important; }
@@ -94,10 +97,15 @@
 <main class="pm">
   <header>
     <h1 class="pm-title">Painel da Agropecuária Municipal do Brasil, 2025</h1>
-    <p class="pm-intro">Esta é uma ferramenta desenvolvida pelo Instituto Arapyaú a partir dos dados da Produção Agrícola Municipal (PAM) e da Pesquisa da Pecuária Municipal (PPM), disponibilizados pelo Instituto Brasileiro de Geografia e Estatística (IBGE), e da Matriz de Dados do Crédito Rural do Banco Central do Brasil. Ela permite explorar, município a município, a área, a quantidade e o valor da produção das lavouras temporárias e permanentes, o efetivo dos rebanhos e o crédito rural contratado no Brasil em 2025, por produto, rebanho, programa de crédito, bioma e estado.</p>
+    <p class="pm-intro">Esta é uma ferramenta desenvolvida pelo Instituto Arapyaú a partir dos dados da Produção Agrícola Municipal (PAM) e da Pesquisa da Pecuária Municipal (PPM), disponibilizados pelo Instituto Brasileiro de Geografia e Estatística (IBGE), e da Matriz de Dados do Crédito Rural do Banco Central do Brasil. Ela permite explorar, município a município, a área, a quantidade e o valor da produção das lavouras temporárias e permanentes, o efetivo dos rebanhos e o crédito rural contratado no Brasil em 2025, por produto, rebanho, programa de crédito, bioma e estado. Inclui também o tamanho dos imóveis rurais inscritos no Cadastro Ambiental Rural (CAR), a partir do Painel de Regularização Ambiental do Ministério do Meio Ambiente e Mudança do Clima.</p>
     <p class="pm-take" id="pm-take">Carregando dados…</p>
   </header>
 
+
+  <aside class="pm-notice" id="aviso-car" role="note" hidden>
+    <span class="pm-notice-dot" aria-hidden="true"></span>
+    <p><strong>Observação: pode haver sobreposição nos dados do CAR.</strong> O Cadastro Ambiental Rural é autodeclaratório, e as áreas de cadastros diferentes podem se sobrepor.</p>
+  </aside>
 
   <div class="pm-controls">
     <div class="pm-field">
@@ -105,6 +113,7 @@
       <div class="pm-seg pm-seg-modo" role="group" aria-labelledby="lb-tema" id="pm-tema">
         <button type="button" data-v="producao">Produção</button>
         <button type="button" data-v="credito">Crédito rural</button>
+        <button type="button" data-v="car">Imóveis rurais (CAR)</button>
       </div>
     </div>
     <div class="pm-field">
@@ -161,6 +170,34 @@
     <button type="button" class="pm-link" id="pm-reset">Limpar filtros</button>
   </div>
 
+  <div class="pm-controls pm-carf" hidden>
+    <div class="pm-field">
+      <span class="pm-label" id="lb-cartam">Tamanho</span>
+      <div class="pm-seg" role="group" aria-labelledby="lb-cartam" id="pm-cartam">
+        <button type="button" data-v="Todos">Todos</button>
+        <button type="button" data-v="Pequena">Pequena</button>
+        <button type="button" data-v="Média">Média</button>
+        <button type="button" data-v="Grande">Grande</button>
+      </div>
+    </div>
+    <label class="pm-field"><span class="pm-label">Tipo de imóvel</span>
+      <select class="pm-select" id="pm-cartipo">
+        <option value="IRU">Imóvel rural (IRU)</option>
+        <option value="AST">Assentamento da reforma agrária (AST)</option>
+        <option value="PCT">Povos e comunidades tradicionais (PCT)</option>
+        <option value="Todos">Todos os tipos</option>
+      </select></label>
+    <label class="pm-field"><span class="pm-label">Condição do CAR</span><select class="pm-select pm-select-if" id="pm-carcond"></select></label>
+    <label class="pm-field"><span class="pm-label">Variável no mapa</span>
+      <select class="pm-select" id="pm-carvar">
+        <option value="cadastros">Número de cadastros</option>
+        <option value="area">Área cadastrada (ha)</option>
+        <option value="media">Área média por imóvel (ha)</option>
+        <option value="pct_cad">Participação nos cadastros do município (%)</option>
+        <option value="pct_area">Participação na área cadastrada do município (%)</option>
+      </select></label>
+  </div>
+
   <div class="pm-controls pm-cred" hidden>
     <label class="pm-field"><span class="pm-label">Modalidade</span><select class="pm-select" id="pm-crmod"></select></label>
     <label class="pm-field"><span class="pm-label">Produto financiado</span><select class="pm-select pm-select-if" id="pm-crprod"></select></label>
@@ -215,6 +252,17 @@
     </div>
   </section>
 
+  <section class="pm-card" id="car-recorte" hidden>
+    <h2 id="pm-carrec-title">Condição do CAR por tamanho do imóvel</h2>
+    <p class="pm-note" id="pm-carrec-note">—</p>
+    <div class="pm-tablebox">
+      <table class="pm-table">
+        <thead><tr><th scope="col">Condição do CAR</th><th scope="col" class="num">Pequena</th><th scope="col" class="num">Média</th><th scope="col" class="num">Grande</th><th scope="col" class="num">Total</th><th scope="col" class="num">% do total</th></tr></thead>
+        <tbody id="pm-carrectbody"></tbody>
+      </table>
+    </div>
+  </section>
+
   <section class="pm-card" id="producao-recorte" hidden>
     <h2 id="pm-prodrec-title">Produtos mais produzidos</h2>
     <p class="pm-note" id="pm-prodrec-note">—</p>
@@ -259,8 +307,9 @@
       <p>Fonte: Banco Central do Brasil, <a href="https://www.bcb.gov.br/estabilidadefinanceira/creditorural" target="_blank" rel="noopener">bcb.gov.br/estabilidadefinanceira/creditorural</a>.</p>
     </div>
     <p><strong>Produtos financiados.</strong> Banco Central do Brasil, Matriz de Dados do Crédito Rural por produto, 2025. O filtro “Produto financiado” e o quadro de produtos por estado usam a base por estado, que é completa. Existe também uma base por município, mas nela o Banco Central omite o município sempre que a combinação de município, produto, programa, fonte de recursos e semestre tem até 3 contratos, por sigilo bancário. Isso deixa sem município 18% dos contratos e 49% do valor, de forma desigual entre produtos e programas (por exemplo, 37% do valor da soja, 62% do cacau e 92% do RenovAgro). Por isso, ao escolher um produto ou uma modalidade, o mapa passa a mostrar estados, e o filtro de bioma deixa de aparecer. A área financiada soma as áreas informadas nas operações de custeio e de investimento. <a href="dados/credito_produtos_2025.csv" download>Baixar a base de produtos financiados por estado (CSV)</a>.</p>
+    <p><strong>Imóveis rurais (CAR).</strong> Ministério do Meio Ambiente e Mudança do Clima, <a href="https://app.powerbi.com/view?r=eyJrIjoiZmRiM2QwZDQtYjUxZi00YWI0LWFjNGEtZTIxNjg1YWFkNmZlIiwidCI6ImViMjJjMjU4LWQ0ZWQtNGZmMC04Y2Y2LTI4NmQ2Mjc3OTQ5ZSJ9" target="_blank" rel="noopener">Painel de Regularização Ambiental</a>, número de cadastros e área cadastrada (ha) no Cadastro Ambiental Rural por município, tipo de imóvel, tamanho e condição do CAR; extração de outubro de 2026. Tipo de imóvel declarado no CAR: IRU, imóvel rural; PCT, imóvel rural de povos e comunidades tradicionais; AST, imóvel rural de assentamento da reforma agrária. Tamanho: pequena propriedade, imóvel com área até 4 módulos fiscais; média propriedade, imóvel rural de área superior a 4 e até 15 módulos fiscais; grande propriedade, imóvel rural de área superior a 15 módulos fiscais. O tema abre com os imóveis rurais (IRU), porque assentamentos e territórios de povos e comunidades tradicionais costumam ser cadastrados como um único imóvel coletivo e, mesmo com áreas grandes, aparecem na faixa de até 4 módulos fiscais, o que distorce a leitura de tamanho. A área cadastrada é declarada pelos próprios responsáveis e pode ter sobreposições entre cadastros; por isso, não equivale à área efetivamente ocupada (o total cadastrado no país soma cerca de 708 milhões de hectares). As participações no município comparam o tamanho escolhido com todos os tamanhos, mantendo os demais filtros; no ranking dessas participações e da área média, só entram municípios com ao menos 30 cadastros no recorte. O filtro de bioma usa o bioma predominante do município, como no restante do painel. <a href="dados/car_2025.csv" download>Baixar a base do CAR (CSV)</a>.</p>
     <p><strong>Biomas.</strong> Cada município foi associado ao seu bioma predominante, conforme a lista do IBGE (Bioma predominante por município, 2024, com base na Malha Municipal 2022 e no mapa de Biomas e Sistema Costeiro-Marinho do Brasil). Municípios na transição entre dois biomas, comuns no norte de Mato Grosso e no oeste de Minas Gerais, entram inteiros no bioma que ocupa a maior parte do território. Por isso, o filtro é um recorte por município, não uma medição exata da produção dentro de cada bioma. <a href="dados/biomas_municipios.csv" download>Baixar a lista de biomas (CSV)</a>.</p>
-    <p><strong>Mapa.</strong> Malha municipal simplificada do projeto geodata-br, com base anterior a 2013. Seis municípios criados depois (Balneário Rincão e Pescaria Brava/SC, Mojuí dos Campos/PA, Nazária/PI, Paraíso das Águas/MS e Pinto Bandeira/RS) não têm polígono próprio: seus dados entram nos totais e no ranking, mas no mapa o território aparece dentro do município de origem.</p>
+    <p><strong>Mapa.</strong> Malha municipal simplificada do projeto geodata-br, com base anterior a 2013. Sete municípios criados depois (Balneário Rincão e Pescaria Brava/SC, Mojuí dos Campos/PA, Nazária/PI, Paraíso das Águas/MS, Pinto Bandeira/RS e Boa Esperança do Norte/MT) não têm polígono próprio: seus dados entram nos totais e no ranking, mas no mapa o território aparece dentro do município de origem.</p>
     <p>Elaboração: Instituto Arapyaú.</p>
   </section>
 </main>
@@ -278,7 +327,7 @@
   const REB_TXT = { Bovino: 'o rebanho bovino', Bubalino: 'o rebanho bubalino', Equino: 'o rebanho equino', 'Suíno (total)': 'o rebanho suíno', 'Suíno – matrizes': 'as matrizes de suínos', Caprino: 'o rebanho caprino', Ovino: 'o rebanho ovino', 'Galináceos (total)': 'os galináceos', 'Galináceos – galinhas': 'as galinhas', Codornas: 'as codornas' };
   const GRUPO = { Bovino: 'Bovinos', Bubalino: 'Bubalinos', Equino: 'Equinos', 'Suíno (total)': 'Suínos', Caprino: 'Caprinos e ovinos', Ovino: 'Caprinos e ovinos', 'Galináceos (total)': 'Aves', Codornas: 'Aves' };
   const GRUPOS = [['Bovinos', '#507651'], ['Aves', '#E76129'], ['Suínos', '#9F3597'], ['Caprinos e ovinos', '#C4D75B'], ['Equinos', '#A61F2D'], ['Bubalinos', '#443C8E']];
-  const DEFAULTS = { tema: 'producao', setor: 'agricultura', pecVer: 'rebanhos', pecProd: 'Todos', pecVar: 'valor', tipo: 'Todas', produto: 'Total', variavel: 'area', uf: 'BR', bioma: 'Todos', rebanho: 'Bovino', vista: 'ua', programa: 'Todos', linha: 'Todas', finalidade: 'Todas', instituicao: 'Todas', ifin: 'Todas', cvar: 'valor', modalidade: 'Todas', produtoCr: 'Todos' };
+  const DEFAULTS = { tema: 'producao', setor: 'agricultura', carTam: 'Todos', carTipo: 'IRU', carCond: 'Todas', carVar: 'cadastros', pecVer: 'rebanhos', pecProd: 'Todos', pecVar: 'valor', tipo: 'Todas', produto: 'Total', variavel: 'area', uf: 'BR', bioma: 'Todos', rebanho: 'Bovino', vista: 'ua', programa: 'Todos', linha: 'Todas', finalidade: 'Todas', instituicao: 'Todas', ifin: 'Todas', cvar: 'valor', modalidade: 'Todas', produtoCr: 'Todos' };
   const pecUF = (p) => p.modo === 'pecuaria' && p.pecVer !== 'rebanhos';
   const GRUPO_PEC = { origem: 'Origem animal', aquicultura: 'Aquicultura' };
   const prodMode = (p) => p.modo === 'credito' && (p.modalidade !== 'Todas' || p.produtoCr !== 'Todos');
@@ -406,9 +455,13 @@
   // ---------- controles ----------
   function setState(patch) {
     state = { ...state, ...patch };
-    if (!['producao', 'credito'].includes(state.tema)) state.tema = 'producao';
     if (!['agricultura', 'pecuaria', 'todos'].includes(state.setor) || (state.tema === 'producao' && state.setor === 'todos')) state.setor = 'agricultura';
-    state.modo = state.tema === 'credito' ? 'credito' : state.setor;
+    if (!['producao', 'credito', 'car'].includes(state.tema)) state.tema = 'producao';
+    state.modo = state.tema === 'credito' ? 'credito' : state.tema === 'car' ? 'car' : state.setor;
+    if (!['Todos', 'Pequena', 'Média', 'Grande'].includes(state.carTam)) state.carTam = 'Todos';
+    if (!['IRU', 'AST', 'PCT', 'Todos'].includes(state.carTipo)) state.carTipo = 'IRU';
+    if (!['cadastros', 'area', 'media', 'pct_cad', 'pct_area'].includes(state.carVar) || (state.carTam === 'Todos' && state.carVar.startsWith('pct'))) state.carVar = 'cadastros';
+    if (K && state.carCond !== 'Todas' && !CAR_GRUPOS.some(([g, l]) => state.carCond === 'g:' + g || l.some((c) => state.carCond === 'c:' + c))) state.carCond = 'Todas';
     if (!['rebanhos', 'origem', 'aquicultura'].includes(state.pecVer)) state.pecVer = 'rebanhos';
     if (Q && state.pecVer !== 'rebanhos' && state.pecProd !== 'Todos' && !Q.lista[GRUPO_PEC[state.pecVer]].includes(state.pecProd)) state.pecProd = 'Todos';
     if (state.pecProd === 'Todos' || !['valor', 'quantidade'].includes(state.pecVar)) state.pecVar = 'valor';
@@ -437,7 +490,10 @@
   }
   const bindSeg = (id, key) => { for (const b of $(id).querySelectorAll('button')) b.addEventListener('click', () => setState({ [key]: b.dataset.v })); };
   for (const b of $('pm-tema').querySelectorAll('button')) b.addEventListener('click', () => { if (b.dataset.v !== state.tema) setState({ tema: b.dataset.v, setor: b.dataset.v === 'credito' ? 'todos' : state.setor === 'todos' ? 'agricultura' : state.setor }); });
-  bindSeg('pm-setor', 'setor'); bindSeg('pm-pecvar', 'pecVar');
+  bindSeg('pm-setor', 'setor'); bindSeg('pm-pecvar', 'pecVar'); bindSeg('pm-cartam', 'carTam');
+  $('pm-cartipo').addEventListener('change', (e) => setState({ carTipo: e.target.value }));
+  $('pm-carcond').addEventListener('change', (e) => setState({ carCond: e.target.value }));
+  $('pm-carvar').addEventListener('change', (e) => setState({ carVar: e.target.value }));
   for (const b of $('pm-pecver').querySelectorAll('button')) b.addEventListener('click', () => setState({ pecVer: b.dataset.v, pecProd: 'Todos', pecVar: 'valor' }));
   $('pm-pecprod').addEventListener('change', (e) => setState({ pecProd: e.target.value })); bindSeg('pm-crvar', 'cvar'); bindSeg('pm-tipo', 'tipo'); bindSeg('pm-var', 'variavel'); bindSeg('pm-vista', 'vista');
   $('pm-produto').addEventListener('change', (e) => setState({ produto: e.target.value }));
@@ -462,7 +518,21 @@
     $('pm-setor').querySelector('[data-v="todos"]').hidden = p.tema !== 'credito'; press('pm-var', p.variavel); press('pm-vista', p.vista);
     for (const el of document.querySelectorAll('.pm-agri')) el.hidden = p.modo !== 'agricultura';
     for (const el of document.querySelectorAll('.pm-cred')) el.hidden = p.modo !== 'credito';
+    const car = p.modo === 'car';
+    $('pm-setor').closest('.pm-field').hidden = car;
+    for (const el of document.querySelectorAll('.pm-carf')) el.hidden = !car;
+    $('aviso-car').hidden = !car; $('car-recorte').hidden = !car;
+    press('pm-cartam', p.carTam); $('pm-cartipo').value = p.carTipo;
+    const cc = $('pm-carcond');
+    if (!cc.options.length) {
+      const og = (label, items) => { const g = document.createElement('optgroup'); g.label = label; g.append(...items); return g; };
+      cc.replaceChildren(new Option('Todas as condições', 'Todas'), og('Grupos', CAR_GRUPOS.map(([g]) => new Option(g, 'g:' + g))), og('Condições em detalhe', CAR_GRUPOS.flatMap(([, l]) => l).map((c) => new Option(c, 'c:' + c))));
+    }
+    cc.value = p.carCond;
+    const cv = $('pm-carvar'); cv.value = p.carVar;
+    for (const o of cv.options) if (o.value.startsWith('pct')) { o.disabled = p.carTam === 'Todos'; o.title = o.disabled ? 'Escolha um tamanho para ver a participação' : ''; }
     for (const el of document.querySelectorAll('.pm-t23')) el.hidden = pec && !pecUF(p);
+    if (p.modo === 'car') for (const el of document.querySelectorAll('.pm-t23')) el.hidden = false;
     if (pecUF(p)) $('pm-v3').closest('.pm-tile').hidden = true;
     const opts = (id, todos, list, v) => { const e = $(id); const key = list.join('|'); if (e.dataset.k !== key) { e.replaceChildren(new Option(todos[1], todos[0]), ...list.map((x) => new Option(x, x))); e.dataset.k = key; } e.value = v; };
     opts('pm-crprog', ['Todos', 'Todos os programas'], C.programas, p.programa);
@@ -538,7 +608,7 @@
       if (!d) { tip.style('display', 'none'); hover = null; return; }
       hover = t; t.classList.add('is-hover'); t.parentNode.appendChild(t);
       if (t.classList.contains('pm-ufill')) (pecUF(current.p) ? tipPecUF : tipUF)(d[0]);
-      else (current.p.modo === 'credito' ? tipCred : current.p.modo === 'pecuaria' ? tipPec : tipAgri)(d[0]);
+      else (current.p.modo === 'car' ? tipCar : current.p.modo === 'credito' ? tipCred : current.p.modo === 'pecuaria' ? tipPec : tipAgri)(d[0]);
       placeTip(event);
     };
     svg.on('pointermove', move).on('pointerdown', move);
@@ -963,7 +1033,7 @@
   // ---------- produtos e rebanhos do recorte (estado e/ou bioma) ----------
   function drawProducaoRecorte(p) {
     const card = $('producao-recorte');
-    card.hidden = p.modo === 'credito' || (!pecUF(p) && p.uf === 'BR' && p.bioma === 'Todos');
+    card.hidden = p.modo === 'credito' || p.modo === 'car' || (!pecUF(p) && p.uf === 'BR' && p.bioma === 'Todos');
     if (card.hidden) return;
     if (pecUF(p)) return drawPecUFRecorte(p);
     const tb = $('pm-prodrectbody');
@@ -1126,12 +1196,119 @@
     $('pm-prodrec-note').textContent = final.length ? 'Produtos ordenados pelo valor da produção (dados por estado).' + (peixes ? ' As espécies de peixes aparecem recuadas abaixo de “Peixes (total)”.' : '') + ' Clique em um produto para vê-lo no mapa.' : 'Nenhuma produção registrada neste recorte.';
   }
 
+  // ---------- imóveis rurais (CAR) ----------
+  let K = null;
+  const CAR_GRUPOS = [
+    ['Aguardando análise', ['Aguardando análise', 'Aguardando análise, após revisão ou atendimento da notificação']],
+    ['Em análise', ['Em análise']],
+    ['Analisado, com pendências', ['Analisado, aguardando atendimento a notificação', 'Analisado, aguardando regularização ambiental (Lei nº 12.651/2012)']],
+    ['Analisado, em regularização ambiental', ['Analisado, em regularização ambiental (Lei nº 12.651/2012)', 'Analisado, em regularização ambiental (Lei nº 12.651/2012), com ativos ambientais']],
+    ['Analisado, em conformidade', ['Analisado sem pendências', 'Analisado, em conformidade com a Lei nº 12.651/2012', 'Analisado, em conformidade com a Lei nº 12.651/2012, com ativos ambientais']],
+    ['Cancelado', ['Cancelado por decisão administrativa']],
+  ];
+  const CAR_GRUPO_DE = Object.fromEntries(CAR_GRUPOS.flatMap(([g, l]) => l.map((c) => [c, g])));
+  const CAR_TIPO_TXT = { IRU: 'os imóveis rurais (IRU)', AST: 'os assentamentos da reforma agrária (AST)', PCT: 'os imóveis de povos e comunidades tradicionais (PCT)', Todos: 'os imóveis de todos os tipos' };
+  const CAR_TAM_TXT = { Pequena: 'pequenas propriedades', 'Média': 'médias propriedades', Grande: 'grandes propriedades' };
+  const fmtPct = (x) => (x == null ? '—' : (x * 100).toLocaleString('pt-BR', { maximumFractionDigits: 1 }) + '%');
+  function indexCar(raw) {
+    const mun = raw.municipios.map(([cod, nome, uf]) => ({ cod, nome, uf }));
+    const all = raw.dados.map(([m, t, ti, c, n, a]) => ({ cod: mun[m].cod, tamanho: raw.tamanhos[t], tipo: raw.tipos[ti], condicao: raw.condicoes[c], grupo: CAR_GRUPO_DE[raw.condicoes[c]] || raw.condicoes[c], n, area: a }));
+    return { all, porMun: d3.group(all, (r) => r.cod), names: new Map(mun.map((x) => [x.cod, x])) };
+  }
+  const carCondOk = (p, r) => p.carCond === 'Todas' || (p.carCond.startsWith('g:') ? r.grupo === p.carCond.slice(2) : r.condicao === p.carCond.slice(2));
+  const carOk = (p, r, skip) => (skip === 'tamanho' || p.carTam === 'Todos' || r.tamanho === p.carTam) && (p.carTipo === 'Todos' || r.tipo === p.carTipo) && (skip === 'condicao' || carCondOk(p, r));
+  const carPct = (p) => p.carVar.startsWith('pct');
+  function tipCar(cod) {
+    const { p, rows } = current, r = rows.get(cod);
+    tipHead(cod, K.names);
+    if (!r || !r.nTot) { tip.append('div').text('Sem cadastros neste recorte.'); return; }
+    tipLine('Cadastros', nInt.format(r.n)); tipLine('Área cadastrada', fmtBig(r.area) + ' ha'); if (r.n) tipLine('Área média', fmtBig(r.media) + ' ha');
+    const ops = K.porMun.get(cod) || [];
+    const t = d3.rollup(ops.filter((o) => carOk(p, o, 'tamanho')), (v) => ({ n: d3.sum(v, (o) => o.n), a: d3.sum(v, (o) => o.area) }), (o) => o.tamanho);
+    const tn = d3.sum([...t.values()], (x) => x.n), ta = d3.sum([...t.values()], (x) => x.a);
+    tip.append('div').attr('class', 'pm-tip-sec').text('Por tamanho (cadastros | área)');
+    const g = tip.append('div').attr('class', 'pm-tip-grid');
+    for (const k of ['Pequena', 'Média', 'Grande']) { const x = t.get(k) || { n: 0, a: 0 }, w = p.carTam === k ? 800 : null; g.append('span').style('font-weight', w).text(k); g.append('span').style('font-weight', w).text((tn ? Math.round((x.n / tn) * 100) : 0) + '% | ' + (ta ? Math.round((x.a / ta) * 100) : 0) + '%'); }
+    const c = d3.rollups(ops.filter((o) => carOk(p, o, 'condicao')), (v) => d3.sum(v, (o) => o.n), (o) => o.grupo).sort((a, b) => b[1] - a[1]), tc = d3.sum(c, (x) => x[1]);
+    if (!tc) return;
+    tip.append('div').attr('class', 'pm-tip-sec').text('Condição do CAR (cadastros)');
+    const g2 = tip.append('div').attr('class', 'pm-tip-grid');
+    for (const [k, v] of c) { g2.append('span').text(k); g2.append('span').text(pct(v / tc)); }
+  }
+  function renderCar(p) {
+    const rows = new Map();
+    for (const r of K.all) {
+      if (!carOk(p, r, 'tamanho')) continue;
+      let a = rows.get(r.cod);
+      if (!a) { const nm = K.names.get(r.cod); a = { cod: r.cod, nome: nm.nome, uf: nm.uf, n: 0, area: 0, nTot: 0, areaTot: 0 }; rows.set(r.cod, a); }
+      a.nTot += r.n; a.areaTot += r.area;
+      if (p.carTam === 'Todos' || r.tamanho === p.carTam) { a.n += r.n; a.area += r.area; }
+    }
+    for (const a of rows.values()) { a.media = a.n ? a.area / a.n : 0; a.pct_cad = a.nTot ? a.n / a.nTot : 0; a.pct_area = a.areaTot ? a.area / a.areaTot : 0; a.val = p.carVar === 'cadastros' ? a.n : p.carVar === 'area' ? a.area : a[p.carVar]; }
+    current = { p, rows };
+    const fmtL = (x) => (p.carVar === 'cadastros' ? fmtBig(x) : carPct(p) ? fmtPct(x) : fmtBig(x) + ' ha');
+    drawChoro(p, rows, 'val', fmtL, 'Sem cadastros');
+    const varNome = { cadastros: 'número de cadastros', area: 'área cadastrada', media: 'área média por imóvel', pct_cad: 'participação nos cadastros do município', pct_area: 'participação na área cadastrada do município' }[p.carVar];
+    const filtros = [p.carTam !== 'Todos' ? p.carTam.toLowerCase() + ' propriedade' : null, p.carTipo !== 'Todos' ? p.carTipo : 'todos os tipos', p.carCond !== 'Todas' ? p.carCond.slice(2) : null].filter(Boolean);
+    $('pm-map-title').textContent = 'Imóveis rurais no CAR, ' + varNome + ': ' + filtros.join(', ') + sufixo(p);
+    $('pm-map-note').textContent = 'Cores em sete faixas com o mesmo número de municípios cada. Passe o mouse (ou toque) em um município para ver a divisão por tamanho e a condição do CAR.';
+    // ranking
+    const minimo = carPct(p) || p.carVar === 'media' ? 30 : 1;
+    const lista = [...rows.values()].filter((r) => inScope(p, r.cod) && r.val > 0 && (minimo === 1 || (carPct(p) ? r.nTot : r.n) >= minimo)).sort((a, b) => b.val - a.val);
+    const top = lista.slice(0, 25), max = top.length ? top[0].val : 1;
+    $('pm-rank-title').textContent = 'Maiores municípios'; $('pm-th-nome').textContent = 'Município'; $('pm-th-pred').hidden = true;
+    $('pm-th-val').textContent = { cadastros: 'Cadastros', area: 'Área (ha)', media: 'Área média (ha)', pct_cad: '% dos cadastros', pct_area: '% da área' }[p.carVar];
+    $('pm-tbody').replaceChildren(...top.map((r, i) => {
+      const tr = document.createElement('tr');
+      const td = (t, c) => { const e = document.createElement('td'); if (c) e.className = c; e.textContent = t; tr.append(e); return e; };
+      td(i + 1, 'pm-rank'); td(r.nome); td(r.uf);
+      const cell = td(carPct(p) ? fmtPct(r.val) : nInt.format(r.val), 'num');
+      const bar = document.createElement('div'); bar.className = 'pm-bar'; bar.style.width = Math.max(2, (r.val / max) * 100) + '%'; cell.append(bar);
+      return tr;
+    }));
+    $('pm-rank-note').textContent = top.length ? 'Os ' + top.length + ' municípios com maior ' + varNome + ' ' + recorte(p) + (minimo > 1 ? ' (com ao menos 30 cadastros no recorte).' : '.') : 'Nenhum município neste recorte.';
+    // totais
+    let n = 0, area = 0, nTot = 0, aTot = 0, k = 0;
+    for (const r of rows.values()) if (inScope(p, r.cod)) { n += r.n; area += r.area; nTot += r.nTot; aTot += r.areaTot; if (r.n > 0) k += 1; }
+    tiles('Cadastros', fmtBig(n), p.carTam === 'Todos' ? 'imóveis inscritos no CAR' : fmtPct(nTot ? n / nTot : null) + ' dos cadastros do recorte', 'Municípios', nInt.format(k), 'com ao menos um cadastro');
+    $('pm-l2').textContent = 'Área cadastrada'; $('pm-v2').textContent = fmtBig(area); $('pm-n2').textContent = p.carTam === 'Todos' ? 'hectares declarados' : 'hectares, ' + fmtPct(aTot ? area / aTot : null) + ' da área do recorte';
+    $('pm-l3').textContent = 'Área média por imóvel'; $('pm-v3').textContent = n ? fmtBig(area / n) : '—'; $('pm-n3').textContent = 'hectares';
+    // frase-resumo
+    const porTam = d3.rollup(K.all.filter((r) => carOk(p, r, 'tamanho') && inScope(p, r.cod)), (v) => ({ n: d3.sum(v, (o) => o.n), a: d3.sum(v, (o) => o.area) }), (r) => r.tamanho);
+    const TN = d3.sum([...porTam.values()], (x) => x.n), TA = d3.sum([...porTam.values()], (x) => x.a);
+    if (!TN) take([[escopoTxt(p) + ', não há cadastros neste recorte.']]);
+    else {
+      const foco = p.carTam === 'Todos' ? 'Grande' : p.carTam, f = porTam.get(foco) || { n: 0, a: 0 };
+      take([[escopoTxt(p) + ', ' + CAR_TIPO_TXT[p.carTipo] + (p.carCond !== 'Todas' ? ' na condição “' + p.carCond.slice(2) + '”' : '') + ' somam '], [fmtBig(TN), 1], [' cadastros e '], [fmtBig(TA) + ' ha', 1],
+        ['. As ' + CAR_TAM_TXT[foco] + ' são '], [fmtPct(f.n / TN), 1], [' dos cadastros e ocupam '], [fmtPct(TA ? f.a / TA : null), 1], [' da área cadastrada.']]);
+    }
+    // tabela condição × tamanho
+    const usaArea = ['area', 'pct_area', 'media'].includes(p.carVar), agg = new Map();
+    for (const r of K.all) {
+      if (!inScope(p, r.cod) || !carOk(p, r, 'tamanho')) continue;
+      let a = agg.get(r.grupo); if (!a) { a = { Pequena: 0, 'Média': 0, Grande: 0 }; agg.set(r.grupo, a); }
+      a[r.tamanho] += usaArea ? r.area : r.n;
+    }
+    const tot = d3.sum([...agg.values()], (a) => a.Pequena + a['Média'] + a.Grande), fmt = (x) => (usaArea ? fmtBig(x) : nInt.format(x)), soma = { Pequena: 0, 'Média': 0, Grande: 0 };
+    const tb = $('pm-carrectbody'); tb.replaceChildren();
+    const linha = (cells, bold) => { const tr = document.createElement('tr'); for (const [v, c] of cells) { const td = document.createElement('td'); if (c) td.className = c; if (bold) td.style.fontWeight = 800; td.textContent = v; tr.append(td); } tb.append(tr); };
+    for (const [g] of CAR_GRUPOS) {
+      const a = agg.get(g); if (!a) continue;
+      const t = a.Pequena + a['Média'] + a.Grande; if (!t) continue;
+      for (const x in soma) soma[x] += a[x];
+      linha([[g], [fmt(a.Pequena), 'num'], [fmt(a['Média']), 'num'], [fmt(a.Grande), 'num'], [fmt(t), 'num'], [tot ? fmtPct(t / tot) : '—', 'num']]);
+    }
+    linha([['Total'], [fmt(soma.Pequena), 'num'], [fmt(soma['Média']), 'num'], [fmt(soma.Grande), 'num'], [fmt(tot), 'num'], ['100%', 'num']], true);
+    $('pm-carrec-title').textContent = 'Condição do CAR por tamanho do imóvel ' + recorte(p);
+    $('pm-carrec-note').textContent = (usaArea ? 'Área cadastrada (ha)' : 'Número de cadastros') + ' de ' + CAR_TIPO_TXT[p.carTipo].replace(/^os /, '') + ', por condição do CAR (agrupada) e tamanho. A tabela mostra ' + (usaArea ? 'área' : 'cadastros') + ' conforme a variável escolhida no mapa.';
+  }
+
   function render() {
-    if (!A || !P || !C || !PR || !Q || !svg) return;
+    if (!A || !P || !C || !PR || !Q || !K || !svg) return;
     const p = state;
     drawControls(p);
     $('pm-map-note').textContent = NOTA_MAPA;
-    (pecUF(p) ? renderPecUF : prodMode(p) ? renderProd : p.modo === 'credito' ? renderCred : p.modo === 'pecuaria' ? renderPec : renderAgri)(p);
+    (p.modo === 'car' ? renderCar : pecUF(p) ? renderPecUF : prodMode(p) ? renderProd : p.modo === 'credito' ? renderCred : p.modo === 'pecuaria' ? renderPec : renderAgri)(p);
     drawProducaoRecorte(p);
     semRecorte(p);
     postHeight();
@@ -1148,9 +1325,9 @@
   window.addEventListener('hashchange', () => { state = { ...DEFAULTS }; readHash(); setState({}); });
   const get = (u) => fetch(u).then((r) => { if (!r.ok) throw new Error(u); return r.json(); });
   const getTxt = (u) => fetch(u).then((r) => { if (!r.ok) throw new Error(u); return r.text(); });
-  Promise.all([get('dados/pam_2025.json'), get('dados/ppm_2025.json'), get('dados/malha.json'), getTxt('dados/biomas_municipios.csv'), get('dados/malha_biomas.json'), get('dados/credito_2025.json'), get('dados/credito_produtos_2025.json'), getTxt('dados/pecuaria_produtos_uf_2025.csv')])
-    .then(([pam, ppm, malha, biomas, bios, cred, prodCr, pecTxt]) => {
-      A = indexAgri(pam); P = indexPec(ppm); C = indexCred(cred); PR = indexProd(prodCr); Q = indexPecUF(pecTxt);
+  Promise.all([get('dados/pam_2025.json'), get('dados/ppm_2025.json'), get('dados/malha.json'), getTxt('dados/biomas_municipios.csv'), get('dados/malha_biomas.json'), get('dados/credito_2025.json'), get('dados/credito_produtos_2025.json'), getTxt('dados/pecuaria_produtos_uf_2025.csv'), get('dados/car_2025.json')])
+    .then(([pam, ppm, malha, biomas, bios, cred, prodCr, pecTxt, carRaw]) => {
+      A = indexAgri(pam); P = indexPec(ppm); C = indexCred(cred); PR = indexProd(prodCr); Q = indexPecUF(pecTxt); K = indexCar(carRaw);
       biomaDe = new Map(d3.csvParse(biomas).map((b) => [b.cod_ibge, b.bioma]));
       buildMap(malha, bios);
       setState({});
