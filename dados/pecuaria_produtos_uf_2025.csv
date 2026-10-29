@@ -1,0 +1,515 @@
+uf,grupo,produto,agregado,unidade,quantidade,valor_mil_reais
+RO,Aquicultura,Peixes (total),1,kg,64754995,780694
+AC,Aquicultura,Peixes (total),1,kg,2312381,35778
+AM,Aquicultura,Peixes (total),1,kg,9258880,141756
+RR,Aquicultura,Peixes (total),1,kg,13908248,179131
+PA,Aquicultura,Peixes (total),1,kg,18407659,284485
+AP,Aquicultura,Peixes (total),1,kg,1086438,16942
+TO,Aquicultura,Peixes (total),1,kg,15559119,241889
+MA,Aquicultura,Peixes (total),1,kg,32828802,356305
+PI,Aquicultura,Peixes (total),1,kg,12590319,144570
+CE,Aquicultura,Peixes (total),1,kg,16251782,178161
+RN,Aquicultura,Peixes (total),1,kg,2888443,36786
+PB,Aquicultura,Peixes (total),1,kg,4232549,56575
+PE,Aquicultura,Peixes (total),1,kg,30247473,425894
+AL,Aquicultura,Peixes (total),1,kg,13431662,198755
+SE,Aquicultura,Peixes (total),1,kg,1034908,12824
+BA,Aquicultura,Peixes (total),1,kg,16744185,180452
+MG,Aquicultura,Peixes (total),1,kg,64124567,609133
+ES,Aquicultura,Peixes (total),1,kg,7175165,78070
+RJ,Aquicultura,Peixes (total),1,kg,2538971,34793
+SP,Aquicultura,Peixes (total),1,kg,72119289,651174
+PR,Aquicultura,Peixes (total),1,kg,214178117,1986282
+SC,Aquicultura,Peixes (total),1,kg,49262352,487414
+RS,Aquicultura,Peixes (total),1,kg,11850466,154224
+MS,Aquicultura,Peixes (total),1,kg,20124437,175978
+MT,Aquicultura,Peixes (total),1,kg,64382720,825098
+GO,Aquicultura,Peixes (total),1,kg,19117716,184635
+DF,Aquicultura,Peixes (total),1,kg,2636951,31309
+RO,Aquicultura,Carpa,0,kg,768,11
+PA,Aquicultura,Carpa,0,kg,2250,34
+MA,Aquicultura,Carpa,0,kg,9520,100
+PI,Aquicultura,Carpa,0,kg,100,3
+CE,Aquicultura,Carpa,0,kg,210,3
+PE,Aquicultura,Carpa,0,kg,9159,135
+AL,Aquicultura,Carpa,0,kg,67594,1140
+BA,Aquicultura,Carpa,0,kg,178014,1752
+MG,Aquicultura,Carpa,0,kg,15239,198
+ES,Aquicultura,Carpa,0,kg,3848,43
+RJ,Aquicultura,Carpa,0,kg,61958,1229
+SP,Aquicultura,Carpa,0,kg,99760,1289
+PR,Aquicultura,Carpa,0,kg,2629984,34643
+SC,Aquicultura,Carpa,0,kg,4909748,63992
+RS,Aquicultura,Carpa,0,kg,5612320,73203
+MS,Aquicultura,Carpa,0,kg,4600,86
+MT,Aquicultura,Carpa,0,kg,5651,113
+RO,Aquicultura,"Curimatã, curimbatá",0,kg,21575,302
+AC,Aquicultura,"Curimatã, curimbatá",0,kg,297371,4799
+AM,Aquicultura,"Curimatã, curimbatá",0,kg,14200,308
+PA,Aquicultura,"Curimatã, curimbatá",0,kg,24200,357
+TO,Aquicultura,"Curimatã, curimbatá",0,kg,43000,548
+MA,Aquicultura,"Curimatã, curimbatá",0,kg,2684467,31933
+PI,Aquicultura,"Curimatã, curimbatá",0,kg,46813,555
+CE,Aquicultura,"Curimatã, curimbatá",0,kg,110,2
+RN,Aquicultura,"Curimatã, curimbatá",0,kg,205873,1417
+PB,Aquicultura,"Curimatã, curimbatá",0,kg,255,4
+PE,Aquicultura,"Curimatã, curimbatá",0,kg,5075,67
+AL,Aquicultura,"Curimatã, curimbatá",0,kg,32500,548
+SE,Aquicultura,"Curimatã, curimbatá",0,kg,18908,227
+BA,Aquicultura,"Curimatã, curimbatá",0,kg,104635,1180
+MG,Aquicultura,"Curimatã, curimbatá",0,kg,4975,93
+RJ,Aquicultura,"Curimatã, curimbatá",0,kg,3810,68
+SP,Aquicultura,"Curimatã, curimbatá",0,kg,56200,687
+PR,Aquicultura,"Curimatã, curimbatá",0,kg,10115,125
+RS,Aquicultura,"Curimatã, curimbatá",0,kg,4878,86
+MS,Aquicultura,"Curimatã, curimbatá",0,kg,50,1
+MT,Aquicultura,"Curimatã, curimbatá",0,kg,40657,744
+GO,Aquicultura,"Curimatã, curimbatá",0,kg,6000,57
+BA,Aquicultura,Dourado,0,kg,2855,36
+MG,Aquicultura,Dourado,0,kg,1010,35
+RJ,Aquicultura,Dourado,0,kg,1000,40
+SP,Aquicultura,Dourado,0,kg,58045,1395
+PR,Aquicultura,Dourado,0,kg,2537,52
+SC,Aquicultura,Dourado,0,kg,450,14
+RS,Aquicultura,Dourado,0,kg,3182,88
+MT,Aquicultura,Dourado,0,kg,1245,22
+RO,Aquicultura,"Jatuarana, piabanha e piracanjuba",0,kg,76893,1056
+PA,Aquicultura,"Jatuarana, piabanha e piracanjuba",0,kg,110820,1568
+TO,Aquicultura,"Jatuarana, piabanha e piracanjuba",0,kg,11927,219
+MA,Aquicultura,"Jatuarana, piabanha e piracanjuba",0,kg,40200,467
+PI,Aquicultura,"Jatuarana, piabanha e piracanjuba",0,kg,20044,287
+SP,Aquicultura,"Jatuarana, piabanha e piracanjuba",0,kg,3300,46
+MT,Aquicultura,"Jatuarana, piabanha e piracanjuba",0,kg,149211,1747
+AL,Aquicultura,Lambari,0,kg,1000,20
+BA,Aquicultura,Lambari,0,kg,1300,13
+MG,Aquicultura,Lambari,0,kg,63287,758
+ES,Aquicultura,Lambari,0,kg,700,8
+RJ,Aquicultura,Lambari,0,kg,170,7
+SP,Aquicultura,Lambari,0,kg,60188,1682
+PR,Aquicultura,Lambari,0,kg,8260,122
+SC,Aquicultura,Lambari,0,kg,9960,126
+RS,Aquicultura,Lambari,0,kg,32585,551
+MS,Aquicultura,Lambari,0,kg,1113,25
+MT,Aquicultura,Lambari,0,kg,5500,88
+GO,Aquicultura,Lambari,0,kg,58810,1396
+RO,Aquicultura,Matrinxã,0,kg,26541,350
+AC,Aquicultura,Matrinxã,0,kg,192775,3523
+AM,Aquicultura,Matrinxã,0,kg,1428470,22325
+RR,Aquicultura,Matrinxã,0,kg,262200,3820
+PA,Aquicultura,Matrinxã,0,kg,727160,12723
+TO,Aquicultura,Matrinxã,0,kg,478852,7188
+MA,Aquicultura,Matrinxã,0,kg,55314,708
+CE,Aquicultura,Matrinxã,0,kg,50,1
+BA,Aquicultura,Matrinxã,0,kg,5395,55
+MG,Aquicultura,Matrinxã,0,kg,19695,271
+RJ,Aquicultura,Matrinxã,0,kg,2750,57
+SP,Aquicultura,Matrinxã,0,kg,53295,725
+PR,Aquicultura,Matrinxã,0,kg,992,12
+MS,Aquicultura,Matrinxã,0,kg,3609,67
+MT,Aquicultura,Matrinxã,0,kg,1468385,22654
+GO,Aquicultura,Matrinxã,0,kg,34050,375
+DF,Aquicultura,Matrinxã,0,kg,24539,319
+RO,Aquicultura,Pacu e patinga,0,kg,173465,2329
+AC,Aquicultura,Pacu e patinga,0,kg,5850,84
+AM,Aquicultura,Pacu e patinga,0,kg,10100,152
+PA,Aquicultura,Pacu e patinga,0,kg,49000,849
+TO,Aquicultura,Pacu e patinga,0,kg,71693,1205
+MA,Aquicultura,Pacu e patinga,0,kg,2260255,26410
+AL,Aquicultura,Pacu e patinga,0,kg,2100,64
+BA,Aquicultura,Pacu e patinga,0,kg,73570,715
+MG,Aquicultura,Pacu e patinga,0,kg,73993,965
+ES,Aquicultura,Pacu e patinga,0,kg,400,0
+RJ,Aquicultura,Pacu e patinga,0,kg,172,3
+SP,Aquicultura,Pacu e patinga,0,kg,1245993,14931
+PR,Aquicultura,Pacu e patinga,0,kg,1242808,17153
+SC,Aquicultura,Pacu e patinga,0,kg,65240,929
+RS,Aquicultura,Pacu e patinga,0,kg,26342,369
+MS,Aquicultura,Pacu e patinga,0,kg,294643,5060
+MT,Aquicultura,Pacu e patinga,0,kg,340615,4825
+GO,Aquicultura,Pacu e patinga,0,kg,583720,7531
+DF,Aquicultura,Pacu e patinga,0,kg,15014,165
+RO,Aquicultura,"Piau, piapara, piauçu, piava",0,kg,28503,353
+AC,Aquicultura,"Piau, piapara, piauçu, piava",0,kg,297447,5123
+PA,Aquicultura,"Piau, piapara, piauçu, piava",0,kg,234670,4279
+TO,Aquicultura,"Piau, piapara, piauçu, piava",0,kg,394958,5926
+MA,Aquicultura,"Piau, piapara, piauçu, piava",0,kg,1004114,13448
+PI,Aquicultura,"Piau, piapara, piauçu, piava",0,kg,9896,154
+CE,Aquicultura,"Piau, piapara, piauçu, piava",0,kg,7000,114
+RN,Aquicultura,"Piau, piapara, piauçu, piava",0,kg,13269,96
+PB,Aquicultura,"Piau, piapara, piauçu, piava",0,kg,425,6
+AL,Aquicultura,"Piau, piapara, piauçu, piava",0,kg,500,7
+BA,Aquicultura,"Piau, piapara, piauçu, piava",0,kg,8255,95
+MG,Aquicultura,"Piau, piapara, piauçu, piava",0,kg,26300,372
+ES,Aquicultura,"Piau, piapara, piauçu, piava",0,kg,800,11
+RJ,Aquicultura,"Piau, piapara, piauçu, piava",0,kg,100,3
+SP,Aquicultura,"Piau, piapara, piauçu, piava",0,kg,87363,1264
+PR,Aquicultura,"Piau, piapara, piauçu, piava",0,kg,80901,1328
+RS,Aquicultura,"Piau, piapara, piauçu, piava",0,kg,17146,264
+MS,Aquicultura,"Piau, piapara, piauçu, piava",0,kg,5600,113
+MT,Aquicultura,"Piau, piapara, piauçu, piava",0,kg,388016,4684
+GO,Aquicultura,"Piau, piapara, piauçu, piava",0,kg,161601,2078
+DF,Aquicultura,"Piau, piapara, piauçu, piava",0,kg,8788,97
+RO,Aquicultura,"Pintado, cachara, cachapira e pintachara, surubim",0,kg,1372783,22046
+AC,Aquicultura,"Pintado, cachara, cachapira e pintachara, surubim",0,kg,31971,623
+PA,Aquicultura,"Pintado, cachara, cachapira e pintachara, surubim",0,kg,266500,5733
+TO,Aquicultura,"Pintado, cachara, cachapira e pintachara, surubim",0,kg,1868233,33373
+MA,Aquicultura,"Pintado, cachara, cachapira e pintachara, surubim",0,kg,336066,4628
+PI,Aquicultura,"Pintado, cachara, cachapira e pintachara, surubim",0,kg,12909,266
+SE,Aquicultura,"Pintado, cachara, cachapira e pintachara, surubim",0,kg,3350,70
+BA,Aquicultura,"Pintado, cachara, cachapira e pintachara, surubim",0,kg,263286,3341
+MG,Aquicultura,"Pintado, cachara, cachapira e pintachara, surubim",0,kg,187617,3822
+ES,Aquicultura,"Pintado, cachara, cachapira e pintachara, surubim",0,kg,5800,95
+RJ,Aquicultura,"Pintado, cachara, cachapira e pintachara, surubim",0,kg,320,9
+SP,Aquicultura,"Pintado, cachara, cachapira e pintachara, surubim",0,kg,110350,2100
+PR,Aquicultura,"Pintado, cachara, cachapira e pintachara, surubim",0,kg,5279,71
+SC,Aquicultura,"Pintado, cachara, cachapira e pintachara, surubim",0,kg,2416,38
+RS,Aquicultura,"Pintado, cachara, cachapira e pintachara, surubim",0,kg,4577,99
+MS,Aquicultura,"Pintado, cachara, cachapira e pintachara, surubim",0,kg,48920,1072
+MT,Aquicultura,"Pintado, cachara, cachapira e pintachara, surubim",0,kg,14060501,235289
+GO,Aquicultura,"Pintado, cachara, cachapira e pintachara, surubim",0,kg,293795,6459
+DF,Aquicultura,"Pintado, cachara, cachapira e pintachara, surubim",0,kg,118663,1977
+RO,Aquicultura,Pirapitinga,0,kg,339259,4030
+AC,Aquicultura,Pirapitinga,0,kg,373899,5292
+AM,Aquicultura,Pirapitinga,0,kg,48000,765
+PA,Aquicultura,Pirapitinga,0,kg,211690,3397
+AP,Aquicultura,Pirapitinga,0,kg,135217,2148
+TO,Aquicultura,Pirapitinga,0,kg,230096,3999
+MA,Aquicultura,Pirapitinga,0,kg,137206,1550
+CE,Aquicultura,Pirapitinga,0,kg,110,2
+BA,Aquicultura,Pirapitinga,0,kg,14705,150
+MG,Aquicultura,Pirapitinga,0,kg,385,6
+SP,Aquicultura,Pirapitinga,0,kg,135450,1964
+MT,Aquicultura,Pirapitinga,0,kg,115520,2402
+GO,Aquicultura,Pirapitinga,0,kg,103410,1236
+RO,Aquicultura,Pirarucu,0,kg,726984,11651
+AC,Aquicultura,Pirarucu,0,kg,24297,461
+AM,Aquicultura,Pirarucu,0,kg,123380,1811
+RR,Aquicultura,Pirarucu,0,kg,13800,207
+PA,Aquicultura,Pirarucu,0,kg,271710,6728
+AP,Aquicultura,Pirarucu,0,kg,7484,225
+TO,Aquicultura,Pirarucu,0,kg,71833,1476
+MA,Aquicultura,Pirarucu,0,kg,85950,1894
+PI,Aquicultura,Pirarucu,0,kg,800,25
+CE,Aquicultura,Pirarucu,0,kg,8439,287
+RN,Aquicultura,Pirarucu,0,kg,5500,275
+PE,Aquicultura,Pirarucu,0,kg,208,3
+AL,Aquicultura,Pirarucu,0,kg,7300,145
+BA,Aquicultura,Pirarucu,0,kg,88870,1464
+MG,Aquicultura,Pirarucu,0,kg,3590,62
+ES,Aquicultura,Pirarucu,0,kg,2400,31
+RJ,Aquicultura,Pirarucu,0,kg,1500,45
+MT,Aquicultura,Pirarucu,0,kg,234100,6002
+GO,Aquicultura,Pirarucu,0,kg,500,10
+RO,Aquicultura,"Tambacu, tambatinga",0,kg,4447794,53856
+AC,Aquicultura,"Tambacu, tambatinga",0,kg,206037,2815
+PA,Aquicultura,"Tambacu, tambatinga",0,kg,5741655,88213
+AP,Aquicultura,"Tambacu, tambatinga",0,kg,202658,2933
+TO,Aquicultura,"Tambacu, tambatinga",0,kg,4240079,53741
+MA,Aquicultura,"Tambacu, tambatinga",0,kg,12219480,118173
+PI,Aquicultura,"Tambacu, tambatinga",0,kg,1194236,16779
+SE,Aquicultura,"Tambacu, tambatinga",0,kg,2106,23
+BA,Aquicultura,"Tambacu, tambatinga",0,kg,994875,8889
+MG,Aquicultura,"Tambacu, tambatinga",0,kg,50761,658
+ES,Aquicultura,"Tambacu, tambatinga",0,kg,400,5
+RJ,Aquicultura,"Tambacu, tambatinga",0,kg,19735,410
+SP,Aquicultura,"Tambacu, tambatinga",0,kg,286205,4283
+PR,Aquicultura,"Tambacu, tambatinga",0,kg,369374,4844
+RS,Aquicultura,"Tambacu, tambatinga",0,kg,480,6
+MS,Aquicultura,"Tambacu, tambatinga",0,kg,78723,1548
+MT,Aquicultura,"Tambacu, tambatinga",0,kg,32899175,379994
+GO,Aquicultura,"Tambacu, tambatinga",0,kg,1206890,15572
+DF,Aquicultura,"Tambacu, tambatinga",0,kg,20512,256
+RO,Aquicultura,Tambaqui,0,kg,57378014,682508
+AC,Aquicultura,Tambaqui,0,kg,865699,12795
+AM,Aquicultura,Tambaqui,0,kg,7634730,116396
+RR,Aquicultura,Tambaqui,0,kg,13632248,175104
+PA,Aquicultura,Tambaqui,0,kg,9651992,144084
+AP,Aquicultura,Tambaqui,0,kg,651945,10480
+TO,Aquicultura,Tambaqui,0,kg,7329588,123022
+MA,Aquicultura,Tambaqui,0,kg,8076003,89522
+PI,Aquicultura,Tambaqui,0,kg,3799480,51735
+CE,Aquicultura,Tambaqui,0,kg,23164,349
+RN,Aquicultura,Tambaqui,0,kg,207986,1059
+PB,Aquicultura,Tambaqui,0,kg,13000,187
+PE,Aquicultura,Tambaqui,0,kg,175189,2580
+AL,Aquicultura,Tambaqui,0,kg,3269161,46980
+SE,Aquicultura,Tambaqui,0,kg,700747,8314
+BA,Aquicultura,Tambaqui,0,kg,1504231,15787
+MG,Aquicultura,Tambaqui,0,kg,365032,4033
+ES,Aquicultura,Tambaqui,0,kg,15329,199
+RJ,Aquicultura,Tambaqui,0,kg,15771,251
+SP,Aquicultura,Tambaqui,0,kg,12205,148
+PR,Aquicultura,Tambaqui,0,kg,3100,38
+SC,Aquicultura,Tambaqui,0,kg,2500,41
+MS,Aquicultura,Tambaqui,0,kg,3583,73
+MT,Aquicultura,Tambaqui,0,kg,8430290,110455
+GO,Aquicultura,Tambaqui,0,kg,694295,8784
+DF,Aquicultura,Tambaqui,0,kg,51272,641
+RO,Aquicultura,Tilápia,0,kg,117716,1616
+AC,Aquicultura,Tilápia,0,kg,17035,262
+PA,Aquicultura,Tilápia,0,kg,1059702,15616
+AP,Aquicultura,Tilápia,0,kg,89134,1156
+TO,Aquicultura,Tilápia,0,kg,768650,10263
+MA,Aquicultura,Tilápia,0,kg,5295461,61857
+PI,Aquicultura,Tilápia,0,kg,7364972,72674
+CE,Aquicultura,Tilápia,0,kg,16196959,177227
+RN,Aquicultura,Tilápia,0,kg,2292417,32917
+PB,Aquicultura,Tilápia,0,kg,4218027,56367
+PE,Aquicultura,Tilápia,0,kg,30025068,422664
+AL,Aquicultura,Tilápia,0,kg,10025357,149477
+SE,Aquicultura,Tilápia,0,kg,301258,4061
+BA,Aquicultura,Tilápia,0,kg,13284319,144118
+MG,Aquicultura,Tilápia,0,kg,62300943,574410
+ES,Aquicultura,Tilápia,0,kg,7143388,77653
+RJ,Aquicultura,Tilápia,0,kg,2372725,30277
+SP,Aquicultura,Tilápia,0,kg,68455539,606759
+PR,Aquicultura,Tilápia,0,kg,209329321,1921436
+SC,Aquicultura,Tilápia,0,kg,43158483,405279
+RS,Aquicultura,Tilápia,0,kg,5720846,72963
+MS,Aquicultura,Tilápia,0,kg,19632300,166917
+MT,Aquicultura,Tilápia,0,kg,6236768,56007
+GO,Aquicultura,Tilápia,0,kg,15876645,139717
+DF,Aquicultura,Tilápia,0,kg,2373261,27530
+TO,Aquicultura,Traíra e trairão,0,kg,950,13
+MA,Aquicultura,Traíra e trairão,0,kg,210,1
+PI,Aquicultura,Traíra e trairão,0,kg,220,4
+RN,Aquicultura,Traíra e trairão,0,kg,86460,455
+PB,Aquicultura,Traíra e trairão,0,kg,332,3
+PE,Aquicultura,Traíra e trairão,0,kg,25864,351
+AL,Aquicultura,Traíra e trairão,0,kg,11150,143
+BA,Aquicultura,Traíra e trairão,0,kg,72420,888
+MG,Aquicultura,Traíra e trairão,0,kg,7940,119
+ES,Aquicultura,Traíra e trairão,0,kg,2100,24
+RJ,Aquicultura,Traíra e trairão,0,kg,8060,157
+SP,Aquicultura,Traíra e trairão,0,kg,117450,1292
+PR,Aquicultura,Traíra e trairão,0,kg,212504,2835
+SC,Aquicultura,Traíra e trairão,0,kg,31911,374
+RS,Aquicultura,Traíra e trairão,0,kg,141371,2222
+MT,Aquicultura,Traíra e trairão,0,kg,715,9
+MG,Aquicultura,Truta,0,kg,999733,23258
+RJ,Aquicultura,Truta,0,kg,28000,1260
+SP,Aquicultura,Truta,0,kg,50191,1337
+PR,Aquicultura,Truta,0,kg,2298,36
+SC,Aquicultura,Truta,0,kg,284232,7446
+PA,Aquicultura,Tucunaré,0,kg,9100,187
+TO,Aquicultura,Tucunaré,0,kg,15160,232
+RN,Aquicultura,Tucunaré,0,kg,43252,399
+PB,Aquicultura,Tucunaré,0,kg,510,9
+BA,Aquicultura,Tucunaré,0,kg,126665,1702
+MG,Aquicultura,Tucunaré,0,kg,450,8
+RJ,Aquicultura,Tucunaré,0,kg,1900,32
+MT,Aquicultura,Tucunaré,0,kg,371,4
+RO,Aquicultura,Outros peixes,0,kg,44700,584
+PA,Aquicultura,Outros peixes,0,kg,47210,718
+TO,Aquicultura,Outros peixes,0,kg,34100,683
+MA,Aquicultura,Outros peixes,0,kg,624556,5615
+PI,Aquicultura,Outros peixes,0,kg,140849,2090
+CE,Aquicultura,Outros peixes,0,kg,15740,177
+RN,Aquicultura,Outros peixes,0,kg,33686,169
+PE,Aquicultura,Outros peixes,0,kg,6910,94
+AL,Aquicultura,Outros peixes,0,kg,15000,231
+SE,Aquicultura,Outros peixes,0,kg,8539,128
+BA,Aquicultura,Outros peixes,0,kg,20790,265
+MG,Aquicultura,Outros peixes,0,kg,3617,65
+RJ,Aquicultura,Outros peixes,0,kg,21000,945
+SP,Aquicultura,Outros peixes,0,kg,1287755,11273
+PR,Aquicultura,Outros peixes,0,kg,280644,3589
+SC,Aquicultura,Outros peixes,0,kg,797412,9173
+RS,Aquicultura,Outros peixes,0,kg,286739,4373
+MS,Aquicultura,Outros peixes,0,kg,51296,1015
+MT,Aquicultura,Outros peixes,0,kg,6000,57
+GO,Aquicultura,Outros peixes,0,kg,98000,1420
+DF,Aquicultura,Outros peixes,0,kg,24902,324
+RO,Aquicultura,Alevinos,0,milheiros,32942,11100
+AC,Aquicultura,Alevinos,0,milheiros,8550,3220
+AM,Aquicultura,Alevinos,0,milheiros,240681,60391
+RR,Aquicultura,Alevinos,0,milheiros,9750,2936
+PA,Aquicultura,Alevinos,0,milheiros,49590,21571
+AP,Aquicultura,Alevinos,0,milheiros,549,79
+TO,Aquicultura,Alevinos,0,milheiros,19692,4956
+MA,Aquicultura,Alevinos,0,milheiros,68851,10891
+PI,Aquicultura,Alevinos,0,milheiros,21719,3988
+CE,Aquicultura,Alevinos,0,milheiros,69698,14638
+RN,Aquicultura,Alevinos,0,milheiros,2570,134
+PB,Aquicultura,Alevinos,0,milheiros,8470,1386
+PE,Aquicultura,Alevinos,0,milheiros,82552,36929
+AL,Aquicultura,Alevinos,0,milheiros,26775,7459
+SE,Aquicultura,Alevinos,0,milheiros,14537,1875
+BA,Aquicultura,Alevinos,0,milheiros,44643,8596
+MG,Aquicultura,Alevinos,0,milheiros,95805,23221
+ES,Aquicultura,Alevinos,0,milheiros,33014,6287
+RJ,Aquicultura,Alevinos,0,milheiros,6692,1740
+SP,Aquicultura,Alevinos,0,milheiros,169496,73498
+PR,Aquicultura,Alevinos,0,milheiros,536172,145415
+SC,Aquicultura,Alevinos,0,milheiros,221457,44925
+RS,Aquicultura,Alevinos,0,milheiros,39860,10112
+MS,Aquicultura,Alevinos,0,milheiros,52147,43834
+MT,Aquicultura,Alevinos,0,milheiros,56175,31146
+GO,Aquicultura,Alevinos,0,milheiros,70163,17663
+DF,Aquicultura,Alevinos,0,milheiros,2256,620
+PA,Aquicultura,Camarão,0,kg,106400,2902
+MA,Aquicultura,Camarão,0,kg,353843,7625
+PI,Aquicultura,Camarão,0,kg,4683242,94643
+CE,Aquicultura,Camarão,0,kg,91869731,1929703
+RN,Aquicultura,Camarão,0,kg,37978491,782871
+PB,Aquicultura,Camarão,0,kg,20118100,444866
+PE,Aquicultura,Camarão,0,kg,4800868,92609
+AL,Aquicultura,Camarão,0,kg,1935000,49877
+SE,Aquicultura,Camarão,0,kg,3959710,84200
+BA,Aquicultura,Camarão,0,kg,6236780,129843
+ES,Aquicultura,Camarão,0,kg,3600,72
+RJ,Aquicultura,Camarão,0,kg,37700,1674
+PR,Aquicultura,Camarão,0,kg,40000,1000
+SC,Aquicultura,Camarão,0,kg,270700,7601
+PA,Aquicultura,Larvas e pós-larvas de camarão,0,milheiros,420,53
+PI,Aquicultura,Larvas e pós-larvas de camarão,0,milheiros,126000,1481
+CE,Aquicultura,Larvas e pós-larvas de camarão,0,milheiros,10638879,129114
+RN,Aquicultura,Larvas e pós-larvas de camarão,0,milheiros,10781354,181187
+PB,Aquicultura,Larvas e pós-larvas de camarão,0,milheiros,195080,2712
+PE,Aquicultura,Larvas e pós-larvas de camarão,0,milheiros,520000,6240
+AL,Aquicultura,Larvas e pós-larvas de camarão,0,milheiros,3350,481
+SE,Aquicultura,Larvas e pós-larvas de camarão,0,milheiros,9060,1087
+ES,Aquicultura,Larvas e pós-larvas de camarão,0,milheiros,100,12
+RJ,Aquicultura,Larvas e pós-larvas de camarão,0,milheiros,4300,817
+SP,Aquicultura,Larvas e pós-larvas de camarão,0,milheiros,370,122
+PA,Aquicultura,"Ostras, vieiras e mexilhões",0,kg,140923,2560
+MA,Aquicultura,"Ostras, vieiras e mexilhões",0,kg,7125,94
+RN,Aquicultura,"Ostras, vieiras e mexilhões",0,kg,310000,7260
+PB,Aquicultura,"Ostras, vieiras e mexilhões",0,kg,20000,520
+PE,Aquicultura,"Ostras, vieiras e mexilhões",0,kg,300000,6300
+AL,Aquicultura,"Ostras, vieiras e mexilhões",0,kg,9330,241
+SE,Aquicultura,"Ostras, vieiras e mexilhões",0,kg,4008,130
+BA,Aquicultura,"Ostras, vieiras e mexilhões",0,kg,33185,505
+RJ,Aquicultura,"Ostras, vieiras e mexilhões",0,kg,109852,3359
+SP,Aquicultura,"Ostras, vieiras e mexilhões",0,kg,56900,1566
+PR,Aquicultura,"Ostras, vieiras e mexilhões",0,kg,190744,3815
+SC,Aquicultura,"Ostras, vieiras e mexilhões",0,kg,8740400,108824
+PA,Aquicultura,Sementes de moluscos,0,milheiros,220,29
+RN,Aquicultura,Sementes de moluscos,0,milheiros,500,28
+RJ,Aquicultura,Sementes de moluscos,0,milheiros,932,47
+SC,Aquicultura,Sementes de moluscos,0,milheiros,50604,2024
+RO,Aquicultura,"Outros produtos (rã, jacaré, siri, caranguejo, lagosta etc.)",0,,,45
+BA,Aquicultura,"Outros produtos (rã, jacaré, siri, caranguejo, lagosta etc.)",0,,,4
+MG,Aquicultura,"Outros produtos (rã, jacaré, siri, caranguejo, lagosta etc.)",0,,,198
+ES,Aquicultura,"Outros produtos (rã, jacaré, siri, caranguejo, lagosta etc.)",0,,,10
+RJ,Aquicultura,"Outros produtos (rã, jacaré, siri, caranguejo, lagosta etc.)",0,,,995
+SP,Aquicultura,"Outros produtos (rã, jacaré, siri, caranguejo, lagosta etc.)",0,,,72
+PR,Aquicultura,"Outros produtos (rã, jacaré, siri, caranguejo, lagosta etc.)",0,,,667
+MS,Aquicultura,"Outros produtos (rã, jacaré, siri, caranguejo, lagosta etc.)",0,,,1453
+GO,Aquicultura,"Outros produtos (rã, jacaré, siri, caranguejo, lagosta etc.)",0,,,1100
+RO,Origem animal,Leite,0,mil litros,583711,1251098
+AC,Origem animal,Leite,0,mil litros,36881,74494
+AM,Origem animal,Leite,0,mil litros,72906,184736
+RR,Origem animal,Leite,0,mil litros,20665,57452
+PA,Origem animal,Leite,0,mil litros,555350,1170468
+AP,Origem animal,Leite,0,mil litros,5142,19405
+TO,Origem animal,Leite,0,mil litros,421694,1097974
+MA,Origem animal,Leite,0,mil litros,412160,973813
+PI,Origem animal,Leite,0,mil litros,71003,248096
+CE,Origem animal,Leite,0,mil litros,1298495,3053340
+RN,Origem animal,Leite,0,mil litros,440261,1115084
+PB,Origem animal,Leite,0,mil litros,358398,866825
+PE,Origem animal,Leite,0,mil litros,1529537,3290565
+AL,Origem animal,Leite,0,mil litros,579766,1255941
+SE,Origem animal,Leite,0,mil litros,701328,1732582
+BA,Origem animal,Leite,0,mil litros,1229664,2521953
+MG,Origem animal,Leite,0,mil litros,10070127,25073035
+ES,Origem animal,Leite,0,mil litros,334519,839485
+RJ,Origem animal,Leite,0,mil litros,379252,987957
+SP,Origem animal,Leite,0,mil litros,1504625,3986642
+PR,Origem animal,Leite,0,mil litros,4800868,12665657
+SC,Origem animal,Leite,0,mil litros,3432778,8211967
+RS,Origem animal,Leite,0,mil litros,4237264,10425793
+MS,Origem animal,Leite,0,mil litros,264415,670570
+MT,Origem animal,Leite,0,mil litros,403959,879509
+GO,Origem animal,Leite,0,mil litros,2906910,6750950
+DF,Origem animal,Leite,0,mil litros,32598,81495
+RO,Origem animal,Ovos de galinha,0,mil dúzias,34746,265261
+AC,Origem animal,Ovos de galinha,0,mil dúzias,11556,78969
+AM,Origem animal,Ovos de galinha,0,mil dúzias,85349,653795
+RR,Origem animal,Ovos de galinha,0,mil dúzias,17827,120215
+PA,Origem animal,Ovos de galinha,0,mil dúzias,68419,416743
+AP,Origem animal,Ovos de galinha,0,mil dúzias,39,179
+TO,Origem animal,Ovos de galinha,0,mil dúzias,55810,394175
+MA,Origem animal,Ovos de galinha,0,mil dúzias,47138,387298
+PI,Origem animal,Ovos de galinha,0,mil dúzias,35320,260759
+CE,Origem animal,Ovos de galinha,0,mil dúzias,278823,1888535
+RN,Origem animal,Ovos de galinha,0,mil dúzias,117882,1041946
+PB,Origem animal,Ovos de galinha,0,mil dúzias,75851,545151
+PE,Origem animal,Ovos de galinha,0,mil dúzias,373614,2193223
+AL,Origem animal,Ovos de galinha,0,mil dúzias,39268,278340
+SE,Origem animal,Ovos de galinha,0,mil dúzias,47180,277944
+BA,Origem animal,Ovos de galinha,0,mil dúzias,134065,879860
+MG,Origem animal,Ovos de galinha,0,mil dúzias,553186,3773562
+ES,Origem animal,Ovos de galinha,0,mil dúzias,389114,2107641
+RJ,Origem animal,Ovos de galinha,0,mil dúzias,20336,185056
+SP,Origem animal,Ovos de galinha,0,mil dúzias,1292026,7848766
+PR,Origem animal,Ovos de galinha,0,mil dúzias,535720,3401963
+SC,Origem animal,Ovos de galinha,0,mil dúzias,334908,2124369
+RS,Origem animal,Ovos de galinha,0,mil dúzias,419494,2301716
+MS,Origem animal,Ovos de galinha,0,mil dúzias,134107,855237
+MT,Origem animal,Ovos de galinha,0,mil dúzias,312009,1721270
+GO,Origem animal,Ovos de galinha,0,mil dúzias,293096,2014320
+DF,Origem animal,Ovos de galinha,0,mil dúzias,28818,373771
+RO,Origem animal,Ovos de codorna,0,mil dúzias,593,1771
+AC,Origem animal,Ovos de codorna,0,mil dúzias,4,12
+AM,Origem animal,Ovos de codorna,0,mil dúzias,1038,2912
+RR,Origem animal,Ovos de codorna,0,mil dúzias,155,465
+PA,Origem animal,Ovos de codorna,0,mil dúzias,20,40
+TO,Origem animal,Ovos de codorna,0,mil dúzias,0,1
+MA,Origem animal,Ovos de codorna,0,mil dúzias,24,53
+PI,Origem animal,Ovos de codorna,0,mil dúzias,100,221
+CE,Origem animal,Ovos de codorna,0,mil dúzias,17591,37323
+RN,Origem animal,Ovos de codorna,0,mil dúzias,2609,5278
+PB,Origem animal,Ovos de codorna,0,mil dúzias,2785,6892
+PE,Origem animal,Ovos de codorna,0,mil dúzias,32261,113108
+AL,Origem animal,Ovos de codorna,0,mil dúzias,2522,7433
+SE,Origem animal,Ovos de codorna,0,mil dúzias,13,41
+BA,Origem animal,Ovos de codorna,0,mil dúzias,2126,4281
+MG,Origem animal,Ovos de codorna,0,mil dúzias,63328,124676
+ES,Origem animal,Ovos de codorna,0,mil dúzias,61096,151930
+RJ,Origem animal,Ovos de codorna,0,mil dúzias,2201,11825
+SP,Origem animal,Ovos de codorna,0,mil dúzias,34389,82519
+PR,Origem animal,Ovos de codorna,0,mil dúzias,9754,17323
+SC,Origem animal,Ovos de codorna,0,mil dúzias,35966,158697
+RS,Origem animal,Ovos de codorna,0,mil dúzias,10449,37806
+MS,Origem animal,Ovos de codorna,0,mil dúzias,423,889
+MT,Origem animal,Ovos de codorna,0,mil dúzias,4916,9446
+GO,Origem animal,Ovos de codorna,0,mil dúzias,6557,20403
+DF,Origem animal,Ovos de codorna,0,mil dúzias,252,589
+RO,Origem animal,Mel de abelha,0,kg,296316,11468
+AC,Origem animal,Mel de abelha,0,kg,9638,646
+AM,Origem animal,Mel de abelha,0,kg,62069,4284
+RR,Origem animal,Mel de abelha,0,kg,93125,2408
+PA,Origem animal,Mel de abelha,0,kg,814443,21803
+AP,Origem animal,Mel de abelha,0,kg,20765,655
+TO,Origem animal,Mel de abelha,0,kg,123525,5533
+MA,Origem animal,Mel de abelha,0,kg,4633433,74144
+PI,Origem animal,Mel de abelha,0,kg,8560008,116885
+CE,Origem animal,Mel de abelha,0,kg,5242378,82131
+RN,Origem animal,Mel de abelha,0,kg,924457,17787
+PB,Origem animal,Mel de abelha,0,kg,433723,10025
+PE,Origem animal,Mel de abelha,0,kg,1089857,21114
+AL,Origem animal,Mel de abelha,0,kg,591759,14037
+SE,Origem animal,Mel de abelha,0,kg,203586,4510
+BA,Origem animal,Mel de abelha,0,kg,4793568,58366
+MG,Origem animal,Mel de abelha,0,kg,6996853,107722
+ES,Origem animal,Mel de abelha,0,kg,860758,13578
+RJ,Origem animal,Mel de abelha,0,kg,448034,23067
+SP,Origem animal,Mel de abelha,0,kg,6451914,105634
+PR,Origem animal,Mel de abelha,0,kg,10707491,217742
+SC,Origem animal,Mel de abelha,0,kg,4836271,79342
+RS,Origem animal,Mel de abelha,0,kg,10935491,156608
+MS,Origem animal,Mel de abelha,0,kg,732047,14012
+MT,Origem animal,Mel de abelha,0,kg,983193,38663
+GO,Origem animal,Mel de abelha,0,kg,456053,13758
+DF,Origem animal,Mel de abelha,0,kg,28265,848
+SP,Origem animal,Casulos do bicho-da-seda,0,kg,146096,4676
+PR,Origem animal,Casulos do bicho-da-seda,0,kg,1170213,39261
+MS,Origem animal,Casulos do bicho-da-seda,0,kg,44322,1274
+MG,Origem animal,Lã,0,kg,4355,57
+SP,Origem animal,Lã,0,kg,1701,10
+PR,Origem animal,Lã,0,kg,156650,723
+SC,Origem animal,Lã,0,kg,161239,1128
+RS,Origem animal,Lã,0,kg,6341252,43723
+MS,Origem animal,Lã,0,kg,22115,175
