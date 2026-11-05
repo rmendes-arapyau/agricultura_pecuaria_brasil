@@ -97,7 +97,7 @@
 <main class="pm">
   <header>
     <h1 class="pm-title">Painel da Agropecuária Municipal do Brasil, 2025</h1>
-    <p class="pm-intro">Esta é uma ferramenta desenvolvida pelo Instituto Arapyaú a partir dos dados da Produção Agrícola Municipal (PAM) e da Pesquisa da Pecuária Municipal (PPM), disponibilizados pelo Instituto Brasileiro de Geografia e Estatística (IBGE), e da Matriz de Dados do Crédito Rural do Banco Central do Brasil. Ela permite explorar, município a município, a área, a quantidade e o valor da produção das lavouras temporárias e permanentes, o efetivo dos rebanhos e o crédito rural contratado no Brasil em 2025, por produto, rebanho, programa de crédito, bioma e estado. Inclui também o tamanho dos imóveis rurais inscritos no Cadastro Ambiental Rural (CAR), a partir do Painel de Regularização Ambiental do Ministério do Meio Ambiente e Mudança do Clima.</p>
+    <p class="pm-intro">Esta é uma ferramenta desenvolvida pelo Instituto Arapyaú a partir dos dados da Produção Agrícola Municipal (PAM) e da Pesquisa da Pecuária Municipal (PPM), disponibilizados pelo Instituto Brasileiro de Geografia e Estatística (IBGE), e da Matriz de Dados do Crédito Rural do Banco Central do Brasil. Ela permite explorar, município a município, a área, a quantidade e o valor da produção das lavouras temporárias e permanentes, o efetivo dos rebanhos, a extração vegetal e a silvicultura e o crédito rural contratado no Brasil em 2025, por produto, rebanho, programa de crédito, bioma e estado. Inclui também o tamanho dos imóveis rurais inscritos no Cadastro Ambiental Rural (CAR), a partir do Painel de Regularização Ambiental do Ministério do Meio Ambiente e Mudança do Clima.</p>
     <p class="pm-take" id="pm-take">Carregando dados…</p>
   </header>
 
@@ -121,6 +121,7 @@
       <div class="pm-seg pm-seg-modo" role="group" aria-labelledby="lb-setor" id="pm-setor">
         <button type="button" data-v="agricultura">Agricultura</button>
         <button type="button" data-v="pecuaria">Pecuária</button>
+        <button type="button" data-v="florestal">Florestal</button>
         <button type="button" data-v="todos">Todos</button>
       </div>
     </div>
@@ -139,6 +140,23 @@
         <button type="button" data-v="area">Área (ha)</button>
         <button type="button" data-v="qtd">Quantidade</button>
         <button type="button" data-v="valor">Valor (R$)</button>
+      </div>
+    </div>
+    <div class="pm-field pm-flo" hidden>
+      <span class="pm-label" id="lb-flover">Ver</span>
+      <div class="pm-seg" role="group" aria-labelledby="lb-flover" id="pm-flover">
+        <button type="button" data-v="extracao">Extração vegetal</button>
+        <button type="button" data-v="silvicultura">Silvicultura</button>
+      </div>
+    </div>
+    <label class="pm-field pm-flo" hidden><span class="pm-label">Produto</span><select class="pm-select pm-select-if" id="pm-floprod"></select></label>
+    <label class="pm-field pm-flo pm-flosilv" hidden><span class="pm-label">Espécie</span><select class="pm-select" id="pm-floesp"></select></label>
+    <div class="pm-field pm-flo" hidden>
+      <span class="pm-label" id="lb-flovar">Variável no mapa</span>
+      <div class="pm-seg" role="group" aria-labelledby="lb-flovar" id="pm-flovar">
+        <button type="button" data-v="valor">Valor (R$)</button>
+        <button type="button" data-v="quantidade">Quantidade</button>
+        <button type="button" data-v="area" id="pm-flo-area">Área plantada (ha)</button>
       </div>
     </div>
     <div class="pm-field pm-pec" hidden>
@@ -293,6 +311,7 @@
     <p><strong>Valor.</strong> Preço médio pago ao produtor vezes a quantidade, sem frete, taxas e impostos. Nas tabelas originais está em mil reais.</p>
     <p><strong>Café.</strong> “Café (em grão) — total” já soma arábica e canephora; as duas espécies também podem ser vistas em separado.</p>
     <p><strong>Pecuária.</strong> IBGE, Pesquisa da Pecuária Municipal (PPM) 2025, Tabela 3939: efetivo dos rebanhos em 31 de dezembro, em cabeças, também preliminar. “Suíno – matrizes” já está contido em “Suíno (total)”, e “Galináceos – galinhas” em “Galináceos (total)”, que inclui também frangos, galos e pintos. <a href="dados/ppm_2025.csv" download>Baixar a base de pecuária (CSV)</a>.</p>
+    <p><strong>Florestal.</strong> IBGE, Produção da Extração Vegetal e da Silvicultura (PEVS) 2025, resultados preliminares: Tabela 289 (extração vegetal, 58 produtos em 10 grupos), Tabela 291 (silvicultura, por produto e espécie) e Tabela 5930 (área total existente em 31 de dezembro dos efetivos da silvicultura, em hectares, por espécie), por município. A extração vegetal é a coleta em matas nativas; a silvicultura é a produção de florestas plantadas. Carvão vegetal, lenha e madeira em tora aparecem nas duas bases, com origens diferentes: na extração vegetal vêm de vegetação nativa, e na silvicultura, de plantios como os de eucalipto e pinus. O açaí da extração vegetal é o coletado em açaizais nativos; o açaí das lavouras permanentes (PAM), no setor Agricultura, é o cultivado, e as duas bases são complementares. A quantidade está na unidade de cada produto (toneladas, metros cúbicos ou mil árvores) e só aparece com um produto escolhido; sem produto, soma-se o valor da produção. A área plantada é informada só por espécie, sem divisão por produto; por isso, ao escolher essa variável, o filtro de produto não se aplica. Somando os municípios, a área chega a 10,38 milhões de hectares, 3,7 mil hectares a menos que a soma dos estados, diferença que o IBGE não detalha por município. <a href="dados/florestal_2025.csv" download>Baixar a base de extração vegetal e silvicultura (CSV)</a> e a <a href="dados/silvicultura_area_2025.csv" download>área plantada (CSV)</a>.</p>
     <p><strong>Produtos de origem animal e aquicultura.</strong> IBGE, Pesquisa da Pecuária Municipal (PPM) 2025, Tabela 74 (produção de origem animal: leite, ovos de galinha e de codorna, mel, casulos do bicho-da-seda e lã) e Tabela 3940 (aquicultura: peixes por espécie, alevinos, camarão, larvas e pós-larvas de camarão, ostras, vieiras e mexilhões, sementes de moluscos e outros produtos), resultados preliminares. Os dados usados aqui são por estado; por isso, nessas visões o mapa mostra estados e o filtro de bioma não aparece. A quantidade está na unidade de cada produto, convertida para facilitar a leitura (toneladas, litros, dúzias ou unidades, a partir dos quilogramas, mil litros, mil dúzias e milheiros do IBGE), e só aparece com um produto escolhido; “Todos os produtos” soma o valor da produção. “Peixes (total)” já soma as espécies, que não são contadas duas vezes. Para “Outros produtos” da aquicultura, o IBGE informa apenas o valor. <a href="dados/pecuaria_produtos_uf_2025.csv" download>Baixar a base (CSV)</a>.</p>
     <p><strong>Todos os rebanhos.</strong> Soma o número de cabeças de todos os rebanhos do município (bovinos, bubalinos, equinos, suínos, caprinos, ovinos, galináceos e codornas); matrizes de suínos e galinhas não entram na soma, porque já estão contidas nos totais de suínos e de galináceos. O rebanho predominante é o grupo com mais cabeças no município: bovinos, bubalinos, equinos, suínos, caprinos e ovinos, ou aves (galináceos e codornas). Como aves são muito mais numerosas, elas predominam em muitos municípios mesmo onde a pecuária bovina tem grande peso econômico.</p>
     <p><strong>Crédito rural.</strong> Banco Central do Brasil, Matriz de Dados do Crédito Rural (SICOR): operações contratadas de janeiro a dezembro de 2025, pela data de emissão (ano civil, não o ano-safra de julho a junho), no município informado na operação. Valores nominais, em reais. A base foi agregada por município, programa, linha (Pronaf e RenovAgro), setor (agricultura ou pecuária, conforme a atividade agrícola ou pecuária informada ao Banco Central), finalidade (custeio, investimento, comercialização e industrialização) e tipo de instituição financeira, conforme o segmento informado pelo Banco Central: banco público, banco privado, cooperativa de crédito, banco cooperativo, banco de desenvolvimento e agência de fomento, e sociedade de crédito, financiamento e investimento (financeira). Também foi mantida cada instituição financeira, com o nome e o CNPJ (oito primeiros dígitos) informados pelo Banco Central; a fonte de recursos e o mês ficaram de fora. O Pronamp é o Programa Nacional de Apoio ao Médio Produtor Rural. <a href="dados/credito_2025.csv" download>Baixar a base de crédito rural (CSV)</a> e a <a href="dados/instituicoes_financeiras.csv" download>lista de instituições financeiras (CSV)</a>.</p>
@@ -327,7 +346,7 @@
   const REB_TXT = { Bovino: 'o rebanho bovino', Bubalino: 'o rebanho bubalino', Equino: 'o rebanho equino', 'Suíno (total)': 'o rebanho suíno', 'Suíno – matrizes': 'as matrizes de suínos', Caprino: 'o rebanho caprino', Ovino: 'o rebanho ovino', 'Galináceos (total)': 'os galináceos', 'Galináceos – galinhas': 'as galinhas', Codornas: 'as codornas' };
   const GRUPO = { Bovino: 'Bovinos', Bubalino: 'Bubalinos', Equino: 'Equinos', 'Suíno (total)': 'Suínos', Caprino: 'Caprinos e ovinos', Ovino: 'Caprinos e ovinos', 'Galináceos (total)': 'Aves', Codornas: 'Aves' };
   const GRUPOS = [['Bovinos', '#507651'], ['Aves', '#E76129'], ['Suínos', '#9F3597'], ['Caprinos e ovinos', '#C4D75B'], ['Equinos', '#A61F2D'], ['Bubalinos', '#443C8E']];
-  const DEFAULTS = { tema: 'producao', setor: 'agricultura', carTam: 'Todos', carTipo: 'IRU', carCond: 'Todas', carVar: 'cadastros', pecVer: 'rebanhos', pecProd: 'Todos', pecVar: 'valor', tipo: 'Todas', produto: 'Total', variavel: 'area', uf: 'BR', bioma: 'Todos', rebanho: 'Bovino', vista: 'ua', programa: 'Todos', linha: 'Todas', finalidade: 'Todas', instituicao: 'Todas', ifin: 'Todas', cvar: 'valor', modalidade: 'Todas', produtoCr: 'Todos' };
+  const DEFAULTS = { tema: 'producao', setor: 'agricultura', floVer: 'extracao', floProd: 'Todos', floEsp: 'Todas', floVar: 'valor', carTam: 'Todos', carTipo: 'IRU', carCond: 'Todas', carVar: 'cadastros', pecVer: 'rebanhos', pecProd: 'Todos', pecVar: 'valor', tipo: 'Todas', produto: 'Total', variavel: 'area', uf: 'BR', bioma: 'Todos', rebanho: 'Bovino', vista: 'ua', programa: 'Todos', linha: 'Todas', finalidade: 'Todas', instituicao: 'Todas', ifin: 'Todas', cvar: 'valor', modalidade: 'Todas', produtoCr: 'Todos' };
   const pecUF = (p) => p.modo === 'pecuaria' && p.pecVer !== 'rebanhos';
   const GRUPO_PEC = { origem: 'Origem animal', aquicultura: 'Aquicultura' };
   const prodMode = (p) => p.modo === 'credito' && (p.modalidade !== 'Todas' || p.produtoCr !== 'Todos');
@@ -455,7 +474,12 @@
   // ---------- controles ----------
   function setState(patch) {
     state = { ...state, ...patch };
-    if (!['agricultura', 'pecuaria', 'todos'].includes(state.setor) || (state.tema === 'producao' && state.setor === 'todos')) state.setor = 'agricultura';
+    if (!['agricultura', 'pecuaria', 'florestal', 'todos'].includes(state.setor) || (state.tema === 'producao' && state.setor === 'todos')) state.setor = 'agricultura';
+    if (state.tema === 'credito' && state.setor === 'florestal') state.setor = 'todos';
+    if (!['extracao', 'silvicultura'].includes(state.floVer)) state.floVer = 'extracao';
+    if (!['valor', 'quantidade', 'area'].includes(state.floVar) || (state.floVar === 'area' && state.floVer !== 'silvicultura') || (state.floVar === 'quantidade' && state.floProd === 'Todos')) state.floVar = 'valor';
+    if (F && state.floProd !== 'Todos' && !(state.floVer === 'extracao' ? F.extProd : F.silvProd).includes(state.floProd)) state.floProd = 'Todos';
+    if (F && state.floEsp !== 'Todas' && !F.especies.includes(state.floEsp)) state.floEsp = 'Todas';
     if (!['producao', 'credito', 'car'].includes(state.tema)) state.tema = 'producao';
     state.modo = state.tema === 'credito' ? 'credito' : state.tema === 'car' ? 'car' : state.setor;
     if (!['Todos', 'Pequena', 'Média', 'Grande'].includes(state.carTam)) state.carTam = 'Todos';
@@ -490,7 +514,10 @@
   }
   const bindSeg = (id, key) => { for (const b of $(id).querySelectorAll('button')) b.addEventListener('click', () => setState({ [key]: b.dataset.v })); };
   for (const b of $('pm-tema').querySelectorAll('button')) b.addEventListener('click', () => { if (b.dataset.v !== state.tema) setState({ tema: b.dataset.v, setor: b.dataset.v === 'credito' ? 'todos' : state.setor === 'todos' ? 'agricultura' : state.setor }); });
-  bindSeg('pm-setor', 'setor'); bindSeg('pm-pecvar', 'pecVar'); bindSeg('pm-cartam', 'carTam');
+  bindSeg('pm-setor', 'setor'); bindSeg('pm-flovar', 'floVar');
+  for (const b of $('pm-flover').querySelectorAll('button')) b.addEventListener('click', () => setState({ floVer: b.dataset.v, floProd: 'Todos', floEsp: 'Todas', floVar: 'valor' }));
+  $('pm-floprod').addEventListener('change', (e) => setState({ floProd: e.target.value }));
+  $('pm-floesp').addEventListener('change', (e) => setState({ floEsp: e.target.value })); bindSeg('pm-pecvar', 'pecVar'); bindSeg('pm-cartam', 'carTam');
   $('pm-cartipo').addEventListener('change', (e) => setState({ carTipo: e.target.value }));
   $('pm-carcond').addEventListener('change', (e) => setState({ carCond: e.target.value }));
   $('pm-carvar').addEventListener('change', (e) => setState({ carVar: e.target.value }));
@@ -515,7 +542,24 @@
     const pec = p.modo === 'pecuaria';
     const press = (id, v) => { for (const b of $(id).querySelectorAll('button')) b.setAttribute('aria-pressed', String(b.dataset.v === v)); };
     press('pm-tema', p.tema); press('pm-setor', p.setor); press('pm-crvar', p.cvar); press('pm-tipo', p.tipo);
-    $('pm-setor').querySelector('[data-v="todos"]').hidden = p.tema !== 'credito'; press('pm-var', p.variavel); press('pm-vista', p.vista);
+    $('pm-setor').querySelector('[data-v="todos"]').hidden = p.tema !== 'credito';
+    $('pm-setor').querySelector('[data-v="florestal"]').hidden = p.tema !== 'producao';
+    const flo = p.modo === 'florestal';
+    for (const el of document.querySelectorAll('.pm-flo')) el.hidden = !flo;
+    for (const el of document.querySelectorAll('.pm-flosilv')) el.hidden = !flo || p.floVer !== 'silvicultura';
+    press('pm-flover', p.floVer); press('pm-flovar', p.floVar);
+    $('pm-flo-area').hidden = p.floVer !== 'silvicultura';
+    const fq = $('pm-flovar').querySelector('[data-v="quantidade"]'); fq.disabled = p.floProd === 'Todos' || p.floVar === 'area'; fq.title = fq.disabled ? 'Escolha um produto para ver a quantidade' : '';
+    const fp = $('pm-floprod');
+    if (fp.dataset.k !== p.floVer) {
+      if (p.floVer === 'extracao') fp.replaceChildren(new Option('Todos os produtos', 'Todos'), ...F.grupos.map((g) => { const og = document.createElement('optgroup'); og.label = g; og.append(...F.porGrupo.get(g).map((x) => new Option(x, x))); return og; }));
+      else fp.replaceChildren(new Option('Todos os produtos', 'Todos'), ...F.silvProd.map((x) => new Option(x, x)));
+      fp.dataset.k = p.floVer;
+    }
+    fp.value = p.floProd; fp.disabled = floArea(p); fp.title = floArea(p) ? 'A área plantada é informada só por espécie, sem divisão por produto' : '';
+    const fe = $('pm-floesp');
+    if (!fe.options.length) fe.replaceChildren(new Option('Todas as espécies', 'Todas'), ...F.especies.map((x) => new Option(x, x)));
+    fe.value = p.floEsp; press('pm-var', p.variavel); press('pm-vista', p.vista);
     for (const el of document.querySelectorAll('.pm-agri')) el.hidden = p.modo !== 'agricultura';
     for (const el of document.querySelectorAll('.pm-cred')) el.hidden = p.modo !== 'credito';
     const car = p.modo === 'car';
@@ -533,6 +577,7 @@
     for (const o of cv.options) if (o.value.startsWith('pct')) { o.disabled = p.carTam === 'Todos'; o.title = o.disabled ? 'Escolha um tamanho para ver a participação' : ''; }
     for (const el of document.querySelectorAll('.pm-t23')) el.hidden = pec && !pecUF(p);
     if (p.modo === 'car') for (const el of document.querySelectorAll('.pm-t23')) el.hidden = false;
+    if (p.modo === 'florestal') { $('pm-v2').closest('.pm-tile').hidden = false; $('pm-v3').closest('.pm-tile').hidden = true; }
     if (pecUF(p)) $('pm-v3').closest('.pm-tile').hidden = true;
     const opts = (id, todos, list, v) => { const e = $(id); const key = list.join('|'); if (e.dataset.k !== key) { e.replaceChildren(new Option(todos[1], todos[0]), ...list.map((x) => new Option(x, x))); e.dataset.k = key; } e.value = v; };
     opts('pm-crprog', ['Todos', 'Todos os programas'], C.programas, p.programa);
@@ -608,7 +653,7 @@
       if (!d) { tip.style('display', 'none'); hover = null; return; }
       hover = t; t.classList.add('is-hover'); t.parentNode.appendChild(t);
       if (t.classList.contains('pm-ufill')) (pecUF(current.p) ? tipPecUF : tipUF)(d[0]);
-      else (current.p.modo === 'car' ? tipCar : current.p.modo === 'credito' ? tipCred : current.p.modo === 'pecuaria' ? tipPec : tipAgri)(d[0]);
+      else (current.p.modo === 'florestal' ? tipFlo : current.p.modo === 'car' ? tipCar : current.p.modo === 'credito' ? tipCred : current.p.modo === 'pecuaria' ? tipPec : tipAgri)(d[0]);
       placeTip(event);
     };
     svg.on('pointermove', move).on('pointerdown', move);
@@ -771,7 +816,8 @@
       const td = (t, c) => { const e = document.createElement('td'); if (c) e.className = c; e.textContent = t; tr.append(e); return e; };
       td(i + 1, 'pm-rank'); td(r.nome); td(r.uf);
       if (pred) td(r.predominante);
-      const cell = td(current && current.p.modo === 'credito' && current.p.cvar === 'valor' ? fmtReais(r[v]) : nInt.format(r[v]), 'num');
+      const emReais = current && ((current.p.modo === 'credito' && current.p.cvar === 'valor') || (current.p.modo === 'florestal' && current.p.floVar === 'valor'));
+      const cell = td(emReais ? fmtReais(r[v]) : nInt.format(r[v]), 'num');
       const bar = document.createElement('div'); bar.className = 'pm-bar'; bar.style.width = Math.max(2, (r[v] / max) * 100) + '%'; cell.append(bar);
       return tr;
     }));
@@ -1036,6 +1082,7 @@
     card.hidden = p.modo === 'credito' || p.modo === 'car' || (!pecUF(p) && p.uf === 'BR' && p.bioma === 'Todos');
     if (card.hidden) return;
     if (pecUF(p)) return drawPecUFRecorte(p);
+    if (p.modo === 'florestal') return drawFloRecorte(p);
     const tb = $('pm-prodrectbody');
     tb.replaceChildren();
     const head = (cols) => $('pm-prodrec-head').replaceChildren(...cols.map(([t, c]) => { const th = document.createElement('th'); th.scope = 'col'; th.textContent = t; if (c) th.className = c; return th; }));
@@ -1196,6 +1243,111 @@
     $('pm-prodrec-note').textContent = final.length ? 'Produtos ordenados pelo valor da produção (dados por estado).' + (peixes ? ' As espécies de peixes aparecem recuadas abaixo de “Peixes (total)”.' : '') + ' Clique em um produto para vê-lo no mapa.' : 'Nenhuma produção registrada neste recorte.';
   }
 
+  // ---------- florestal: extração vegetal e silvicultura ----------
+  let F = null, munNome = new Map();
+  const FLO_BASE = { extracao: 'Extração vegetal', silvicultura: 'Silvicultura' };
+  const floArea = (p) => p.floVer === 'silvicultura' && p.floVar === 'area';
+  function indexFlo(txt, areaTxt) {
+    const all = d3.csvParse(txt).map((r) => ({ cod: r.cod_ibge, base: r.base, grupo: r.grupo, produto: r.produto, especie: r.especie || '', unidade: r.unidade || '', q: r.quantidade === '' ? null : +r.quantidade, v: r.valor_mil_reais === '' ? null : +r.valor_mil_reais }));
+    const area = d3.csvParse(areaTxt).map((r) => ({ cod: r.cod_ibge, especie: r.especie, area: +r.area_ha }));
+    const ordem = (lista, k) => [...d3.rollup(lista, (x) => d3.sum(x, (r) => r.v || 0), (r) => r[k])].sort((a, b) => b[1] - a[1]).map(([x]) => x);
+    const ext = all.filter((r) => r.base === 'Extração vegetal'), silv = all.filter((r) => r.base === 'Silvicultura');
+    const grupos = ordem(ext, 'grupo');
+    return { all, area, grupos, porGrupo: new Map(grupos.map((g) => [g, ordem(ext.filter((r) => r.grupo === g), 'produto')])), extProd: ordem(ext, 'produto'), silvProd: ordem(silv, 'produto'), especies: ordem(silv.filter((r) => r.especie), 'especie'), porMun: d3.group(all, (r) => r.cod), areaPorMun: d3.group(area, (r) => r.cod) };
+  }
+  const floOk = (p, r, skip) => r.base === FLO_BASE[p.floVer] && (skip === 'produto' || p.floProd === 'Todos' || r.produto === p.floProd) && (skip === 'especie' || p.floVer !== 'silvicultura' || p.floEsp === 'Todas' || r.especie === p.floEsp);
+  function tipFlo(cod) {
+    const { p, rows } = current, r = rows.get(cod);
+    tipHead(cod, munNome);
+    if (biomaDe.get(cod)) tip.append('div').attr('class', 'pm-tip-head').text('Bioma: ' + biomaDe.get(cod));
+    if (floArea(p)) {
+      if (!r) { tip.append('div').text('Sem área plantada registrada.'); return; }
+      tipLine('Área plantada', nInt.format(r.val) + ' ha');
+      const esp = (F.areaPorMun.get(cod) || []).slice().sort((a, b) => b.area - a.area), tot = d3.sum(esp, (x) => x.area);
+      if (!tot) return;
+      tip.append('div').attr('class', 'pm-tip-sec').text('Área por espécie');
+      const g = tip.append('div').attr('class', 'pm-tip-grid');
+      for (const x of esp.slice(0, 5)) { const w = x.especie === p.floEsp ? 800 : null; g.append('span').style('font-weight', w).text(x.especie); g.append('span').style('font-weight', w).text(nInt.format(x.area) + ' ha (' + pct(x.area / tot) + ')'); }
+      return;
+    }
+    if (!r) { tip.append('div').text('Sem produção registrada neste recorte.'); return; }
+    tipLine('Valor da produção', fmtReais(r.valor));
+    if (p.floProd !== 'Todos' && r.unidade) tipLine('Quantidade', fmtBig(r.q) + ' ' + r.unidade);
+    const ops = F.porMun.get(cod) || [];
+    const secao = (titulo, chave, skip, sel) => {
+      const g0 = d3.rollups(ops.filter((o) => floOk(p, o, skip) && (chave !== 'especie' || o.especie)), (v) => d3.sum(v, (o) => o.v || 0), (o) => o[chave]).filter((x) => x[1] > 0).sort((a, b) => b[1] - a[1]), tot = d3.sum(g0, (x) => x[1]);
+      if (!tot) return;
+      tip.append('div').attr('class', 'pm-tip-sec').text(titulo);
+      const g = tip.append('div').attr('class', 'pm-tip-grid');
+      for (const [k, v] of g0.slice(0, 5)) { const w = k === sel ? 800 : null; g.append('span').style('font-weight', w).text(k); g.append('span').style('font-weight', w).text(pct(v / tot)); }
+    };
+    secao('Principais produtos', 'produto', 'produto', p.floProd);
+    if (p.floVer === 'silvicultura') secao('Por espécie', 'especie', 'especie', p.floEsp);
+  }
+  function renderFlo(p) {
+    const silv = p.floVer === 'silvicultura', area = floArea(p), qtd = !area && p.floVar === 'quantidade' && p.floProd !== 'Todos';
+    const rows = new Map();
+    const mk = (cod) => { let a = rows.get(cod); if (!a) { const nm = munNome.get(cod) || { nome: cod, uf: COD_UF[cod.slice(0, 2)] }; a = { cod, nome: nm.nome, uf: nm.uf, valor: 0, q: 0, area: 0, unidade: '' }; rows.set(cod, a); } return a; };
+    if (area) { for (const r of F.area) if (p.floEsp === 'Todas' || r.especie === p.floEsp) mk(r.cod).area += r.area; }
+    else for (const r of F.all) if (floOk(p, r)) { const a = mk(r.cod); a.valor += (r.v || 0) * 1000; a.q += r.q || 0; a.unidade = r.unidade; }
+    for (const a of rows.values()) a.val = area ? a.area : qtd ? a.q : a.valor;
+    current = { p, rows };
+    const unidade = area ? 'ha' : [...rows.values()].find((r) => r.unidade)?.unidade || '';
+    drawChoro(p, rows, 'val', (x) => (area || qtd ? fmtBig(x) + ' ' + unidade : fmtReais(x)), area ? 'Sem área plantada' : 'Sem produção registrada');
+    const filtros = [!area && p.floProd !== 'Todos' ? p.floProd : null, silv && p.floEsp !== 'Todas' ? p.floEsp : null].filter(Boolean);
+    $('pm-map-title').textContent = (silv ? 'Silvicultura' : 'Extração vegetal') + ', ' + (area ? 'área plantada' : qtd ? 'quantidade' : 'valor da produção') + (filtros.length ? ': ' + filtros.join(', ') : '') + sufixo(p);
+    $('pm-map-note').textContent = area ? 'Cores em sete faixas com o mesmo número de municípios cada. Passe o mouse (ou toque) em um município para ver a área por espécie. A área é informada só por espécie, sem divisão por produto.' : 'Cores em sete faixas com o mesmo número de municípios cada. Passe o mouse (ou toque) em um município para ver os principais produtos' + (silv ? ' e as espécies.' : '.');
+    const { top, n } = drawTable(p, rows, 'val', area ? 'Área plantada (ha)' : qtd ? 'Quantidade (' + unidade + ')' : 'Valor da produção', false);
+    rankNote(p, n, area ? 'área plantada' : qtd ? 'quantidade' : 'valor da produção', area ? 'Nenhum município com área plantada neste recorte.' : 'Nenhum município com produção neste recorte.');
+    let v = 0, q = 0, ar = 0, k = 0;
+    for (const [cod, r] of rows) if (inScope(p, cod) && r.val > 0) { v += r.valor; q += r.q; ar += r.area; k += 1; }
+    if (area) {
+      let valor = 0;
+      for (const r of F.all) if (r.base === 'Silvicultura' && inScope(p, r.cod) && (p.floEsp === 'Todas' || r.especie === p.floEsp)) valor += (r.v || 0) * 1000;
+      tiles('Área plantada', k ? fmtBig(ar) : '—', 'hectares, em 31/12/2025', 'Municípios com área plantada', nInt.format(k), 'com florestas plantadas registradas');
+      $('pm-l2').textContent = 'Valor da produção'; $('pm-v2').textContent = valor ? fmtReais(valor) : '—'; $('pm-n2').textContent = 'reais, todos os produtos' + (p.floEsp !== 'Todas' ? ' da espécie' : ' da silvicultura');
+      const suj = p.floEsp !== 'Todas' ? 'as florestas plantadas de ' + p.floEsp.toLowerCase() : 'as florestas plantadas';
+      if (!k) take([[escopoTxt(p) + ', não há registro de área plantada na PEVS 2025.']]);
+      else take([[escopoTxt(p) + ', ' + suj + ' somam '], [fmtBig(ar) + ' ha', 1], [' em '], [nInt.format(k), 1], [' municípios.'], ...(top ? [[' O município com maior área é '], [top.nome, 1], [' (' + top.uf + ').']] : [])]);
+      return;
+    }
+    tiles('Valor da produção', k ? fmtReais(v) : '—', 'reais, preço pago ao produtor', 'Municípios produtores', nInt.format(k), 'com produção registrada');
+    $('pm-l2').textContent = 'Quantidade produzida'; $('pm-v2').textContent = p.floProd !== 'Todos' && unidade && k ? fmtBig(q) : '—';
+    $('pm-n2').textContent = p.floProd === 'Todos' ? 'escolha um produto: unidades diferem entre produtos' : unidade || 'o IBGE não informa a quantidade';
+    const suj = p.floProd !== 'Todos' ? 'a produção de ' + p.floProd.toLowerCase() + (silv ? ' na silvicultura' : ' na extração vegetal') + (silv && p.floEsp !== 'Todas' ? ' (' + p.floEsp.toLowerCase() + ')' : '') : silv ? 'a silvicultura' + (p.floEsp !== 'Todas' ? ' de ' + p.floEsp.toLowerCase() : '') : 'a extração vegetal';
+    if (!k) take([[escopoTxt(p) + ', não há registro de ' + suj.replace(/^a /, '') + ' na PEVS 2025.']]);
+    else take([[escopoTxt(p) + ', ' + suj + ' somou '], [fmtReais(v), 1], [' em ' + nInt.format(k) + ' municípios'], ...(p.floProd !== 'Todos' && unidade ? [[', com '], [fmtBig(q) + ' ' + unidade, 1]] : []), ['.'],
+      ...(top ? [[' O maior em ' + (qtd ? 'quantidade' : 'valor da produção') + ' é '], [top.nome, 1], [' (' + top.uf + ').']] : [])]);
+  }
+  function drawFloRecorte(p) {
+    const silv = p.floVer === 'silvicultura', tb = $('pm-prodrectbody');
+    tb.replaceChildren();
+    const head = (cols) => $('pm-prodrec-head').replaceChildren(...cols.map(([t, c]) => { const th = document.createElement('th'); th.scope = 'col'; th.textContent = t; if (c) th.className = c; return th; }));
+    const linha = (cells, sel, titulo, onClick) => { const tr = document.createElement('tr'); tr.className = 'pm-click' + (sel ? ' is-sel' : ''); tr.title = titulo; tr.addEventListener('click', onClick); for (const [t, c] of cells) { const td = document.createElement('td'); if (c) td.className = c; td.textContent = t; tr.append(td); } tb.append(tr); };
+    if (floArea(p)) {
+      const agg = new Map();
+      for (const r of F.area) { if (!inScope(p, r.cod)) continue; let a = agg.get(r.especie); if (!a) { a = { especie: r.especie, area: 0, n: new Set() }; agg.set(r.especie, a); } a.area += r.area; if (r.area > 0) a.n.add(r.cod); }
+      const lista = [...agg.values()].filter((a) => a.area > 0).sort((a, b) => b.area - a.area), tot = d3.sum(lista, (a) => a.area);
+      head([['#', 'pm-rank'], ['Espécie'], ['Área plantada (ha)', 'num'], ['Participação', 'num'], ['Municípios', 'num']]);
+      for (const a of lista) { const s2 = a.especie === p.floEsp; linha([[lista.indexOf(a) + 1, 'pm-rank'], [a.especie], [nInt.format(a.area), 'num'], [tot ? pct(a.area / tot) : '—', 'num'], [nInt.format(a.n.size), 'num']], s2, s2 ? 'Clique para voltar a todas as espécies' : 'Clique para ver esta espécie no mapa', () => setState({ floEsp: s2 ? 'Todas' : a.especie })); }
+      $('pm-prodrec-title').textContent = 'Área plantada por espécie ' + recorte(p);
+      $('pm-prodrec-note').textContent = lista.length ? 'Área total existente em 31/12/2025, por espécie florestal. Clique em uma espécie para vê-la no mapa.' : 'Nenhuma área plantada registrada neste recorte.';
+      return;
+    }
+    const agg = new Map();
+    for (const r of F.all) {
+      if (!inScope(p, r.cod) || !floOk(p, r, 'produto')) continue;
+      let a = agg.get(r.produto); if (!a) { a = { produto: r.produto, grupo: r.grupo, unidade: r.unidade, v: 0, q: 0, n: new Set() }; agg.set(r.produto, a); }
+      a.v += (r.v || 0) * 1000; a.q += r.q || 0; if ((r.v || 0) > 0) a.n.add(r.cod);
+    }
+    const lista = [...agg.values()].filter((a) => a.v > 0).sort((a, b) => b.v - a.v), tot = d3.sum(lista, (a) => a.v), top = lista.slice(0, 25);
+    const sel = lista.find((x) => x.produto === p.floProd); if (sel && !top.includes(sel)) top.push(sel);
+    head([['#', 'pm-rank'], ['Produto'], [silv ? 'Espécie' : 'Grupo'], ['Valor da produção', 'num'], ['Quantidade', 'num'], ['Participação', 'num'], ['Municípios', 'num']]);
+    for (const a of top) { const s2 = a.produto === p.floProd; linha([[lista.indexOf(a) + 1, 'pm-rank'], [a.produto], [silv ? (p.floEsp !== 'Todas' ? p.floEsp : 'Todas') : a.grupo], [fmtReais(a.v), 'num'], [a.unidade ? fmtBig(a.q) + ' ' + a.unidade : '—', 'num'], [tot ? pct(a.v / tot) : '—', 'num'], [nInt.format(a.n.size), 'num']], s2, s2 ? 'Clique para voltar a todos os produtos' : 'Clique para ver este produto no mapa', () => setState({ floProd: s2 ? 'Todos' : a.produto })); }
+    $('pm-prodrec-title').textContent = (silv ? 'Produção da silvicultura ' : 'Produtos mais extraídos ') + recorte(p);
+    $('pm-prodrec-note').textContent = lista.length ? 'Produtos ordenados pelo valor da produção' + (silv && p.floEsp !== 'Todas' ? ', só da espécie escolhida' : '') + '. A quantidade usa a unidade de cada produto. Clique em um produto para vê-lo no mapa.' : 'Nenhuma produção registrada neste recorte.';
+  }
+
   // ---------- imóveis rurais (CAR) ----------
   let K = null;
   const CAR_GRUPOS = [
@@ -1304,11 +1456,11 @@
   }
 
   function render() {
-    if (!A || !P || !C || !PR || !Q || !K || !svg) return;
+    if (!A || !P || !C || !PR || !Q || !K || !F || !svg) return;
     const p = state;
     drawControls(p);
     $('pm-map-note').textContent = NOTA_MAPA;
-    (p.modo === 'car' ? renderCar : pecUF(p) ? renderPecUF : prodMode(p) ? renderProd : p.modo === 'credito' ? renderCred : p.modo === 'pecuaria' ? renderPec : renderAgri)(p);
+    (p.modo === 'florestal' ? renderFlo : p.modo === 'car' ? renderCar : pecUF(p) ? renderPecUF : prodMode(p) ? renderProd : p.modo === 'credito' ? renderCred : p.modo === 'pecuaria' ? renderPec : renderAgri)(p);
     drawProducaoRecorte(p);
     semRecorte(p);
     postHeight();
@@ -1325,10 +1477,12 @@
   window.addEventListener('hashchange', () => { state = { ...DEFAULTS }; readHash(); setState({}); });
   const get = (u) => fetch(u).then((r) => { if (!r.ok) throw new Error(u); return r.json(); });
   const getTxt = (u) => fetch(u).then((r) => { if (!r.ok) throw new Error(u); return r.text(); });
-  Promise.all([get('dados/pam_2025.json'), get('dados/ppm_2025.json'), get('dados/malha.json'), getTxt('dados/biomas_municipios.csv'), get('dados/malha_biomas.json'), get('dados/credito_2025.json'), get('dados/credito_produtos_2025.json'), getTxt('dados/pecuaria_produtos_uf_2025.csv'), get('dados/car_2025.json')])
-    .then(([pam, ppm, malha, biomas, bios, cred, prodCr, pecTxt, carRaw]) => {
-      A = indexAgri(pam); P = indexPec(ppm); C = indexCred(cred); PR = indexProd(prodCr); Q = indexPecUF(pecTxt); K = indexCar(carRaw);
-      biomaDe = new Map(d3.csvParse(biomas).map((b) => [b.cod_ibge, b.bioma]));
+  Promise.all([get('dados/pam_2025.json'), get('dados/ppm_2025.json'), get('dados/malha.json'), getTxt('dados/biomas_municipios.csv'), get('dados/malha_biomas.json'), get('dados/credito_2025.json'), get('dados/credito_produtos_2025.json'), getTxt('dados/pecuaria_produtos_uf_2025.csv'), get('dados/car_2025.json'), getTxt('dados/florestal_2025.csv'), getTxt('dados/silvicultura_area_2025.csv')])
+    .then(([pam, ppm, malha, biomas, bios, cred, prodCr, pecTxt, carRaw, floTxt, areaTxt]) => {
+      A = indexAgri(pam); P = indexPec(ppm); C = indexCred(cred); PR = indexProd(prodCr); Q = indexPecUF(pecTxt); K = indexCar(carRaw); F = indexFlo(floTxt, areaTxt);
+      const bl = d3.csvParse(biomas);
+      biomaDe = new Map(bl.map((b) => [b.cod_ibge, b.bioma]));
+      munNome = new Map(bl.map((b) => [b.cod_ibge, { nome: b.municipio, uf: b.uf }]));
       buildMap(malha, bios);
       setState({});
     })
