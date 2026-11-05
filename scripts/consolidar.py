@@ -22,6 +22,9 @@ A produção de origem animal (Tabela 74) e a aquicultura (Tabela 3940), por est
 planilhas .xlsx do SIDRA na mesma pasta (gera dados/pecuaria_produtos_uf_2025.csv).
 O CAR vem de duas planilhas exportadas do Painel de Regularização Ambiental (número de
 cadastros e área cadastrada), na mesma pasta (gera dados/car_2025.json e .csv).
+A extração vegetal (Tabela 289), a silvicultura (Tabela 291) e a área de florestas plantadas
+(Tabela 5930) vêm de planilhas do SIDRA por município, na mesma pasta (gera dados/florestal_2025.csv
+e dados/silvicultura_area_2025.csv). O script identifica cada tabela pelo cabeçalho, não pelo nome do arquivo.
 Para outro ano, ajuste ANO abaixo e os nomes dos arquivos em index.html.
 """
 import csv, glob, json, os, re, sys, unicodedata
@@ -97,6 +100,8 @@ def main(pasta):
     for arq in sorted(glob.glob(os.path.join(pasta, 'Tabela_3_*.xlsx')) + glob.glob(os.path.join(pasta, 'Tabela_6_*.xlsx'))):
         tipo = 'Temporária' if os.path.basename(arq).startswith('Tabela_3_') else 'Permanente'
         wb = openpyxl.load_workbook(arq, read_only=True)
+        primeira = next(wb.worksheets[0].iter_rows(max_row=1, values_only=True))[0] or ''
+        if not (primeira.startswith('Tabela 1612') or primeira.startswith('Tabela 1613')): continue  # ignora outras tabelas com o mesmo nome de arquivo (ex.: PEVS)
         for ws in wb.worksheets:
             if ws.title == 'Notas': continue
             dados = list(ws.iter_rows(values_only=True))
@@ -113,8 +118,13 @@ def main(pasta):
                 linhas.append(dict(cod_ibge=m['codigo_ibge'], municipio=m['nome'], uf=uf, tipo_lavoura=tipo, produto=produto,
                                    area_ha=a, quantidade=None if produto == 'Total' else q,
                                    unidade_quantidade=None if produto == 'Total' else UNIDADES.get(produto, 't'), valor_mil_reais=v))
-    ufs_tab3 = {re.search(r' - ([A-Z]{2})$', list(openpyxl.load_workbook(a, read_only=True).worksheets[0].iter_rows(min_row=4, max_row=4, values_only=True))[0][0]).group(1)
-                for a in glob.glob(os.path.join(pasta, 'Tabela_3_*.xlsx'))}
+    def _cab(a):
+        ws = openpyxl.load_workbook(a, read_only=True).worksheets[0]
+        return list(ws.iter_rows(max_row=4, values_only=True))
+    ufs_tab3 = set()
+    for a in glob.glob(os.path.join(pasta, 'Tabela_3_*.xlsx')):
+        c = _cab(a)
+        if (c[0][0] or '').startswith('Tabela 1612'): ufs_tab3.add(re.search(r' - ([A-Z]{2})$', c[3][0]).group(1))
     tabela5457(pasta, idx, ufs_tab3, linhas, faltando)
     if faltando:
         print('Municípios sem correspondência (inclua em CORRECOES):', sorted(faltando))
@@ -368,6 +378,80 @@ def car(pasta):
     json.dump(saida, open(os.path.join(RAIZ, 'dados', f'car_{ANO}.json'), 'w', encoding='utf-8'), ensure_ascii=False, separators=(',', ':'))
     print(f'CAR: {len(chaves)} linhas, {sum(a[0] for a in acc.values())} cadastros, {sum(a[1] for a in acc.values()) / 1e6:.1f} milhões de ha.')
 
+def florestal(pasta):
+    """Extração vegetal (Tabela 289) e silvicultura (Tabela 291 e área da Tabela 5930) da PEVS, por município.
+    Usa qualquer .xlsx da pasta cuja primeira planilha comece com "Tabela 289", "Tabela 291" ou "Tabela 5930"."""
+    oficiais = list(csv.DictReader(open(os.path.join(RAIZ, 'scripts', 'municipios_ibge.csv'), encoding='utf-8')))
+    idx = {(int(m['codigo_uf']), norm(m['nome'])): m for m in oficiais}
+    nome_uf = {'Rondônia': 'RO', 'Acre': 'AC', 'Amazonas': 'AM', 'Roraima': 'RR', 'Pará': 'PA', 'Amapá': 'AP', 'Tocantins': 'TO', 'Maranhão': 'MA', 'Piauí': 'PI', 'Ceará': 'CE',
+               'Rio Grande do Norte': 'RN', 'Paraíba': 'PB', 'Pernambuco': 'PE', 'Alagoas': 'AL', 'Sergipe': 'SE', 'Bahia': 'BA', 'Minas Gerais': 'MG', 'Espírito Santo': 'ES',
+               'Rio de Janeiro': 'RJ', 'São Paulo': 'SP', 'Paraná': 'PR', 'Santa Catarina': 'SC', 'Rio Grande do Sul': 'RS', 'Mato Grosso do Sul': 'MS', 'Mato Grosso': 'MT', 'Goiás': 'GO', 'Distrito Federal': 'DF'}
+    unidades = {'Toneladas': 't', 'Metros cúbicos': 'm³', 'Mil árvores': 'mil árvores'}
+    grupos = {'1': 'Alimentícios', '2': 'Aromáticos, medicinais, tóxicos e corantes', '3': 'Borrachas', '4': 'Ceras', '5': 'Fibras', '6': 'Gomas não elásticas',
+              '7': 'Madeiras', '8': 'Oleaginosos', '9': 'Pinheiro brasileiro', '10': 'Tanantes'}
+    especies = [('acácia negra', 'Acácia-negra'), ('acácia-negra', 'Acácia-negra'), ('cedro australiano', 'Cedro-australiano'), ('eucalipto', 'Eucalipto'),
+                ('mogno africano', 'Mogno-africano'), ('pinus', 'Pinus'), ('teca', 'Teca'), ('outras espécies', 'Outras espécies')]
+    especie_area = {'Acácia negra': 'Acácia-negra', 'Cedro australiano': 'Cedro-australiano', 'Eucalipto': 'Eucalipto', 'Mogno africano': 'Mogno-africano', 'Pinus': 'Pinus', 'Teca': 'Teca', 'Outras espécies': 'Outras espécies'}
+    def produto_silv(cod, nome):
+        esp = next((e for k, e in especies if k in nome.lower()), None)
+        for pre, prod in (('1.1.', 'Carvão vegetal'), ('1.2.', 'Lenha'), ('1.3.1.', 'Madeira em tora para papel e celulose'), ('1.3.2.', 'Madeira em tora para outras finalidades')):
+            if cod.startswith(pre): return prod, esp
+        return {'2.1': ('Casca de acácia-negra', None), '2.2': ('Folha de eucalipto', None), '2.3': ('Resina', None)}.get(cod, (None, None))
+    linhas, area, faltando = [], [], set()
+    def municipios(dados):
+        uf = None
+        for r in dados[5:]:
+            if not isinstance(r[0], str): continue
+            ind = len(r[0]) - len(r[0].lstrip(' '))
+            if ind == 0: uf = nome_uf.get(r[0].strip()); continue
+            if ind != 6 or not uf: continue
+            nome = CORRECOES.get((uf, r[0].strip()), r[0].strip())
+            m = idx.get((UFMAP[uf], norm(nome)))
+            if not m: faltando.add((uf, nome)); continue
+            yield m['codigo_ibge'], r
+    for arq in sorted(glob.glob(os.path.join(pasta, '*.xlsx'))):
+        wb = openpyxl.load_workbook(arq, read_only=True)
+        primeira = next(wb.worksheets[0].iter_rows(max_row=1, values_only=True))[0] or ''
+        tab = next((t for t in ('289', '291', '5930') if primeira.startswith('Tabela ' + t + ' ')), None)
+        if not tab: continue
+        for ws in wb.worksheets:
+            if ws.title == 'Notas': continue
+            dados = list(ws.iter_rows(values_only=True))
+            item = dados[1][0].split(' - ', 1)[1].strip()
+            if tab == '5930':
+                if item == 'Total': continue
+                for cod, r in municipios(dados):
+                    a = numero(r[1])
+                    if a: area.append({'cod_ibge': cod, 'especie': especie_area.get(item, item), 'area_ha': a})
+                continue
+            m = re.match(r'^([\d.]+) - (.*)$', item)
+            if not m: continue
+            cab = dados[4][1] or ''
+            unidade = unidades.get(cab[cab.find('(') + 1:cab.rfind(')')], '') if '(' in cab else ''
+            if tab == '289':
+                partes = m.group(1).split('.')
+                if len(partes) != 2: continue
+                grupo, prod, esp, base = grupos[partes[0]], m.group(2).strip(), '', 'Extração vegetal'
+                if prod in ('Outros', 'Outras'): prod = prod + ' (' + grupo.lower().split(',')[0] + ')'
+            else:
+                prod, esp = produto_silv(m.group(1), m.group(2))
+                if not prod or (m.group(1).startswith('1.') and not esp): continue
+                grupo, esp, base = '', esp or '', 'Silvicultura'
+            for cod, r in municipios(dados):
+                q, v = numero(r[1]), numero(r[2])
+                if not q and not v: continue
+                linhas.append({'cod_ibge': cod, 'base': base, 'grupo': grupo, 'produto': prod, 'especie': esp, 'unidade': unidade,
+                               'quantidade': '' if q is None or not unidade else q, 'valor_mil_reais': '' if v is None else v})
+    if faltando: print('Florestal - municípios sem correspondência (inclua em CORRECOES):', sorted(faltando))
+    if linhas:
+        with open(os.path.join(RAIZ, 'dados', f'florestal_{ANO}.csv'), 'w', newline='', encoding='utf-8') as f:
+            w = csv.DictWriter(f, list(linhas[0])); w.writeheader(); w.writerows(linhas)
+        print(f'Florestal (extração vegetal e silvicultura): {len(linhas)} linhas.')
+    if area:
+        with open(os.path.join(RAIZ, 'dados', f'silvicultura_area_{ANO}.csv'), 'w', newline='', encoding='utf-8') as f:
+            w = csv.DictWriter(f, ['cod_ibge', 'especie', 'area_ha']); w.writeheader(); w.writerows(area)
+        print(f'Área de silvicultura: {len(area)} linhas.')
+
 if __name__ == '__main__':
     if len(sys.argv) != 2: sys.exit(__doc__)
     if glob.glob(os.path.join(sys.argv[1], 'Tabela_[36]_*.xlsx')): main(sys.argv[1])
@@ -376,3 +460,4 @@ if __name__ == '__main__':
     produtos(sys.argv[1])
     pecuaria_estados(sys.argv[1])
     car(sys.argv[1])
+    florestal(sys.argv[1])
